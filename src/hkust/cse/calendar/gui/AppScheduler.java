@@ -91,14 +91,14 @@ public class AppScheduler extends JDialog implements ActionListener, ComponentLi
 	private JButton acceptButton;
 	private JButton rejectButton;
 
-	private Appt NewAppt;
+	private Appt newAppt;
 	private CalGrid parent;
 	private LocationStorageController locationControl;
 	private UserStorageController userControl;
 	private boolean isNew = true;
 	private boolean isChanged = true;
 	private boolean isJoint = false;
-	
+
 	private LinkedList<String> invited;
 	private User[] invitedppl;
 
@@ -119,7 +119,7 @@ public class AppScheduler extends JDialog implements ActionListener, ComponentLi
 		setModal(false);
 
 		userControl = UserStorageController.getInstance();
-		
+
 		Container contentPane;
 		contentPane = getContentPane();
 
@@ -299,8 +299,8 @@ public class AppScheduler extends JDialog implements ActionListener, ComponentLi
 
 		top.add(pDes, BorderLayout.SOUTH);
 
-		if (NewAppt != null) {
-			apptDescripField.setText(NewAppt.getInfo());
+		if (newAppt != null) {
+			apptDescripField.setText(newAppt.getInfo());
 		}
 
 		JPanel panel2 = new JPanel();
@@ -316,16 +316,16 @@ public class AppScheduler extends JDialog implements ActionListener, ComponentLi
 		eventbg.add(privateAppt);
 		panel2.add(publicAppt);
 		panel2.add(privateAppt);
-		
+
 		privateAppt.setSelected(true);
 		publicAppt.addActionListener(this);
 		privateAppt.addActionListener(this);
-		
+
 		if(inivitation==true){
 			acceptButton = new JButton("Accept");
 			acceptButton.addActionListener(this);
 			panel2.add(acceptButton);		
-			
+
 			rejectButton = new JButton("Reject");
 			rejectButton.addActionListener(this);
 			panel2.add(rejectButton);
@@ -342,16 +342,15 @@ public class AppScheduler extends JDialog implements ActionListener, ComponentLi
 		panel2.add(cancelButton);
 
 		contentPane.add("South", panel2);
-		//NewAppt = new Appt();	//YinYin: I think this a big bug
 
 		if (this.getTitle().equals("Join Appointment Content Change") || this.getTitle().equals("Join Appointment Invitation")){
-//			inviteBut.show(false);
+			//			inviteBut.show(false);
 			rejectButton.show(true);
 			cancelButton.setText("Consider Later");
 			saveButton.setText("Accept");
 		}
 		if (this.getTitle().equals("Someone has responded to your Joint Appointment invitation") ){
-//			inviteBut.show(false);
+			//			inviteBut.show(false);
 			rejectButton.show(false);
 			cancelButton.show(false);
 			saveButton.setText("confirmed");
@@ -371,9 +370,9 @@ public class AppScheduler extends JDialog implements ActionListener, ComponentLi
 		}else{
 			commonConstructor(title, cal,false);
 		}
-		
+
 	}
-	
+
 
 	AppScheduler(String title, CalGrid cal) {
 		locationControl = LocationStorageController.getInstance();
@@ -399,7 +398,7 @@ public class AppScheduler extends JDialog implements ActionListener, ComponentLi
 		}
 
 		if (e.getSource() == jointButton) {
-			JointApptUserManager inviteuser = new JointApptUserManager(this.parent, AppScheduler.this, NewAppt);
+			JointApptUserManager inviteuser = new JointApptUserManager(this.parent, AppScheduler.this, newAppt);
 		}
 		else if (e.getSource() == cancelButton) {
 			setVisible(false);
@@ -408,60 +407,52 @@ public class AppScheduler extends JDialog implements ActionListener, ComponentLi
 		else if (e.getSource() == saveButton) {
 			boolean succeed = saveButtontonResponse();
 			if(succeed) {
-				/* 
-				 * This is for if the appt is modified from the UserApptManager,
-				 * we would like to update the Appt List in the manager
-				 * */
+
 				if(UserApptManager.getInstance() != null) {
 					UserApptManager.updateApptList();
 				}
-				
+
 				setVisible(false);
 				dispose();
 			}
 		}
 		else if (e.getSource() == acceptButton) {
-			
+
 			if (JOptionPane.showConfirmDialog(this, "Accept this joint appointment?", "Confirmation", JOptionPane.YES_NO_OPTION) == 0){
-				NewAppt.addAttendant(getCurrentUser());
-				NewAppt.getRejectList().remove(getCurrentUser().ID());
-				NewAppt.getWaitingList().remove(getCurrentUser().ID());
-				
+				newAppt.addAttendant(getCurrentUser());
+				newAppt.getRejectList().remove(getCurrentUser().ID());
+				newAppt.getWaitingList().remove(getCurrentUser().ID());
+
 				ApptXmlFactory apptxmlfactory = new ApptXmlFactory();
-				Appt[] appts = this.parent.controller.RetrieveAppts(NewAppt.getOwner(), NewAppt.getJoinID());
+				Appt[] appts = this.parent.controller.RetrieveAppts(newAppt.getOwner(), newAppt.getJoinID());
 				for(Appt appt : appts){
-					apptxmlfactory.removeApptFromXml("appt.xml", appt, NewAppt.getOwner().ID());
-					apptxmlfactory.saveApptToXml("appt.xml", appt, NewAppt.getOwner().ID());					
+					apptxmlfactory.removeApptFromXml("appt.xml", appt, newAppt.getOwner().ID());
+					apptxmlfactory.saveApptToXml("appt.xml", appt, newAppt.getOwner().ID());					
 				}
 
 				this.setVisible(false);
 				dispose();
 			}
-			
-			/* 
-			 * This is for if the appt is modified from the UserApptManager,
-			 * we would like to update the Appt List in the manager
-			 * */
+
 			if(UserApptManager.getInstance() != null) {
 				UserApptManager.updateApptList();
 			}
-			
+
 			setVisible(false);
 			dispose();
-			
+
 		} 
 		else if (e.getSource() == rejectButton) {
 			if (JOptionPane.showConfirmDialog(this, "Reject this joint appointment?", "Confirmation", JOptionPane.YES_NO_OPTION) == 0){
-				
-				NewAppt.addReject(getCurrentUser());
-				NewAppt.getAttendList().remove(getCurrentUser().ID());
-				NewAppt.getWaitingList().remove(getCurrentUser().ID());
-				this.parent.controller.ManageAppt(NewAppt, ApptStorageControllerImpl.REMOVE);
+
+				newAppt.addReject(getCurrentUser());
+				newAppt.getAttendList().remove(getCurrentUser().ID());
+				newAppt.getWaitingList().remove(getCurrentUser().ID());
+				this.parent.controller.ManageAppt(newAppt, ApptStorageControllerImpl.REMOVE);
 				ApptXmlFactory apptxmlfactory = new ApptXmlFactory();
-				Appt[] appts = this.parent.controller.RetrieveAppts(NewAppt.getOwner(), NewAppt.getJoinID());
+				Appt[] appts = this.parent.controller.RetrieveAppts(newAppt.getOwner(), newAppt.getJoinID());
 				for(Appt appt : appts){
-					apptxmlfactory.removeApptFromXml("appt.xml", appt, NewAppt.getOwner().ID());
-//					apptxmlfactory.saveApptToXml("appt.xml", appt, NewAppt.getOwner().ID());
+					apptxmlfactory.removeApptFromXml("appt.xml", appt, newAppt.getOwner().ID());
 				}
 
 			};
@@ -469,7 +460,6 @@ public class AppScheduler extends JDialog implements ActionListener, ComponentLi
 			dispose();
 		}
 
-		
 		parent.getAppList().clear();
 		parent.updateAppList();
 		parent.repaint();
@@ -572,7 +562,7 @@ public class AppScheduler extends JDialog implements ActionListener, ComponentLi
 		return (hour * 60 + minute);
 
 	}
-	
+
 	private int getReminder(JComboBox reminder) {
 
 		int minute = Utility.getNumber(reminder.getSelectedItem().toString());
@@ -634,7 +624,7 @@ public class AppScheduler extends JDialog implements ActionListener, ComponentLi
 	}
 
 	private boolean saveButtontonResponse() {
-		
+
 		// create an appt
 		int[] time = getValidTimeInterval();
 		int[] date = getValidDate();
@@ -647,7 +637,7 @@ public class AppScheduler extends JDialog implements ActionListener, ComponentLi
 		Timestamp end = CreateTimeStamp(date, time[1]);
 		TimeSpan startTime = new TimeSpan(start, end);
 		TimeSpan startDate = new TimeSpan(startTime);
-		
+
 		String freq = freqbg.getSelection().getActionCommand();
 		TimeSpan endTime = startTime;
 		if(freq != "OneTime") {
@@ -658,47 +648,47 @@ public class AppScheduler extends JDialog implements ActionListener, ComponentLi
 		}
 
 		Timestamp reminder = Utility.convertReminderToTimestamp(getReminder(reminderField), start);
-				
-		NewAppt.setLocation((Location) locationlist.getSelectedItem());
-		NewAppt.setTimeSpan(startTime);
-		NewAppt.setStartDate(startDate);
-		NewAppt.setEndDate(endTime);
-		NewAppt.setTitle(titleField.getText());
-		NewAppt.setInfo(apptDescripField.getText());
-		NewAppt.setReminderTime(reminder);
-		NewAppt.setFrequency(freq.trim());
-		NewAppt.setOwner(getCurrentUser());
-		
+
+		newAppt.setLocation((Location) locationlist.getSelectedItem());
+		newAppt.setTimeSpan(startTime);
+		newAppt.setStartDate(startDate);
+		newAppt.setEndDate(endTime);
+		newAppt.setTitle(titleField.getText());
+		newAppt.setInfo(apptDescripField.getText());
+		newAppt.setReminderTime(reminder);
+		newAppt.setFrequency(freq.trim());
+		newAppt.setOwner(getCurrentUser());
+
 		boolean isPublic = eventbg.getSelection().getActionCommand() == "publicAppt" ? true : false;
-		NewAppt.setIsPublic(isPublic);
-		boolean isJoint = NewAppt.getAllPeople().isEmpty();
-		NewAppt.setJoint(!isJoint);
-		
+		newAppt.setIsPublic(isPublic);
+		boolean isJoint = newAppt.getAllPeople().isEmpty();
+		newAppt.setJoint(!isJoint);
+
 		// set id & joint id for old appt		
 		if (selectedApptId != -1){ // old appt
-			NewAppt.setID(selectedApptId);
+			newAppt.setID(selectedApptId);
 			if(isJoint){  
-				NewAppt.setJoinID(-1);
-			}else if(!isJoint && NewAppt.getJoinID()==-1){
+				newAppt.setJoinID(-1);
+			}else if(!isJoint && newAppt.getJoinID()==-1){
 				int joinid = this.parent.controller.getAssignedJointID();
-				NewAppt.setJoinID(joinid);
+				newAppt.setJoinID(joinid);
 				this.parent.controller.setAssignedApptID(joinid+1);
 			}
 
 		}else{ // new appt
 			int apptid = this.parent.controller.getAssignedApptID();
-			NewAppt.setID(apptid);
+			newAppt.setID(apptid);
 			this.parent.controller.setAssignedApptID(apptid+1);
 			if(!isJoint){ // !isJoint = joint appt
 				int joinid = this.parent.controller.getAssignedJointID();
-				NewAppt.setJoinID(joinid);
+				newAppt.setJoinID(joinid);
 				this.parent.controller.setAssignedApptID(joinid+1);
 			}
 		}
 
 
 		ArrayList<Appt> apptlist = new ArrayList<Appt>();
-		apptlist.add(NewAppt);
+		apptlist.add(newAppt);
 
 
 		int frequency = -1; // that mean one time event
@@ -711,9 +701,9 @@ public class AppScheduler extends JDialog implements ActionListener, ComponentLi
 		else if (freq == "Monthly") {
 			frequency = TimeSpan.MONTH;
 		}
-		 // if it is not one time event, we recursively schedule new appts until the end date
+		// if it is not one time event, we recursively schedule new appts until the end date
 		if(frequency != -1) {
-			Utility.createRepeatingAppts(NewAppt, frequency, apptlist,getReminder(reminderField));
+			Utility.createRepeatingAppts(newAppt, frequency, apptlist,getReminder(reminderField));
 		}
 
 		// overlap checking
@@ -721,23 +711,23 @@ public class AppScheduler extends JDialog implements ActionListener, ComponentLi
 			JOptionPane.showMessageDialog(null, "Appointment Overlapped!" , "Error", JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
-		
-//		System.out.println(this.parent.controller.checkotherApptsHaveLocation(NewAppt, locationlist.getSelectedItem().toString()));
-		if(this.parent.controller.checkotherApptsHaveLocation(NewAppt, locationlist.getSelectedItem().toString())) {
+
+		//		System.out.println(this.parent.controller.checkotherApptsHaveLocation(newAppt, locationlist.getSelectedItem().toString()));
+		if(this.parent.controller.checkotherApptsHaveLocation(newAppt, locationlist.getSelectedItem().toString())) {
 			JOptionPane.showMessageDialog(null, "Appointment Overlapped! Your location has been used by other people in this timeslot." , "Error", JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
-		
+
 		// overlap checking GROUP event
-		if(NewAppt.isJoint()){
-			invited = NewAppt.getAllPeople();
+		if(newAppt.isJoint()){
+			invited = newAppt.getAllPeople();
 			invitedppl = initializeUserList(invited);
 			if(!this.parent.controller.checkotherUsersTimespan(startTime, invitedppl)){
 				JOptionPane.showMessageDialog(null, "Appointment Overlapped! Other people used in this timeslot." , "Error", JOptionPane.ERROR_MESSAGE);
 				return false;
 			}
 
-			if(!this.parent.controller.checkLocationCapacityEnough(NewAppt)) {
+			if(!this.parent.controller.checkLocationCapacityEnough(newAppt)) {
 				JOptionPane.showMessageDialog(null, "Location Capacity not enough!" , "Error", JOptionPane.ERROR_MESSAGE);
 				return false;
 			}
@@ -745,8 +735,8 @@ public class AppScheduler extends JDialog implements ActionListener, ComponentLi
 
 		// if we are modifing an appt, remove the old appts in the memory first
 		if(selectedApptId != -1){
-			this.parent.controller.removeApptFromXml(NewAppt);
-			this.parent.controller.ManageAppt(NewAppt, parent.controller.REMOVE); // for memory
+			this.parent.controller.removeApptFromXml(newAppt);
+			this.parent.controller.ManageAppt(newAppt, parent.controller.REMOVE); // for memory
 		}
 
 		// store the appts to the memory
@@ -755,11 +745,11 @@ public class AppScheduler extends JDialog implements ActionListener, ComponentLi
 			this.parent.controller.ManageAppt(appt, parent.controller.NEW); // for memory
 		}
 
-		this.parent.controller.saveApptToXml(NewAppt);
+		this.parent.controller.saveApptToXml(newAppt);
 
 		return true;
 	}
-	
+
 	private User[] initializeUserList(LinkedList<String> ppl) {
 		User[] suggestedpeople = new User[ppl.size()];
 		int i = 0;
@@ -786,11 +776,11 @@ public class AppScheduler extends JDialog implements ActionListener, ComponentLi
 	// set value of modify view
 	public void updateSetApp(Appt appt) {
 
-		NewAppt = appt;
-		
+		newAppt = appt;
+
 		Timestamp start = appt.TimeSpan().StartTime();
 		Timestamp end = appt.TimeSpan().EndTime();
-		
+
 		if(selectedApptId != -1) {
 			locationlist.setSelectedItem(appt.getLocation());
 			reminderField.setSelectedItem(rollBackReminderTimestamp(appt));
@@ -805,7 +795,7 @@ public class AppScheduler extends JDialog implements ActionListener, ComponentLi
 				else if (appt.getFrequency().equals("Monthly")) {
 					freqMonthly.setSelected(true);
 				}
-				
+
 				endYearField.setEditable(true);
 				endYearField.setEnabled(true);
 				endMonthField.setEditable(true);
@@ -813,11 +803,11 @@ public class AppScheduler extends JDialog implements ActionListener, ComponentLi
 				endDayField.setEditable(true);
 				endDayField.setEnabled(true);
 			}
-			
+
 			start = appt.getStartDate().StartTime();
 			end = appt.getStartDate().EndTime();
 		}
-		
+
 		Timestamp start_of_end_date = appt.getEndDate().StartTime();
 
 		setTitle(appt.getTitle());
@@ -835,7 +825,7 @@ public class AppScheduler extends JDialog implements ActionListener, ComponentLi
 		startMinuteField.setText(String.valueOf(start.getMinutes()));
 		endHourField.setText(String.valueOf(end.getHours()));
 		endMinuteField.setText(String.valueOf(end.getMinutes()));
-		
+
 		if(appt.isPublic()) {
 			publicAppt.setSelected(true);
 		}
@@ -882,7 +872,7 @@ public class AppScheduler extends JDialog implements ActionListener, ComponentLi
 		titleField.setEditable(false);
 		apptDescripField.setEditable(false);
 	}
-	
+
 	public void timeDisableEdit() {
 		startYearField.setEditable(false);
 		startMonthField.setEditable(false);
@@ -897,7 +887,7 @@ public class AppScheduler extends JDialog implements ActionListener, ComponentLi
 	}
 
 	//public static void testu(Appt appt) {
-		/*for (Appt lol = appt ; lol.TimeSpan().EndTime().before(new Timestamp(114,10,30,23,59,59,0)) ; lol = lol.clone()){
+	/*for (Appt lol = appt ; lol.TimeSpan().EndTime().before(new Timestamp(114,10,30,23,59,59,0)) ; lol = lol.clone()){
 			System.out.println(lol.TimeSpan().StartTime()+" "+lol.getReminder().getReminderTimestamp());
 		}*/
 	//}	

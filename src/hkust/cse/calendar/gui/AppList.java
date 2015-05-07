@@ -46,9 +46,9 @@ class AppCellRenderer extends DefaultTableCellRenderer {
 		
 		if (override) {
 			if (row % 2 == 0)
-				setBackground(new Color(0, 204, 255));
+				setBackground(new Color(153, 204, 255));
 			else
-				setBackground(new Color(210, 204, 255));
+				setBackground(new Color(204, 204, 255));
 			setForeground(Color.black);
 
 		}
@@ -135,7 +135,7 @@ public class AppList extends JPanel implements ActionListener {
 
 		menuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				NewAppt();
+				newAppt();
 			}
 		});
 
@@ -497,7 +497,7 @@ public class AppList extends JPanel implements ActionListener {
 
 	}
 	
-	private void NewAppt() {
+	private void newAppt() {
 
 		if (currentRow < 0 || currentRow > ROWNUM - 1) {
 			JOptionPane.showMessageDialog(parent, "Please Select Again !",

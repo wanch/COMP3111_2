@@ -91,7 +91,7 @@ public class CalGrid extends JFrame implements ActionListener {
 	private JScrollPane scrollpane;
 	private StyledDocument mem_doc = null;
 	private SimpleAttributeSet sab = null;
-	private JMenu Appmenu = new JMenu("Appointment");
+	private JMenu apptMenu = new JMenu("Appointment");
 	
 	//Create a menu for manage location
 	private JMenu adminMenu = new JMenu("Admin");
@@ -274,7 +274,7 @@ public class CalGrid extends JFrame implements ActionListener {
 		invitationOfJointAppt();
 		initializeSystem(); // for you to add.
 		//mCurrUser = getCurrUser(); // totally meaningless code
-		Appmenu.setEnabled(true);
+		apptMenu.setEnabled(true);
 		locationMenu.setEnabled(true);
 		adminMenu.setEnabled(true);
 		dateStatus.setEnabled(true);
@@ -453,14 +453,14 @@ public class CalGrid extends JFrame implements ActionListener {
 			}
 		});
 
-		menuBar.add(Appmenu);
-		Appmenu.setEnabled(false);
-		Appmenu.setMnemonic('p');
-		Appmenu.getAccessibleContext().setAccessibleDescription(
+		menuBar.add(apptMenu);
+		apptMenu.setEnabled(false);
+		apptMenu.setMnemonic('p');
+		apptMenu.getAccessibleContext().setAccessibleDescription(
 				"Appointment Management");
 		mi = new JMenuItem("Manual Scheduling");
 		mi.addActionListener(listener);
-		Appmenu.add(mi);
+		apptMenu.add(mi);
 		intivationMenuItem = new JMenuItem("Reply to Invitation");
 		intivationMenuItem.addActionListener(new ActionListener() {
 			@Override
@@ -469,7 +469,7 @@ public class CalGrid extends JFrame implements ActionListener {
 				ReplyJointApptPanel replyPanel = new ReplyJointApptPanel(CalGrid.this);
 			}
 		});
-		Appmenu.add(intivationMenuItem);
+		apptMenu.add(intivationMenuItem);
 		
 		if(mCurrUser.getRole().equals("Admin")) {
 			menuBar.add(adminMenu);

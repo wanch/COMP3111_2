@@ -11,7 +11,7 @@ class CalCellRenderer extends DefaultTableCellRenderer {
 
 	public CalCellRenderer(Object value) {
 		if(value == null) {
-			setBackground(Color.GRAY);
+			setBackground(new Color(230, 230, 230));
 		}
 	}
 	
@@ -26,7 +26,7 @@ class CalCellRenderer extends DefaultTableCellRenderer {
 		}
 		
 		if(hasEvent){
-			setBackground(Color.yellow);
+			setBackground(new Color(255, 255, 153));
 		}		
 
 		setHorizontalAlignment(SwingConstants.RIGHT);

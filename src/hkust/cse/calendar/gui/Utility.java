@@ -59,7 +59,7 @@ public class Utility {
 		// newAppt.setParticipants(temp);
 
 		newAppt.setTitle("Untitled");
-		//newAppt.setInfo("Input description of this appointment");
+		newAppt.setInfo("Input description of this appointment");
 		return newAppt;
 	}
 
