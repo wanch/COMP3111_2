@@ -28,6 +28,6 @@ public class Location implements Serializable {
 	}
 	
 	public String toString() {
-		return mLocationName + "\t\t [" + mCapacity + "]";
+		return mLocationName + "\t [" + mCapacity + "]";
 	}
 }
