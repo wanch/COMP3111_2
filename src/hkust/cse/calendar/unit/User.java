@@ -5,14 +5,12 @@ import java.io.Serializable;
 public abstract class User implements Serializable {
 
 	protected String mPassword;				// User password
-
-	protected String mID;						// User id
-	protected String mFirstName;				// First Name
-	protected String mLastName;					// Last Name
-	protected String mEmail;					// User email
-	//protected TimeSpan mBirthday;				// User Birthday
-	protected String mRole;	
-
+	protected String mID;					// User id
+	protected String mFirstName;			// First Name
+	protected String mLastName;				// Last Name
+	protected String mEmail;				// User email
+	protected TimeSpan mBirthday;			// User Birthday
+	protected String mRole;					// level of user
 	
 	public String getRole() {
 		return mRole;
@@ -34,7 +32,7 @@ public abstract class User implements Serializable {
 		mFirstName = "";
 		mLastName = "";
 		mEmail = "";
-		//mBirthday = null;
+		mBirthday = null;
 	}
 
 	//  Get user password
@@ -55,13 +53,13 @@ public abstract class User implements Serializable {
 		return mEmail;
 	}
 	
-	/*public void setBirthday(TimeSpan bDay) {
+	public void setBirthday(TimeSpan bDay) {
 		mBirthday = bDay;
 	}
 	
 	public TimeSpan getBirthday() {
 		return mBirthday;
-	}*/
+	}
 	
 	public void setName(String firstname, String lastnamem) {
 		mFirstName = firstname;
@@ -87,6 +85,5 @@ public abstract class User implements Serializable {
 	public String toString() {
 		return getName() + " (" + ID() + ")";
 	}
-	
 	public abstract boolean isAdmin();
 }
