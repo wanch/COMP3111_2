@@ -31,11 +31,13 @@ import org.xml.sax.SAXException;
 
 public class UserXmlFactory {
 
-	public void loadUserFromXml(String file, HashMap<String, User> mUsers) {
+
+	public void loadUserXml(String file, HashMap<String, User> mUsers) {
 		File userFile = new File(file);
 		if(userFile.isFile()) {
 			DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder builder = null;
+
 			try {
 				builder = builderFactory.newDocumentBuilder();
 				Document document = builder.parse(userFile);
@@ -96,7 +98,9 @@ public class UserXmlFactory {
 		}
 	}
 
-	public void updateUserInXml(String file, User user) {
+		
+
+	public void updateUserXml(String file, User user) {
 		DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder = null;
 		
@@ -105,7 +109,6 @@ public class UserXmlFactory {
 		String email = user.getEmail();
 		String firstname = user.getFirstName();
 		String lastname = user.getLastName();
-		
 		try {
 
 			builder = builderFactory.newDocumentBuilder();
@@ -156,7 +159,7 @@ public class UserXmlFactory {
 		}		
 	}
 
-	public void saveUserToXml(String file, User user) {
+	public void saveUserXml(String file, User user) {
 		// TODO Auto-generated method stub
 		String id = user.ID();
 		String pw = user.Password();
@@ -312,10 +315,12 @@ public class UserXmlFactory {
 		}
 	}
 
-	public void removeUserFromXml(String file, User user) {
+
+	public void removeUserXml(String file, User user) {
 		DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder = null;
 		String id = user.ID();
+
 		try {
 
 			builder = builderFactory.newDocumentBuilder();
@@ -365,7 +370,7 @@ public class UserXmlFactory {
 		}
 	}
 
-	public void addUserToToBeDeletedListXml(String file, User user) {
+	public void addUserToDeletedListXml(String file, User user) {
 		File fileObject = new File(file);
 		String id = user.ID();
 		if(fileObject.isFile()) {
@@ -439,7 +444,9 @@ public class UserXmlFactory {
 		}
 	}
 
-	public void loadUserFromToBeDeletedListXml(String file, ArrayList<String> ToBeDeleted) {
+
+	public void loadUserFromDeletedListXml(String file, ArrayList<String> ToBeDeleted) {
+
 		File userDataFile = new File(file);
 		ArrayList<String> temp = ToBeDeleted;
 		if(userDataFile.isFile()) {
@@ -473,10 +480,12 @@ public class UserXmlFactory {
 		}
 	}
 	
-	public void removeUserFromToBeDeletedListXml(String file, User user) {
+
+	public void removeUserFromDeletedListXml(String file, User user) {
 		DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder = null;
 		String id = user.ID();
+
 		try {
 
 			builder = builderFactory.newDocumentBuilder();

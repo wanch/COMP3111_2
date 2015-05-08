@@ -14,17 +14,18 @@ public class Appt implements Serializable {
 	private Reminder mReminder;					// Reminder for the appointment
 	
 	private int mApptID;						// The appointment id
-	private int jointID;						// The join appointment i
+	private int joinApptID;						// The join appointment i
 	
 	private String mTitle;						// The Title of the appointment
 	private String mInfo;						// Store the content of the appointments description
 	private Location mLocation;					// Location of the appointment
 	
-	private boolean ispublic;					// The appointment is a public appointment
+	private boolean isPublic;					// The appointment is a public appointment
+
 	private User owner;
 	
 	private boolean isJoint;					// The appointment is a joint appointment
-	
+
 	private LinkedList<String> attend;			// The Attendant list
 	private LinkedList<String> reject;			// The reject list
 	private LinkedList<String> waiting;			// The waiting list
@@ -43,8 +44,10 @@ public class Appt implements Serializable {
 		attend = new LinkedList<String>();
 		reject = new LinkedList<String>();
 		waiting = new LinkedList<String>();
-		jointID = -1;
-		ispublic = false;
+
+		joinApptID = -1;
+		isPublic = false;
+
 		owner = null;
 	}
 
@@ -70,11 +73,11 @@ public class Appt implements Serializable {
 	
 	// Getter of the join appointment id
 	public int getJoinID(){
-		return jointID;
+		return joinApptID;
 	}
 
 	public void setJoinID(int joinID){
-		this.jointID = joinID;
+		this.joinApptID = joinID;
 	}
 	
 	public void setLocation(Location location) {
@@ -268,11 +271,11 @@ public class Appt implements Serializable {
 	}
 	
 	public boolean isPublic() {
-		return ispublic;
+		return isPublic;
 	}
 	
-	public void setIsPublic(boolean isPublic) {
-		ispublic = isPublic;
+	public void setIsPublic(boolean isPub) {
+		isPublic = isPub;
 	}
 	public User getOwner() {
 		return owner;

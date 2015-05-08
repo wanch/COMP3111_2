@@ -16,7 +16,7 @@ public class NotificationCentre extends JFrame {
 	private static NotificationCentre instance = new NotificationCentre();
 	private Timer mTimer;
 	private TimeMachine mTimeMachine;
-	private ApptStorageControllerImpl apptController;
+	private ApptStorageControllerImpl apptControl;
 	
 	public static NotificationCentre getInstance() {
 		return instance;
@@ -28,18 +28,18 @@ public class NotificationCentre extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
-				popUpReminderIfNeede();
+				popUpReminder();
 			}		
 		});		
 		mTimer.start();
 	}
 
-	public void setApptController(ApptStorageControllerImpl apptCon) {
-		apptController = apptCon;
+	public void setApptController(ApptStorageControllerImpl apptContro) {
+		apptControl = apptContro;
 	}
 
-	private void popUpReminderIfNeede() {
-		Appt[] apptList = apptController.RetrieveAppts(apptController.getDefaultUser(), mTimeMachine.getTodayTimeSpan());
+	private void popUpReminder() {
+		Appt[] apptList = apptControl.RetrieveAppts(apptControl.getDefaultUser(), mTimeMachine.getTodayTimeSpan());
 		
 		for(Appt appt : apptList) {
 			if(appt.getReminder().getReminderTimestamp() != null) {
@@ -47,7 +47,7 @@ public class NotificationCentre extends JFrame {
 					String message = "";
 					
 					if(appt.TimeSpan().StartTime().getMinutes() == mTimeMachine.getNowTimestamp().getMinutes()) {
-						message = appt.getTitle() + " will be starting now";
+						message = appt.getTitle() + " will start now";
 						new Notification(message, appt.getLocation().getLocationName());
 					}
 					else if(appt.TimeSpan().StartTime().after(mTimeMachine.getNowTimestamp())) {

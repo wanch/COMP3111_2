@@ -24,9 +24,11 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 public class LocationXmlFactory {
-	public void loadLocationFromXml(ArrayList<Location> mLocations) {
-		File locationFile = new File(LocationStorage.locationDataFile);
+
+	public void loadLocationXml(ArrayList<Location> mLocations) {
+		File locationFile = new File(LocationStorage.locationFile);
 		
+
 		if(locationFile.isFile()) {
 			DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder builder = null;
@@ -67,17 +69,21 @@ public class LocationXmlFactory {
 		}
 	}
 	
-	public void saveLocationToXml(Location location) {
+	public void saveLocationXml(Location location) {
 		// TODO Auto-generated method stub
-		File file = new File(LocationStorage.locationDataFile);
+
+		File file = new File(LocationStorage.locationFile);
 		String locationName = location.getLocationName();
 		int locationCapacity = location.getCapacity();
+
 		if(file.isFile()) {
 			DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder builder = null;
 			try {
+
 				builder = builderFactory.newDocumentBuilder();
-				Document document = builder.parse(LocationStorage.locationDataFile);
+				Document document = builder.parse(LocationStorage.locationFile);
+
 
 				Node locations = document.getFirstChild();		// <locations>
 				
@@ -97,7 +103,7 @@ public class LocationXmlFactory {
 				TransformerFactory transformerFactory = TransformerFactory.newInstance();
 				Transformer transformer = transformerFactory.newTransformer();
 				DOMSource source = new DOMSource(document);
-				StreamResult result = new StreamResult(new File(LocationStorage.locationDataFile));
+				StreamResult result = new StreamResult(new File(LocationStorage.locationFile));
 				transformer.transform(source, result);
 
 			} catch (ParserConfigurationException e) {
@@ -144,7 +150,7 @@ public class LocationXmlFactory {
 				TransformerFactory transformerFactory = TransformerFactory.newInstance();
 				Transformer transformer = transformerFactory.newTransformer();
 				DOMSource source = new DOMSource(document);
-				StreamResult result = new StreamResult(new File(LocationStorage.locationDataFile));
+				StreamResult result = new StreamResult(new File(LocationStorage.locationFile));
 
 				transformer.transform(source, result);
 			} catch (ParserConfigurationException e) {
@@ -160,14 +166,16 @@ public class LocationXmlFactory {
 		}
 	}
 	
-	public void updateLocationInXml(Location location, String locationName, int locationCapacity) {
+	public void updateLocationXml(Location location, String locationName, int locationCapacity) {
 		// TODO Auto-generated method stub
 		DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder = null;
 		try {
 
+
 			builder = builderFactory.newDocumentBuilder();
-			Document doc = builder.parse(LocationStorage.locationDataFile);
+			Document doc = builder.parse(LocationStorage.locationFile);
+
 
 			NodeList locations = doc.getElementsByTagName("Location");
 			for(int i = 0; i < locations.getLength(); i++) {
@@ -195,7 +203,7 @@ public class LocationXmlFactory {
 			TransformerFactory transformerFactory = TransformerFactory.newInstance();
 			Transformer transformer = transformerFactory.newTransformer();
 			DOMSource source = new DOMSource(doc);
-			StreamResult result = new StreamResult(new File(LocationStorage.locationDataFile));
+			StreamResult result = new StreamResult(new File(LocationStorage.locationFile));
 			transformer.transform(source, result);
 
 		} catch (ParserConfigurationException e) {
@@ -217,15 +225,20 @@ public class LocationXmlFactory {
 	}
 	
 	public void addLocationToToBeDeleteList(Location location) {
-		File fileObject = new File(LocationStorage.toBeDeleteLocationFile);
+
 		String locationName = location.getLocationName();
+
+		File fileObject = new File(LocationStorage.deleteLocationFile);
+
 		if(fileObject.isFile()) {
 			DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder builder = null;
 			try {
 
+
 				builder = builderFactory.newDocumentBuilder();
-				Document document = builder.parse(LocationStorage.toBeDeleteLocationFile);
+				Document document = builder.parse(LocationStorage.deleteLocationFile);
+
 
 				Node locations = document.getFirstChild();
 				Element newLocation = document.createElement("Location");
@@ -236,7 +249,7 @@ public class LocationXmlFactory {
 				TransformerFactory transformerFactory = TransformerFactory.newInstance();
 				Transformer transformer = transformerFactory.newTransformer();
 				DOMSource source = new DOMSource(document);
-				StreamResult result = new StreamResult(new File(LocationStorage.toBeDeleteLocationFile));
+				StreamResult result = new StreamResult(new File(LocationStorage.deleteLocationFile));
 				transformer.transform(source, result);
 
 			} catch (ParserConfigurationException e) {
@@ -274,7 +287,7 @@ public class LocationXmlFactory {
 				TransformerFactory transformerFactory = TransformerFactory.newInstance();
 				Transformer transformer = transformerFactory.newTransformer();
 				DOMSource source = new DOMSource(document);
-				StreamResult result = new StreamResult(new File(LocationStorage.toBeDeleteLocationFile));
+				StreamResult result = new StreamResult(new File(LocationStorage.deleteLocationFile));
 
 				transformer.transform(source, result);
 			} catch (ParserConfigurationException e) {
@@ -290,8 +303,8 @@ public class LocationXmlFactory {
 		}
 	}
 	
-	public Location[] getLocationInToBeDelete() {
-		String locationFile = LocationStorage.toBeDeleteLocationFile;
+	public Location[] getLocationInDeleteList() {
+		String locationFile = LocationStorage.deleteLocationFile;
 		File fileObject = new File(locationFile);
 		ArrayList<Location> locations = new ArrayList<Location>();
 		
@@ -332,11 +345,14 @@ public class LocationXmlFactory {
 	}
 	
 	public void deleteLocationInToBeDelete(Location location) {
-		String file = LocationStorage.toBeDeleteLocationFile;
+
 		DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder = null;
 		String locationName = location.getLocationName();
 		
+
+		String file = LocationStorage.deleteLocationFile;
+
 		try {
 
 			builder = builderFactory.newDocumentBuilder();
@@ -384,14 +400,17 @@ public class LocationXmlFactory {
 		}
 	}
 	
-	public void removeLocationFromXml(Location location) {
+public void removeLocationXml(Location location) {
 		String locationName = location.getLocationName();
 		DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder = null;
+
 		try {
 
+
 			builder = builderFactory.newDocumentBuilder();
-			Document doc = builder.parse(LocationStorage.locationDataFile);
+			Document doc = builder.parse(LocationStorage.locationFile);
+
 
 			Node locationRootNode = doc.getFirstChild();
 			NodeList locations = doc.getElementsByTagName("Location");
@@ -415,7 +434,7 @@ public class LocationXmlFactory {
 			TransformerFactory transformerFactory = TransformerFactory.newInstance();
 			Transformer transformer = transformerFactory.newTransformer();
 			DOMSource source = new DOMSource(doc);
-			StreamResult result = new StreamResult(new File(LocationStorage.locationDataFile));
+			StreamResult result = new StreamResult(new File(LocationStorage.locationFile));
 			transformer.transform(source, result);
 
 		} catch (ParserConfigurationException e) {

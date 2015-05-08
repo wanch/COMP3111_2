@@ -18,9 +18,9 @@ public class UserStorageModel extends UserStorage {
 	private UserStorageModel() {
 		mUsers = new HashMap<String, User>();
 		mToBeDeletedUsers = new ArrayList<String>();
-		userXmlFactory = new UserXmlFactory();
-		loadUserFromXml();
-		loadUserFromToBeDeletedListXml();
+		userXml = new UserXmlFactory();
+		loadUserXml();
+		loadUserFromDeletedListXml();
 	}
 
 	@Override
@@ -32,29 +32,30 @@ public class UserStorageModel extends UserStorage {
 	@Override
 	public void saveUser(User user) {
 		// TODO Auto-generated method stub
+
 		String id = user.ID();
 		mUsers.put(id, user);
-		saveUserToXml(user);
+		saveUserXml(user);
+
 	}
 
 	@Override
 	public void updateUser(User user) {
 		// TODO Auto-generated method stub
-		//mUsers.put(user.ID(), user);
-		updateUserInXml(user);
+		updateUserXml(user);
 	}
 
 	@Override
 	public void removeUser(User user) {
 		// TODO Auto-generated method stub
 		mUsers.remove(user.ID());
-		removeUserFromXml(user);
+		removeUserXml(user);
 	}
 
 	@Override
-	public void loadUserFromXml() {
+	public void loadUserXml() {
 		// TODO Auto-generated method stub
-		userXmlFactory.loadUserFromXml(UserStorage.userFile, mUsers);
+		userXml.loadUserXml(UserStorage.userFile, mUsers);
 	}
 
 	@Override
@@ -100,61 +101,65 @@ public class UserStorageModel extends UserStorage {
 	}
 
 	@Override
-	public void saveUserToXml(User user) {
+	public void saveUserXml(User user) {
 		// TODO Auto-generated method stub
-		userXmlFactory.saveUserToXml(UserStorage.userFile, user);
+		userXml.saveUserXml(UserStorage.userFile, user);
 	}
 	
-	public void updateUserInXml(User user) {
-		userXmlFactory.updateUserInXml(UserStorage.userFile, user);
+	public void updateUserXml(User user) {
+		userXml.updateUserXml(UserStorage.userFile, user);
 	}
 	
-	public void removeUserFromXml(User user) {
-		userXmlFactory.removeUserFromXml(UserStorage.userFile, user);
+	public void removeUserXml(User user) {
+		userXml.removeUserXml(UserStorage.userFile, user);
 	}
 
 	@Override
-	public void putUserToBeDeletedList(User user) {
+	public void putUserToDeletedList(User user) {
 		// TODO Auto-generated method stub
+
 		String id = user.ID();
 		mToBeDeletedUsers.add(id);
-		addUserToToBeDeletedListXml(user);
+		addUserToDeletedListXml(user);
+
 	}
 
 	@Override
-	public void removeUserFromToBeDeletedList(User user) {
+	public void removeUserFromDeletedList(User user) {
 		// TODO Auto-generated method stub
+
 		String id = user.ID();
 		mToBeDeletedUsers.remove(id);
-		removeUserFromToBeDeletedListXml(user);
+		removeUserFromDeletedListXml(user);
+
 	}
 
 	@Override
-	public ArrayList<String> retrieveUsersFromToBeDeletedList() {
+	public ArrayList<String> retrieveUsersFromDeletedList() {
 		// TODO Auto-generated method stub
 		return mToBeDeletedUsers;
 	}
 
 	@Override
-	public void addUserToToBeDeletedListXml(User user) {
+	public void addUserToDeletedListXml(User user) {
 		// TODO Auto-generated method stub
-		userXmlFactory.addUserToToBeDeletedListXml(UserStorage.toBeDeleteUserFile, user);
+		userXml.addUserToDeletedListXml(UserStorage.toBeDeleteUserFile, user);
 	}
 
 	@Override
-	public void removeUserFromToBeDeletedListXml(User user) {
+	public void removeUserFromDeletedListXml(User user) {
 		// TODO Auto-generated method stub
-		userXmlFactory.removeUserFromToBeDeletedListXml(UserStorage.toBeDeleteUserFile, user);
+		userXml.removeUserFromDeletedListXml(UserStorage.toBeDeleteUserFile, user);
 	}
 
 	@Override
-	public void loadUserFromToBeDeletedListXml() {
+	public void loadUserFromDeletedListXml() {
 		// TODO Auto-generated method stub
-		userXmlFactory.loadUserFromToBeDeletedListXml(UserStorage.toBeDeleteUserFile, mToBeDeletedUsers);
+		userXml.loadUserFromDeletedListXml(UserStorage.toBeDeleteUserFile, mToBeDeletedUsers);
 	}
 
 	@Override
-	public boolean checkUserInToBeDeleteList(User user) {
+	public boolean checkUserInDeleteList(User user) {
 		// TODO Auto-generated method stub
 		String id = user.ID();
 		return mToBeDeletedUsers.contains(id);

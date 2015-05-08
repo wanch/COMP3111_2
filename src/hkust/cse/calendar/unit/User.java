@@ -5,12 +5,14 @@ import java.io.Serializable;
 public abstract class User implements Serializable {
 
 	protected String mPassword;				// User password
+
 	protected String mID;						// User id
-	protected String mFirstName;
-	protected String mLastName;
+	protected String mFirstName;				// First Name
+	protected String mLastName;					// Last Name
 	protected String mEmail;					// User email
 	//protected TimeSpan mBirthday;				// User Birthday
 	protected String mRole;	
+
 	
 	public String getRole() {
 		return mRole;
@@ -25,7 +27,7 @@ public abstract class User implements Serializable {
 		return mID;
 	}
 
-	// Constructor of class 'User' which set up the user id and password
+	//  set up the user id and password
 	public User(String id, String pass) {
 		mID = id;
 		mPassword = pass;
@@ -35,12 +37,12 @@ public abstract class User implements Serializable {
 		//mBirthday = null;
 	}
 
-	// Getter of the user password
+	//  Get user password
 	public String Password() {
 		return mPassword;
 	}
 
-	// Setter of the user password
+	// Set user password
 	public void Password(String pass) {
 		mPassword = pass;
 	}

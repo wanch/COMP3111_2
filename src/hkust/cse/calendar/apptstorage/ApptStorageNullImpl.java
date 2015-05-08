@@ -487,7 +487,7 @@ public class ApptStorageNullImpl extends ApptStorage {
 	public Appt[] getApptInDeleteLocation() {
 		// TODO Auto-generated method stub
 		LocationStorageController locationController = LocationStorageController.getInstance();
-		Location[] locationsToBeDelete = locationController.getLocationInToBeDelete();
+		Location[] locationsToBeDelete = locationController.getLocationInDeleteList();
 		ArrayList<Appt> appts = new ArrayList<Appt>();
 		ArrayList<Integer> addedId = new ArrayList<Integer>();
 

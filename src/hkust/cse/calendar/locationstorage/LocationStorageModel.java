@@ -48,7 +48,7 @@ public class LocationStorageModel extends LocationStorage {
 	public void saveLocation(Location location) {
 		// TODO Auto-generated method stub
 		mLocations.add(location);
-		saveLocationToXml(location);
+		saveLocationXml(location);
 	}
 
 	public void saveLocationButNotXml(Location location) {
@@ -66,7 +66,7 @@ public class LocationStorageModel extends LocationStorage {
 	@Override
 	public void updateLocation(Location location, String newLocationName, int newLocationCapacity) {
 		// TODO Auto-generated method stub
-		updateLocationInXml(location, newLocationName, newLocationCapacity);
+		updateLocationXml(location, newLocationName, newLocationCapacity);
 		location.setLocationName(newLocationName);
 		//location.setCapacity(newLocationCapacity);
 	}
@@ -75,27 +75,27 @@ public class LocationStorageModel extends LocationStorage {
 	public void removeLocation(Location location) {
 		// TODO Auto-generated method stub
 		mLocations.remove(location);
-		removeLocationFromXml(location);
+		removeLocationXml(location);
 	}
 
-	public void removeLocationFromXml(Location location) {
-		xmlFactory.removeLocationFromXml(location);
+	public void removeLocationXml(Location location) {
+		xmlFactory.removeLocationXml(location);
 	}
 
 	@Override
-	public void loadLocationFromXml() {
+	public void loadLocationXml() {
 		// TODO Auto-generated method stub
-		xmlFactory.loadLocationFromXml(mLocations);
+		xmlFactory.loadLocationXml(mLocations);
 	}
 
 	@Override
-	public Location[] retrieveLocations() {
+	public Location[] retrieveLocation() {
 		// TODO Auto-generated method stub
 		return mLocations.toArray(new Location[mLocations.size()]);
 	}
 
 	@Override
-	public boolean checkLocationExists(Location location) {
+	public boolean locationExists(Location location) {
 		// TODO Auto-generated method stub
 		if(location == null) {
 			return false;
@@ -109,7 +109,7 @@ public class LocationStorageModel extends LocationStorage {
 		return false;
 	}
 
-	public Location findLocationByName(String locationName) {
+	public Location findLocation(String locationName) {
 		for(int i = 0; i < mLocations.size(); i++) {
 			if(mLocations.get(i).getLocationName().equals(locationName)) {
 				return mLocations.get(i);
@@ -119,27 +119,27 @@ public class LocationStorageModel extends LocationStorage {
 	}
 
 	@Override
-	public void saveLocationToXml(Location location) {
+	public void saveLocationXml(Location location) {
 		// TODO Auto-generated method stub
-		xmlFactory.saveLocationToXml(location);
+		xmlFactory.saveLocationXml(location);
 	}
 
 	@Override
-	public void updateLocationInXml(Location location, String locationName, int locationCapacity) {
+	public void updateLocationXml(Location location, String locationName, int locationCapacity) {
 		// TODO Auto-generated method stub
-		xmlFactory.updateLocationInXml(location, locationName, locationCapacity);
+		xmlFactory.updateLocationXml(location, locationName, locationCapacity);
 	}
 
 	@Override
-	public void addLocationToToBeDeleteList(Location location) {
+	public void addLocationToDeleteList(Location location) {
 		// TODO Auto-generated method stub
 		xmlFactory.addLocationToToBeDeleteList(location);
 	}
 
 	@Override
-	public Location[] getLocationInToBeDelete() {
+	public Location[] getLocationInDeleteList() {
 		// TODO Auto-generated method stub
-		return xmlFactory.getLocationInToBeDelete();
+		return xmlFactory.getLocationInDeleteList();
 	}
 
 }

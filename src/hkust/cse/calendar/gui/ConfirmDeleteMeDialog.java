@@ -62,7 +62,7 @@ public class ConfirmDeleteMeDialog extends JDialog implements ActionListener {
 		// TODO Auto-generated method stub
 		if(e.getSource() == confirmButton) {
 			userController.manageUsers(mUser, UserStorageController.DELETE);
-			userController.removeUserFromToBeDeletedList(mUser);
+			userController.removeUserFromDeletedList(mUser);
 			
 			for(Iterator<Entry<User, HashMap<TimeSpan, Appt>>> it = ApptStorage.mUserToAppts.entrySet().iterator(); it.hasNext();) {
 				User key = it.next().getKey();
