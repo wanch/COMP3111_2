@@ -137,16 +137,6 @@ public class UserXmlFactory {
 
 	public void saveUserXml(String file, User user) {
 		// TODO Auto-generated method stub
-<<<<<<< HEAD
-		String id = user.ID();
-		String pw = user.Password();
-		String type = user.getType();
-		String firstname = user.getFirstName();
-		String lastname = user.getLastName();
-		String email = user.getEmail();
-		
-=======
->>>>>>> refs/remotes/origin/master
 		File fileObject = new File(file);
 		if(fileObject.isFile()) {
 			try {
@@ -165,15 +155,9 @@ public class UserXmlFactory {
 				password.appendChild(document.createTextNode(user.Password()));
 				newUser.appendChild(password);
 
-<<<<<<< HEAD
-				Element userRole = document.createElement("Type");
-				userRole.appendChild(document.createTextNode(type));
-				newUser.appendChild(userRole);
-=======
 				Element role = document.createElement("Role");
 				role.appendChild(document.createTextNode(user.getRole()));
 				newUser.appendChild(role);
->>>>>>> refs/remotes/origin/master
 
 				Element name = document.createElement("Name");
 				Element firstName = document.createElement("FirstName");
@@ -245,15 +229,9 @@ public class UserXmlFactory {
 				password.appendChild(document.createTextNode(user.Password()));
 				newUser.appendChild(password);
 
-<<<<<<< HEAD
-				Element userRole = document.createElement("Role");
-				userRole.appendChild(document.createTextNode(type));
-				
-=======
 				Element role = document.createElement("Role");
 				role.appendChild(document.createTextNode(user.getRole()));
 				newUser.appendChild(role);
->>>>>>> refs/remotes/origin/master
 
 				Element name = document.createElement("Name");
 				Element firstName = document.createElement("FirstName");
