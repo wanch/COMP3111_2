@@ -41,17 +41,6 @@ public class SuggestedTime extends JDialog implements ActionListener {
 	private LinkedList<String> suggestedppl;
 	private User[] suggestedpeople;
 	
-//	private JLabel firstTimeL;
-//	private JRadioButton firstTimeB;
-//	private JLabel secondTimeL;
-//	private JRadioButton secondTimeB;
-//	private JLabel thirdTimeL;
-//	private JRadioButton thirdTimeB;
-//	private JLabel fourthTimeL;
-//	private JRadioButton fourthTimeB;
-//	private JLabel fifthTimeL;
-//	private JRadioButton fifthTimeB;
-//	private ButtonGroup suggestedGp;
 	
 	private JList<TimeSpan> suggestedList;
 	private DefaultListModel<TimeSpan> suggestedListModel;
@@ -72,46 +61,6 @@ public class SuggestedTime extends JDialog implements ActionListener {
 		contentPane = getContentPane();
 		
 		JPanel top = new JPanel(new BorderLayout());
-//		firstTimeL = new JLabel("Fisrt");
-//		firstTimeB = new JRadioButton("Earliest Time: ");
-//		secondTimeL = new JLabel("Second");
-//	    secondTimeB = new JRadioButton("Other Time: ");
-//	    thirdTimeL = new JLabel("Third");
-//	    thirdTimeB = new JRadioButton("Other Time: ");
-//	    fourthTimeL = new JLabel("Fourth");
-//	    fourthTimeB = new JRadioButton("Othere Time: ");
-//	    fifthTimeL = new JLabel("Fifth");
-//	    fifthTimeB = new JRadioButton("Other Time: ");
-//	    suggestedGp = new ButtonGroup();
-//
-//	    firstTimeB.setActionCommand("0");
-//	    secondTimeB.setActionCommand("1");
-//	    thirdTimeB.setActionCommand("2");
-//	    fourthTimeB.setActionCommand("3");	
-//	    fifthTimeB.setActionCommand("4");	
-//	    
-//	    firstTimeB.addActionListener(this);
-//	    secondTimeB.addActionListener(this);
-//	    thirdTimeB.addActionListener(this);
-//	    fourthTimeB.addActionListener(this);
-//	    fifthTimeB.addActionListener(this);
-//	    
-//	    top.add(firstTimeL);
-//	    top.add(firstTimeB);
-//	    suggestedGp.add(firstTimeB);
-//	    top.add(secondTimeL);
-//	    top.add(secondTimeB);
-//	    suggestedGp.add(secondTimeB);
-//	    top.add(thirdTimeL);
-//	    top.add(thirdTimeB);
-//	    suggestedGp.add(thirdTimeB);
-//	    top.add(fourthTimeL);
-//	    top.add(fourthTimeB);
-//	    suggestedGp.add(fourthTimeB);
-//	    top.add(fifthTimeL);
-//	    top.add(fifthTimeB);
-//	    suggestedGp.add(fifthTimeB);
-//	    firstTimeB.setSelected(true);
 		
 		suggestedListModel = new DefaultListModel<TimeSpan>();
 		suggestedList = new JList<TimeSpan>(suggestedListModel);
@@ -194,23 +143,6 @@ public class SuggestedTime extends JDialog implements ActionListener {
 			span.add(suggestion[i]);
 		}
 		suggestedList.setListData(span.toArray(new TimeSpan[span.size()]));
-//		String total = new String();
-//		for (int i = 0; i < 5; i++) {
-//			total = start[i] + " ----- " + end[i];
-//			switch (i)
-//			{
-//				case 0:
-//					firstTimeL.setText(total);
-//				case 1:
-//					secondTimeL.setText(total);
-//				case 2:
-//					thirdTimeL.setText(total);
-//				case 3:
-//					fourthTimeL.setText(total);
-//				case 4:
-//					fifthTimeL.setText(total);
-//			}
-//		}
 	}
 	private void updateJointTime(TimeSpan option) {
 		updateTimeField(option);
