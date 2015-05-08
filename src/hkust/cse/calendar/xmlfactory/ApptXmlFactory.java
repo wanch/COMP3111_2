@@ -39,12 +39,11 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 public class ApptXmlFactory {
-	
-	//  return the top appt id + 1 of specific user's appts
+	// this will also return the largest appt id + 1 of specific user's appts
 	public int loadApptFromXml(String file, HashMap<TimeSpan, Appt> mAppts, String userid) {
 		File userDataFile = new File(file);
 
-		int currID = -1; // keep the curr appt id in the xml file
+		int topid = -1; // to record the max top appt id from the xml file
 
 		if(userDataFile.isFile()) {
 			try {
@@ -53,14 +52,14 @@ public class ApptXmlFactory {
 				Document document = docBuilder.parse(userDataFile);
 				document.getDocumentElement().normalize();
 
-				//  get the appts of specific user
+				// try to get the appts of specific user
 				XPathFactory factory = XPathFactory.newInstance();
 				XPath xpath = factory.newXPath();
 				XPathExpression expr = xpath.compile("/Appts/user[@id='" + userid + "']");
-				NodeList userlist = (NodeList) expr.evaluate(document, XPathConstants.NODESET); 
+				NodeList userlist = (NodeList) expr.evaluate(document, XPathConstants.NODESET); // nodelist of user where id="userid"
 				Node user = userlist.item(0); // the node of specific user
 
-				// new user create a new user node, then save to the xml file 
+				// if it is a new user, we need create a new user node for it, and then save the xml file and terminate the loading
 				if(user==null){
 					user = document.createElement("user"); // create the user node
 					NamedNodeMap attributes = user.getAttributes(); // set id as attribute
@@ -89,14 +88,14 @@ public class ApptXmlFactory {
 
 				}
 
-				// extract the appts info from xml 
+				// extracting the appts information from xml file
 				NodeList appts = userlist.item(0).getChildNodes();
 				for(int i = 0; i < appts.getLength() ; i++) {
 
 					Node node = appts.item(i);
 					if(node.getNodeType() != Node.ELEMENT_NODE) continue;
 
-					/* parse all the info of the appt */
+					/* starting to parse all the information of the appt */
 
 					Element element = (Element) node;
 					Element startTime_node = (Element) element.getElementsByTagName("startTime").item(0);
@@ -108,12 +107,12 @@ public class ApptXmlFactory {
 					if(reminder_node!="") 
 						reminder = new Timestamp(Long.parseLong(reminder_node));
 
-					Timestamp startTime_stt = new Timestamp(getLongValue(startTime_node,"startTimestamp"));
-					Timestamp startTime_ett = new Timestamp(getLongValue(startTime_node,"endTimestamp"));
-					Timestamp startDate_stt = new Timestamp(getLongValue(startDate_node,"startTimestamp"));
-					Timestamp startDate_ett = new Timestamp(getLongValue(startDate_node,"endTimestamp"));
-					Timestamp endDate_stt = new Timestamp(getLongValue(endDate_node,"startTimestamp"));
-					Timestamp endDate_ett = new Timestamp(getLongValue(endDate_node,"endTimestamp"));
+					Timestamp startTime_stt = new Timestamp(getLongValue(startTime_node,"startTimeTimestamp"));
+					Timestamp startTime_ett = new Timestamp(getLongValue(startTime_node,"endTimeTimestamp"));
+					Timestamp startDate_stt = new Timestamp(getLongValue(startDate_node,"startTimeTimestamp"));
+					Timestamp startDate_ett = new Timestamp(getLongValue(startDate_node,"endTimeTimestamp"));
+					Timestamp endDate_stt = new Timestamp(getLongValue(endDate_node,"startTimeTimestamp"));
+					Timestamp endDate_ett = new Timestamp(getLongValue(endDate_node,"endTimeTimestamp"));
 
 					TimeSpan startTime = new TimeSpan(startTime_stt,startTime_ett);
 					TimeSpan startDate = new TimeSpan(startDate_stt,startDate_ett);
@@ -202,7 +201,7 @@ public class ApptXmlFactory {
 					else if (mFreq.equals("Monthly")) {
 						frequency = TimeSpan.MONTH;
 					}
-					//  not one time event, recursively schedule new appts 
+					// if it is not one time event, we recursively schedule new appts until the end date
 					if(!mFreq.equals("OneTime")) {
 						ArrayList<Appt> apptlist = new ArrayList<Appt>();
 						Utility.createRepeatingAppts(appt, frequency, apptlist, Utility.reminderTimestampToMinutes(appt));
@@ -211,11 +210,11 @@ public class ApptXmlFactory {
 						}
 					}
 
-					if(mApptID>currID) currID = mApptID; // return the max top appt id to the ApptStorage
+					if(mApptID>topid) topid = mApptID; // return the max top appt id to the ApptStorage
 
 				}
 
-				return (1+currID);
+				return (1+topid);
 
 			} catch (SAXException e) {
 				e.printStackTrace();
@@ -255,9 +254,9 @@ public class ApptXmlFactory {
 			} catch (ParserConfigurationException e) {
 				e.printStackTrace();
 			}
-			return (1+currID);
+			return (1+topid);
 		}
-		return (currID+1);
+		return (topid+1);
 
 	}
 
@@ -276,7 +275,7 @@ public class ApptXmlFactory {
 			DocumentBuilder docBuilder = null;
 			docBuilder = docFactory.newDocumentBuilder();
 
-			//  new xml, create new document, create Appts node
+			// for the new xml, we need to create new document and create Appts node
 			if(!fileObject.isFile()) { 
 
 				document = docBuilder.newDocument();
@@ -284,14 +283,14 @@ public class ApptXmlFactory {
 				document.appendChild(appts);
 
 
-			}else{ // for the old user,  get the info
+			}else{ // for the old one, we need to get the document
 
 				document = docBuilder.parse(fileObject);
 				document = docBuilder.parse(file);
 				appts = (Element) document.getFirstChild();
 			}
 
-			// get the user node, if not found create a new one
+			// try to get the user node, if the user node does't exist than we create a new one
 			XPathFactory factory = XPathFactory.newInstance();
 			XPath xpath = factory.newXPath();
 			XPathExpression expr;
@@ -303,14 +302,14 @@ public class ApptXmlFactory {
 
 			if(user==null){
 				user = document.createElement("user");
-				NamedNodeMap attributes = user.getAttributes(); 
+				NamedNodeMap attributes = user.getAttributes(); // set id as attribute
 				Node attNode = user.getOwnerDocument().createAttribute("id");
 				attNode.setNodeValue(userid);
 				attributes.setNamedItem(attNode);
-				appts.appendChild(user); 
+				appts.appendChild(user); // append the new user tag to Appts tag
 			}
 
-			/* convert appt to xml */
+			/* start converting appt obj to xml */
 
 			Element apptNode = document.createElement("Appt");
 
@@ -318,27 +317,28 @@ public class ApptXmlFactory {
 			Element startDateTimeSpan =  document.createElement("startDateTimeSpan");
 			Element endDateTimeSpan =  document.createElement("endDateTimeSpan");
 
-			/* get the TimeSpan*/
-			Element startTimestamp =  document.createElement("startTimestamp");
-			startTimestamp.appendChild(document.createTextNode(String.valueOf(appt.TimeSpan().StartTime().getTime())));
-			Element endTimestamp =  document.createElement("endTimestamp");
-			endTimestamp.appendChild(document.createTextNode(String.valueOf(appt.TimeSpan().EndTime().getTime())));
-			startTime.appendChild(startTimestamp);
-			startTime.appendChild(endTimestamp);
+			/* get the TimeSpan of startTime, startDate, endDate */
+			Element startTimeTimestamp =  document.createElement("startTimeTimestamp");
+			startTimeTimestamp.appendChild(document.createTextNode(String.valueOf(appt.TimeSpan().StartTime().getTime())));
+			Element endTimeTimestamp =  document.createElement("endTimeTimestamp");
+			endTimeTimestamp.appendChild(document.createTextNode(String.valueOf(appt.TimeSpan().EndTime().getTime())));
+			startTime.appendChild(startTimeTimestamp);
+			startTime.appendChild(endTimeTimestamp);
 
-			startTimestamp =  document.createElement("startTimestamp");
-			endTimestamp =  document.createElement("endTimestamp");
-			startTimestamp.appendChild(document.createTextNode(String.valueOf(appt.getStartDate().StartTime().getTime())));
-			endTimestamp.appendChild(document.createTextNode(String.valueOf(appt.getStartDate().EndTime().getTime())));
-			startDateTimeSpan.appendChild(startTimestamp);
-			startDateTimeSpan.appendChild(endTimestamp);
+			startTimeTimestamp =  document.createElement("startTimeTimestamp");
+			endTimeTimestamp =  document.createElement("endTimeTimestamp");
+			startTimeTimestamp.appendChild(document.createTextNode(String.valueOf(appt.getStartDate().StartTime().getTime())));
+			endTimeTimestamp.appendChild(document.createTextNode(String.valueOf(appt.getStartDate().EndTime().getTime())));
+			startDateTimeSpan.appendChild(startTimeTimestamp);
+			startDateTimeSpan.appendChild(endTimeTimestamp);
 
-			startTimestamp =  document.createElement("startTimestamp");
-			endTimestamp =  document.createElement("endTimestamp");
-			startTimestamp.appendChild(document.createTextNode(String.valueOf(appt.getEndDate().StartTime().getTime())));
-			endTimestamp.appendChild(document.createTextNode(String.valueOf(appt.getEndDate().EndTime().getTime())));
-			endDateTimeSpan.appendChild(startTimestamp);
-			endDateTimeSpan.appendChild(endTimestamp);
+			startTimeTimestamp =  document.createElement("startTimeTimestamp");
+			endTimeTimestamp =  document.createElement("endTimeTimestamp");
+			startTimeTimestamp.appendChild(document.createTextNode(String.valueOf(appt.getEndDate().StartTime().getTime())));
+			endTimeTimestamp.appendChild(document.createTextNode(String.valueOf(appt.getEndDate().EndTime().getTime())));
+			endDateTimeSpan.appendChild(startTimeTimestamp);
+			endDateTimeSpan.appendChild(endTimeTimestamp);
+			/* end of getting the TimeSpan of startTime, startDate, endDate */
 
 			Element reminder =  document.createElement("reminder");
 
@@ -416,6 +416,8 @@ public class ApptXmlFactory {
 			apptNode.appendChild(waitinglist);
 			user.appendChild(apptNode);
 
+			/* end of the convertion */
+
 			// update the xml file
 			TransformerFactory transformerFactory = TransformerFactory.newInstance();
 			Transformer transformer;
@@ -437,6 +439,9 @@ public class ApptXmlFactory {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+
+
+
 	}
 
 	public void removeApptXml(String file, Appt appt,String userid) {
@@ -499,11 +504,11 @@ public class ApptXmlFactory {
 		return textVal;
 	}
 
-	private int getIntValue(Element element, String tagName) {
-		return Integer.parseInt(getTextValue(element,tagName));
+	private int getIntValue(Element ele, String tagName) {
+		return Integer.parseInt(getTextValue(ele,tagName));
 	}
-	private long getLongValue(Element element, String tagName) {
-		return Long.parseLong(getTextValue(element,tagName));
+	private long getLongValue(Element ele, String tagName) {
+		return Long.parseLong(getTextValue(ele,tagName));
 	}
 
 	public void updateApptWithLocationName(String file, String locationName, String newLocationName) {
@@ -516,8 +521,8 @@ public class ApptXmlFactory {
 			for(int i = 0; i < users.getLength(); i++) {
 				Node userNode = users.item(i);
 				if(userNode.getNodeType() == Node.ELEMENT_NODE) {
-					Element nodeUser = (Element) userNode;
-					NodeList apptList = nodeUser.getElementsByTagName("Appt");
+					Element eUser = (Element) userNode;
+					NodeList apptList = eUser.getElementsByTagName("Appt");
 					for(int j = 0; j < apptList.getLength(); j++) {
 						Node apptNode = apptList.item(j);
 						if(apptNode.getNodeType() == Node.ELEMENT_NODE) {
@@ -566,9 +571,9 @@ public class ApptXmlFactory {
 			for(int i = 0; i < users.getLength(); i++) {
 				Node userNode = users.item(i);
 				if(userNode.getNodeType() == Node.ELEMENT_NODE) {
-					Element nodeUser = (Element) userNode;
-					if(user.ID().equals(nodeUser.getAttribute("id"))) {
-						NodeList appts = nodeUser.getElementsByTagName("Appt");
+					Element eUser = (Element) userNode;
+					if(user.ID().equals(eUser.getAttribute("id"))) {
+						NodeList appts = eUser.getElementsByTagName("Appt");
 						for(int j = 0; j < appts.getLength(); j++) {
 							Node apptNode = appts.item(j);
 							if(apptNode.getNodeType() == Node.ELEMENT_NODE) {
@@ -605,7 +610,7 @@ public class ApptXmlFactory {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void deleteUserAppt(User user) {
 		String file = ApptStorage.apptFile;
 		try {
@@ -618,8 +623,8 @@ public class ApptXmlFactory {
 			for(int i = 0; i < users.getLength(); i++) {
 				Node userNode = users.item(i);
 				if(userNode.getNodeType() == Node.ELEMENT_NODE) {
-					Element nodeUser = (Element) userNode;
-					if(user.ID().equals(nodeUser.getAttribute("id"))) {
+					Element eUser = (Element) userNode;
+					if(user.ID().equals(eUser.getAttribute("id"))) {
 						userRootNode.removeChild(userNode);
 					}
 				}
