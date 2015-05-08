@@ -5,20 +5,19 @@ import java.io.Serializable;
 public abstract class User implements Serializable {
 
 	protected String mPassword;				// User password
-
-	protected String mID;						// User id
-	protected String mFirstName;				// First Name
-	protected String mLastName;					// Last Name
-	protected String mEmail;					// User email
-	//protected TimeSpan mBirthday;				// User Birthday
-	protected String mType;	
+	protected String mID;					// User id
+	protected String mFirstName;			// First Name
+	protected String mLastName;				// Last Name
+	protected String mEmail;				// User email
+	protected TimeSpan mBirthday;			// User Birthday
+	protected String mRole;
 	
-	public String getType() {
-		return mType;
+	public String getRole() {
+		return mRole;
 	}
 	
-	public void setType(String type) {
-		mType = type;
+	public void setRole(String role) {
+		mRole = role;
 	}
 
 	// Getter of the user id
@@ -33,6 +32,7 @@ public abstract class User implements Serializable {
 		mFirstName = "";
 		mLastName = "";
 		mEmail = "";
+		mBirthday = null;
 	}
 
 	//  Get user password
@@ -51,6 +51,14 @@ public abstract class User implements Serializable {
 	
 	public String getEmail() {
 		return mEmail;
+	}
+	
+	public void setBirthday(TimeSpan bDay) {
+		mBirthday = bDay;
+	}
+	
+	public TimeSpan getBirthday() {
+		return mBirthday;
 	}
 	
 	public void setName(String firstname, String lastnamem) {
