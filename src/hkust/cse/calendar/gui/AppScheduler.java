@@ -8,6 +8,7 @@ import hkust.cse.calendar.unit.TimeSpan;
 import hkust.cse.calendar.unit.User;
 import hkust.cse.calendar.userstorage.UserStorageController;
 import hkust.cse.calendar.xmlfactory.ApptXmlFactory;
+import hkust.cse.calendar.system.TimeMachine;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -107,11 +108,12 @@ public class AppScheduler extends JDialog implements ActionListener, ComponentLi
 	private JSplitPane pDes;
 	JPanel apptDescripFieldPanel;
 
-	//	private JTextField attendField;
-	//	private JTextField rejectField;
-	//	private JTextField waitingField;
 	private int selectedApptId = -1;
-
+	//private TimeMachine timeMachine = TimeMachine.getInstance();
+	private Timestamp today;
+	int date[] = new int [3];
+	int time[] = new int [3];
+	
 	private void commonConstructor(String title, CalGrid cal, boolean inivitation) {
 		parent = cal;
 		this.setAlwaysOnTop(false);
@@ -549,7 +551,40 @@ public class AppScheduler extends JDialog implements ActionListener, ComponentLi
 		return date;
 	}
 
-
+	
+	private boolean getValidDateInterval() {
+		int[] Interval = new int[6];
+		Interval[0] = Utility.getNumber(startYearField.getText());
+		Interval[1] = Utility.getNumber(startMonthField.getText());
+		Interval[2] = Utility.getNumber(startDayField.getText());
+		Interval[3] = Utility.getNumber(endYearField.getText());
+		Interval[4] = Utility.getNumber(endMonthField.getText());
+		Interval[5] = Utility.getNumber(endDayField.getText());
+	if (Interval[3] < Interval[0]) {
+		JOptionPane.showMessageDialog(this,
+				"Please check year",
+				"Input Error", JOptionPane.ERROR_MESSAGE);
+		return false;
+	}
+	
+	if ((Interval[3] >= Interval[0]) && (Interval[4] < Interval[1])) {
+		JOptionPane.showMessageDialog(this,
+				"Please check month",
+				"Input Error", JOptionPane.ERROR_MESSAGE);
+		return false;
+	}
+	
+	if ((Interval[3] >= Interval[0]) && (Interval[4] >= Interval[1]) &&((Interval[5] < Interval[2]))) {
+		JOptionPane.showMessageDialog(this,
+				"Please check date",
+				"Input Error", JOptionPane.ERROR_MESSAGE);
+		return false;
+	}
+	return true;
+}
+	
+	
+	
 	private int getTime(JTextField h, JTextField min) {
 
 		int hour = Utility.getNumber(h.getText());
@@ -587,20 +622,22 @@ public class AppScheduler extends JDialog implements ActionListener, ComponentLi
 		int[] result = new int[2];
 		result[0] = getTime(startHourField, startMinuteField);
 		result[1] = getTime(endHourField, endMinuteField);
+		
+		// check minute
 		if ((result[0] % 15) != 0 || (result[1] % 15) != 0) {
 			JOptionPane.showMessageDialog(this,
-					"Minute Must be 0, 15, 30, or 45 !", "Input Error",
+					"Minute Must be 0, 15, 30, or 45 ", "Input Error",
 					JOptionPane.ERROR_MESSAGE);
 			return null;
 		}
 
-		if (!startMinuteField.getText().equals("0") && !startMinuteField.getText().equals("15") && !startMinuteField.getText().equals("30") && !startMinuteField.getText().equals("45") 
+		/**if (!startMinuteField.getText().equals("0") && !startMinuteField.getText().equals("15") && !startMinuteField.getText().equals("30") && !startMinuteField.getText().equals("45") 
 				|| !endMinuteField.getText().equals("0") && !endMinuteField.getText().equals("15") && !endMinuteField.getText().equals("30") && !endMinuteField.getText().equals("45")){
 			JOptionPane.showMessageDialog(this,
 					"Minute Must be 0, 15, 30, or 45 !", "Input Error",
 					JOptionPane.ERROR_MESSAGE);
 			return null;
-		}
+		}*/
 
 		if (result[1] == -1 || result[0] == -1) {
 			JOptionPane.showMessageDialog(this, "Please check time",
@@ -619,7 +656,60 @@ public class AppScheduler extends JDialog implements ActionListener, ComponentLi
 					"Input Error", JOptionPane.ERROR_MESSAGE);
 			return null;
 		}
-
+		
+		// check start time less than current time
+		int[] timeInterval = new int[10];
+		today = new Timestamp(System.currentTimeMillis());
+		timeInterval[0] = today.getYear() + 1900;
+		timeInterval[1] = today.getMonth();
+		timeInterval[2] = today.getDate();
+		timeInterval[3] = today.getHours();
+		timeInterval[4] = today.getMinutes();
+		timeInterval[5] = Utility.getNumber(startYearField.getText());
+		timeInterval[6] = Utility.getNumber(startMonthField.getText());
+		timeInterval[7] = Utility.getNumber(startDayField.getText());
+		timeInterval[8] = Utility.getNumber(startHourField.getText());
+		timeInterval[9] = Utility.getNumber(startMinuteField.getText());
+		/**System.out.print(timeInterval[0]);
+		System.out.println();
+		System.out.print(timeInterval[1]);
+		System.out.println();
+		System.out.print(timeInterval[2]);
+		System.out.println();
+		System.out.print(timeInterval[3]);*/
+	
+		// check year
+		if (timeInterval[0] > timeInterval[5]){
+			JOptionPane.showMessageDialog(null, "Time passed,check year" , "Error", JOptionPane.ERROR_MESSAGE);
+			return null;
+		}
+		
+		//check month
+		if ((timeInterval[0] <= timeInterval[5]) && (timeInterval[1] > timeInterval[6]) ){
+			JOptionPane.showMessageDialog(null, "Time passed,check month" , "Error", JOptionPane.ERROR_MESSAGE);
+			return null;
+		}
+		//check day
+		if ((timeInterval[0] <= timeInterval[5]) && (timeInterval[1] <= timeInterval[6]) &&
+				(timeInterval[2] > timeInterval[7])){
+			JOptionPane.showMessageDialog(null, "Time passed,check day" , "Error", JOptionPane.ERROR_MESSAGE);
+			return null;
+		}
+		
+		//check hour
+		if ((timeInterval[0] <= timeInterval[5]) && (timeInterval[1] <= timeInterval[6]) &&
+				(timeInterval[2] <= timeInterval[7]) && (timeInterval[3] > timeInterval[8])){
+			JOptionPane.showMessageDialog(null, "Time passed,check hour" , "Error", JOptionPane.ERROR_MESSAGE);
+			return null;
+		}
+		
+		//check minute
+		if ((timeInterval[0] <= timeInterval[5]) && (timeInterval[1] <= timeInterval[6]) &&
+				(timeInterval[2] == timeInterval[7]) && (timeInterval[3] == timeInterval[8]) && (timeInterval[4] > timeInterval[9])){
+			JOptionPane.showMessageDialog(null, "Time passed,check minute" , "Error", JOptionPane.ERROR_MESSAGE);
+			return null;
+		}
+		
 		return result;
 	}
 
@@ -628,8 +718,8 @@ public class AppScheduler extends JDialog implements ActionListener, ComponentLi
 		// create an appt
 		int[] time = getValidTimeInterval();
 		int[] date = getValidDate();
-
-		if(time == null || date == null) {
+		boolean interval = getValidDateInterval();
+		if(time == null || date == null || interval == false) {
 			return false;
 		}
 

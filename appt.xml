@@ -1,10 +1,60 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <Appts>
   <user id="admin">
-    
-  
-  
-  
+    <Appt>
+      <startTime>
+        <startTimeTimestamp>1431666000000</startTimeTimestamp>
+        <endTimeTimestamp>1431669600000</endTimeTimestamp>
+      </startTime>
+      <startDateTimeSpan>
+        <startTimeTimestamp>1431666000000</startTimeTimestamp>
+        <endTimeTimestamp>1431669600000</endTimeTimestamp>
+      </startDateTimeSpan>
+      <endDateTimeSpan>
+        <startTimeTimestamp>1431666000000</startTimeTimestamp>
+        <endTimeTimestamp>1431669600000</endTimeTimestamp>
+      </endDateTimeSpan>
+      <reminder/>
+      <mTitle>Untitled</mTitle>
+      <mInfo>Input description of this appointment</mInfo>
+      <mLocation>test</mLocation>
+      <mFreq>OneTime</mFreq>
+      <mApptID>0</mApptID>
+      <joinApptID>-1</joinApptID>
+      <isjoint>false</isjoint>
+      <ispublic>false</ispublic>
+      <owner>admin</owner>
+      <attendlist/>
+      <rejectlist/>
+      <waitinglist/>
+    </Appt>
+  <Appt>
+      <startTime>
+        <startTimeTimestamp>1431064800000</startTimeTimestamp>
+        <endTimeTimestamp>1431068400000</endTimeTimestamp>
+      </startTime>
+      <startDateTimeSpan>
+        <startTimeTimestamp>1431064800000</startTimeTimestamp>
+        <endTimeTimestamp>1431068400000</endTimeTimestamp>
+      </startDateTimeSpan>
+      <endDateTimeSpan>
+        <startTimeTimestamp>1431064800000</startTimeTimestamp>
+        <endTimeTimestamp>1431068400000</endTimeTimestamp>
+      </endDateTimeSpan>
+      <reminder/>
+      <mTitle>Untitled</mTitle>
+      <mInfo>Input description of this appointment</mInfo>
+      <mLocation>test</mLocation>
+      <mFreq>OneTime</mFreq>
+      <mApptID>1</mApptID>
+      <joinApptID>-1</joinApptID>
+      <isjoint>false</isjoint>
+      <ispublic>false</ispublic>
+      <owner>admin</owner>
+      <attendlist/>
+      <rejectlist/>
+      <waitinglist/>
+    </Appt>
   </user>
 <user id="regular"/>
 </Appts>
