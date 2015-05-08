@@ -109,7 +109,7 @@ public class SignupDialog extends JDialog implements ActionListener {
 		namePanel.add(lastNameField);
 		personalInfoPanel.add(namePanel);
 
-		JPanel emailPanel = new JPanel();
+		/*JPanel emailPanel = new JPanel();
 		emailPanel.add(new JLabel("Email: "));
 		emailField = new JTextField(30);
 		emailPanel.add(emailField);
@@ -128,7 +128,7 @@ public class SignupDialog extends JDialog implements ActionListener {
 		bDayPanel.add(new JLabel("DAY: "));
 		bDayDateField = new JTextField(5);
 		bDayPanel.add(bDayDateField);
-		personalInfoPanel.add(bDayPanel);
+		personalInfoPanel.add(bDayPanel);*/
 
 		contentPane.add("Center", personalInfoPanel);
 
@@ -197,18 +197,18 @@ public class SignupDialog extends JDialog implements ActionListener {
 			return false;
 		}
 
-		String email = checkValidEmail(emailField.getText());
+		/*String email = checkValidEmail(emailField.getText());
 		if(email == null) {
 			return false;
-		}
+		}*/
 
-		int[] bDay = getValidDate();		
+		/*int[] bDay = getValidDate();		
 		if(bDay == null) {
 			return false;
 		}		
 		Timestamp start = CreateTimeStamp(bDay, 0);
 		Timestamp end = CreateTimeStamp(bDay, 23 * 60 + 59);
-		TimeSpan birthday = new TimeSpan(start, end);
+		TimeSpan birthday = new TimeSpan(start, end);*/
 		
 		if(adminCheckBox.isSelected()) {
 			if(validateAdminCode(adminSecretPasswordField.getText())) {
@@ -224,8 +224,8 @@ public class SignupDialog extends JDialog implements ActionListener {
 		}
 		
 		newUser.setName(firstName, lastName);
-		newUser.setBirthday(birthday);
-		newUser.setEmail(email);
+		//newUser.setBirthday(birthday);
+		//newUser.setEmail(email);
 		
 		userController.manageUsers(newUser, UserStorageController.NEW);
 		

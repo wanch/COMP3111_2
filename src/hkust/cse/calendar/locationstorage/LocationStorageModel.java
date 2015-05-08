@@ -55,12 +55,20 @@ public class LocationStorageModel extends LocationStorage {
 		mLocations.add(location);
 	}
 
+	/*@Override
+	public void updateLocation(Location location, String newLocationName, int newLocationCapacity) {
+		// TODO Auto-generated method stub
+		updateLocationInXml(location, newLocationName, newLocationCapacity);
+		location.setLocationName(newLocationName);
+		//location.setCapacity(newLocationCapacity);
+	}*/
+	
 	@Override
 	public void updateLocation(Location location, String newLocationName, int newLocationCapacity) {
 		// TODO Auto-generated method stub
 		updateLocationInXml(location, newLocationName, newLocationCapacity);
 		location.setLocationName(newLocationName);
-		location.setCapacity(newLocationCapacity);
+		//location.setCapacity(newLocationCapacity);
 	}
 
 	@Override

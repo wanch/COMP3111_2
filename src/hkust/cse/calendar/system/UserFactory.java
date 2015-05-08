@@ -12,9 +12,10 @@ public class UserFactory {
 	}
 	
 	private UserFactory() {
+		
 	}
 	
-	public User createUser(String role, String id, String pw) {
+	public User createUser(String id, String pw, String role) {
 		User user = null;
 		
 		if(role.equals("Admin")) {

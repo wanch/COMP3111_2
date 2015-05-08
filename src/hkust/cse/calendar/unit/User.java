@@ -9,8 +9,8 @@ public abstract class User implements Serializable {
 	protected String mFirstName;
 	protected String mLastName;
 	protected String mEmail;					// User email
-	protected TimeSpan mBirthday;				// User Birthday
-	protected String mRole;
+	//protected TimeSpan mBirthday;				// User Birthday
+	protected String mRole;	
 	
 	public String getRole() {
 		return mRole;
@@ -32,7 +32,7 @@ public abstract class User implements Serializable {
 		mFirstName = "";
 		mLastName = "";
 		mEmail = "";
-		mBirthday = null;
+		//mBirthday = null;
 	}
 
 	// Getter of the user password
@@ -53,13 +53,13 @@ public abstract class User implements Serializable {
 		return mEmail;
 	}
 	
-	public void setBirthday(TimeSpan bDay) {
+	/*public void setBirthday(TimeSpan bDay) {
 		mBirthday = bDay;
 	}
 	
 	public TimeSpan getBirthday() {
 		return mBirthday;
-	}
+	}*/
 	
 	public void setName(String firstname, String lastnamem) {
 		mFirstName = firstname;

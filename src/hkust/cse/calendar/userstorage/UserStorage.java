@@ -18,7 +18,7 @@ public abstract class UserStorage {
 	public UserStorage() {
 	}
 	
-	public abstract Integer getNumberOfUsers();
+	public abstract int getSize();
 	
 	public abstract void saveUser(User user);
 	

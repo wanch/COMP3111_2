@@ -4,12 +4,15 @@ import hkust.cse.calendar.apptstorage.ApptStorage;
 import hkust.cse.calendar.gui.Utility;
 import hkust.cse.calendar.locationstorage.LocationStorageController;
 import hkust.cse.calendar.unit.Appt;
+import hkust.cse.calendar.unit.Location;
 import hkust.cse.calendar.unit.TimeSpan;
 import hkust.cse.calendar.unit.User;
 import hkust.cse.calendar.userstorage.UserStorageController;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,29 +43,36 @@ import org.xml.sax.SAXException;
 
 public class ApptXmlFactory {
 	// this will also return the largest appt id + 1 of specific user's appts
-	public int loadApptFromXml(String file, HashMap<TimeSpan, Appt> mAppts, String userid) {
-		File userDataFile = new File(file);
+	public int loadApptFromXml(String filepath, HashMap<TimeSpan, Appt> mAppts, String userid) {
+		File userDataFile = new File(filepath);
 
-		int topid = -1; // to record the max top appt id from the xml file
+		int largeID = -1; // to record the max top appt id from the xml file
 
 		if(userDataFile.isFile()) {
+			DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder builder = null;
 			try {
-				DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-				DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-				Document document = docBuilder.parse(userDataFile);
-				document.getDocumentElement().normalize();
+				builder = builderFactory.newDocumentBuilder();
+				Document document = builder.parse(userDataFile);
+				document.getDocumentElement().normalize(); // normailize nodes
 
-				// try to get the appts of specific user
+				// get the appts of specific user
 				XPathFactory factory = XPathFactory.newInstance();
-				XPath xpath = factory.newXPath();
-				XPathExpression expr = xpath.compile("/Appts/user[@id='" + userid + "']");
-				NodeList userlist = (NodeList) expr.evaluate(document, XPathConstants.NODESET); // nodelist of user where id="userid"
-				Node user = userlist.item(0); // the node of specific user
+				XPath xPath = factory.newXPath();
+				XPathExpression expression = xPath.compile("/Appts/user[@id='" + userid + "']");  // set id="userid"
+				NodeList userlist = (NodeList) expression.evaluate(document, XPathConstants.NODESET); // nodelist of user where id="userid"
+				Node user = userlist.item(0); // specific user
 
-				// if it is a new user, we need create a new user node for it, and then save the xml file and terminate the loading
-				if(user==null){
+				// if it is a new user
+				if(user == null){
+					// create a new user node, and then save the xml file and terminate the loading
 					user = document.createElement("user"); // create the user node
-					NamedNodeMap attributes = user.getAttributes(); // set id as attribute
+					// get a map containing the attributes of this node
+					// inner users
+					NamedNodeMap attributes = user.getAttributes(); 
+					// get the number of nodes in this map
+					int numAttrs = attributes.getLength();
+					// set id as attribute
 					Node attNode = user.getOwnerDocument().createAttribute("id");
 					attNode.setNodeValue(userid);
 					attributes.setNamedItem(attNode);
@@ -74,7 +84,7 @@ public class ApptXmlFactory {
 					try {
 						transformer = transformerFactory.newTransformer();
 						DOMSource source = new DOMSource(document);
-						StreamResult result = new StreamResult(new File(file));
+						StreamResult result = new StreamResult(new File(filepath));
 						transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 						transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
 						transformer.transform(source, result);				
@@ -90,131 +100,176 @@ public class ApptXmlFactory {
 
 				// extracting the appts information from xml file
 				NodeList appts = userlist.item(0).getChildNodes();
+				
 				for(int i = 0; i < appts.getLength() ; i++) {
 
 					Node node = appts.item(i);
-					if(node.getNodeType() != Node.ELEMENT_NODE) continue;
+					if(node.getNodeType() != Node.ELEMENT_NODE)
+					{
+						continue;  // for </xxx>
+					}
 
-					/* starting to parse all the information of the appt */
-
-					Element element = (Element) node;
-					Element startTime_node = (Element) element.getElementsByTagName("startTime").item(0);
-					Element startDate_node = (Element)element.getElementsByTagName("startDateTimeSpan").item(0);
-					Element endDate_node = (Element) element.getElementsByTagName("endDateTimeSpan").item(0);
-
-					String reminder_node = element.getElementsByTagName("reminder").item(0).getTextContent();
-					Timestamp reminder = null;
-					if(reminder_node!="") 
-						reminder = new Timestamp(Long.parseLong(reminder_node));
-
-					Timestamp startTime_stt = new Timestamp(getLongValue(startTime_node,"startTimeTimestamp"));
-					Timestamp startTime_ett = new Timestamp(getLongValue(startTime_node,"endTimeTimestamp"));
-					Timestamp startDate_stt = new Timestamp(getLongValue(startDate_node,"startTimeTimestamp"));
-					Timestamp startDate_ett = new Timestamp(getLongValue(startDate_node,"endTimeTimestamp"));
-					Timestamp endDate_stt = new Timestamp(getLongValue(endDate_node,"startTimeTimestamp"));
-					Timestamp endDate_ett = new Timestamp(getLongValue(endDate_node,"endTimeTimestamp"));
-
-					TimeSpan startTime = new TimeSpan(startTime_stt,startTime_ett);
-					TimeSpan startDate = new TimeSpan(startDate_stt,startDate_ett);
-					TimeSpan endDate = new TimeSpan(endDate_stt,endDate_ett);
-
-
-					String mTitle =	getTextValue(element,"mTitle");
-					String mInfo = getTextValue(element,"mInfo");
-					String mLocation = getTextValue(element,"mLocation");
-					String mFreq = getTextValue(element,"mFreq");
-					String owner = getTextValue(element,"owner");
-
-					int mApptID = getIntValue(element,"mApptID");
-					int joinApptID = getIntValue(element,"joinApptID");
-
-					boolean isjoint = false;
-					if (element.getElementsByTagName("isjoint").item(0).getTextContent().equals("true"))
-						isjoint = true;
-					boolean ispublic = false;
-					if (element.getElementsByTagName("ispublic").item(0).getTextContent().equals("true"))
-						ispublic = true;
-
-					NodeList attendlist = element.getElementsByTagName("attendlist").item(0).getChildNodes();
-					NodeList rejectlist = element.getElementsByTagName("rejectlist").item(0).getChildNodes();
-					NodeList waitinglist = element.getElementsByTagName("waitinglist").item(0).getChildNodes();
-
-					LinkedList<String> attend=null, reject=null, waiting=null;
-					if(attendlist!=null){	
-						attend = new LinkedList<String>();
-						for(int j = 0; j <attendlist.getLength(); j++){
-							Node user_node = attendlist.item(j);
-							if(user_node.getNodeType() == Node.ELEMENT_NODE) {
-								attend.add(user_node.getTextContent());
+					// starting to parse all the information of the appt 
+					else if(node.getNodeType() == Node.ELEMENT_NODE){
+						Element element = (Element) node;
+						Element startTime_node = (Element) element.getElementsByTagName("startTime").item(0);
+						Element startDate_node = (Element)element.getElementsByTagName("startDateTimeSpan").item(0);
+						Element endDate_node = (Element) element.getElementsByTagName("endDateTimeSpan").item(0);
+	
+						String reminder_node = element.getElementsByTagName("reminder").item(0).getTextContent();
+						Timestamp reminder = null;
+						if(reminder_node != "") 
+							reminder = new Timestamp(Long.parseLong(reminder_node));
+	
+						long stt = getLongValue(startTime_node,"startTimestamp");
+						Timestamp startTime_stt = new Timestamp(stt);
+						long ett = getLongValue(startTime_node,"endTimestamp");
+						Timestamp startTime_ett = new Timestamp(ett);
+						
+						long sdt = getLongValue(startDate_node,"startTimestamp");
+						Timestamp startDate_stt = new Timestamp(sdt);
+						long edt = getLongValue(startDate_node,"endTimestamp");
+						Timestamp startDate_ett = new Timestamp(edt);
+						
+						long sdd = getLongValue(endDate_node,"startTimestamp");
+						Timestamp endDate_stt = new Timestamp(sdd);
+						long edd = getLongValue(endDate_node,"endTimestamp");
+						Timestamp endDate_ett = new Timestamp(edd);
+	
+						TimeSpan startTime = new TimeSpan(startTime_stt,startTime_ett);
+						TimeSpan startDate = new TimeSpan(startDate_stt,startDate_ett);
+						TimeSpan endDate = new TimeSpan(endDate_stt,endDate_ett);
+	
+	
+						String mTitle =	getTextValue(element,"mTitle");
+						String mInfo = getTextValue(element,"mInfo");
+						String mLocation = getTextValue(element,"mLocation");
+						String mFreq = getTextValue(element,"mFreq");
+						String owner = getTextValue(element,"owner");
+	
+						int mApptID = getIntValue(element,"mApptID");
+						int jointID = getIntValue(element,"jointID");
+	
+						boolean isJoint = false;
+						NodeList nodeListJoint = element.getElementsByTagName("isJoint");
+						Node temp = nodeListJoint.item(0);
+						String tempString = temp.getTextContent();
+						if (tempString.equals("true") == true)
+							isJoint = true;
+						
+						boolean ispublic = false;
+						NodeList nodeListPublic = element.getElementsByTagName("ispublic");
+						temp = nodeListPublic.item(0);
+						tempString = temp.getTextContent();
+						if (tempString.equals("true") == true)
+							ispublic = true;
+	
+						//NodeList attendlist = element.getElementsByTagName("attendlist").item(0);
+						NodeList attendnodelist = element.getElementsByTagName("attendlist").item(0).getChildNodes();
+						//NodeList rejectlist = element.getElementsByTagName("rejectlist").item(0);
+						NodeList rejectnodelist = element.getElementsByTagName("rejectlist").item(0).getChildNodes();
+						//NodeList waitinglist = element.getElementsByTagName("waitinglist").item(0);
+						NodeList waitingnodelist = element.getElementsByTagName("waitinglist").item(0).getChildNodes();
+	
+						LinkedList<String> attend = null;
+						LinkedList<String> reject = null;
+						LinkedList<String> waiting = null;
+						if(attendnodelist != null){	
+							attend = new LinkedList<String>();
+							for(int j = 0; j <attendnodelist.getLength(); j++){
+								Node user_node = attendnodelist.item(j);
+								short temp1 = user_node.getNodeType();
+								if(temp1 == Node.ELEMENT_NODE) {
+									String attenduser = user_node.getTextContent();
+									attend.add(attenduser);
+								}
 							}
 						}
-					}
-					if(rejectlist!=null){	
-						reject = new LinkedList<String>();
-						for(int j = 0; j < rejectlist.getLength(); j++){
-							Node user_node = rejectlist.item(j);
-							if(user_node.getNodeType() == Node.ELEMENT_NODE) {
-								reject.add(user_node.getTextContent());
+						
+						if(rejectnodelist != null){	
+							reject = new LinkedList<String>();
+							for(int j = 0; j < rejectnodelist.getLength(); j++){
+								Node user_node = rejectnodelist.item(j);
+								short temp1 = user_node.getNodeType();
+								if(temp1 == Node.ELEMENT_NODE) {
+									String rejectuser = user_node.getTextContent();
+									reject.add(rejectuser);
+								}
 							}
 						}
-					}
-					if(waitinglist!=null){	
-						waiting = new LinkedList<String>();
-						for(int j = 0; j < waitinglist.getLength(); j++){
-							Node user_node = waitinglist.item(j);
-							if(user_node.getNodeType() == Node.ELEMENT_NODE) {
-								waiting.add(user_node.getTextContent());
+						if(waitingnodelist!=null){	
+							waiting = new LinkedList<String>();
+							for(int j = 0; j < waitingnodelist.getLength(); j++){
+								Node user_node = waitingnodelist.item(j);
+								short temp1 = user_node.getNodeType();
+								if(temp1 == Node.ELEMENT_NODE) {
+									String waituser = user_node.getTextContent();
+									waiting.add(waituser);
+								}
 							}
 						}
-					}
-
-					/* end of parsing */
-
-					/* create the appt */
-					Appt appt = new Appt();
-					appt.setTimeSpan(startTime);
-					appt.setStartDate(startDate);
-					appt.setEndDate(endDate);
-					appt.setReminderTime(reminder);
-					appt.setTitle(mTitle);
-					appt.setInfo(mInfo);
-					appt.setLocation(LocationStorageController.getInstance().findLocationByName(mLocation));
-					appt.setFrequency(mFreq);
-					appt.setID(mApptID);
-					appt.setJoinID(joinApptID);
-					appt.setJoint(isjoint);
-					appt.setIsPublic(ispublic);
-					appt.setOwner(UserStorageController.getInstance().getUserById(owner));
-					appt.setAttendList(attend);
-					appt.setRejectList(reject);
-					appt.setWaitingList(waiting);
-					/* end of the creation of appt */
-
-					mAppts.put(appt.TimeSpan(),appt); // put the appt to the memory
-					int frequency=-1;
-					if (mFreq.equals("Daily")){
-						frequency = TimeSpan.DAY;
-					}
-					else if (mFreq.equals("Weekly")) {
-						frequency = TimeSpan.WEEK;
-					}
-					else if (mFreq.equals("Monthly")) {
-						frequency = TimeSpan.MONTH;
-					}
-					// if it is not one time event, we recursively schedule new appts until the end date
-					if(!mFreq.equals("OneTime")) {
-						ArrayList<Appt> apptlist = new ArrayList<Appt>();
-						Utility.createRepeatingAppts(appt, frequency, apptlist, Utility.reminderTimestampToMinutes(appt));
-						for(Appt app : apptlist){
-							mAppts.put(app.TimeSpan(), app);
+	
+						// end of parsing 
+	
+						// create the appt 
+						Appt appt = new Appt();
+						appt.setTimeSpan(startTime);
+						appt.setStartDate(startDate);
+						appt.setEndDate(endDate);
+						appt.setReminderTime(reminder);
+						appt.setTitle(mTitle);
+						appt.setInfo(mInfo);
+						
+						LocationStorageController locController = LocationStorageController.getInstance();
+						Location location = locController.findLocationByName(mLocation);
+						appt.setLocation(location);
+						
+						appt.setFrequency(mFreq);
+						appt.setID(mApptID);
+						appt.setJoinID(jointID);
+						appt.setJoint(isJoint);
+						appt.setIsPublic(ispublic);
+						
+						UserStorageController userController = UserStorageController.getInstance();
+						User ownerUser = userController.getUserById(owner);
+						appt.setOwner(ownerUser);
+						
+						appt.setAttendList(attend);
+						appt.setRejectList(reject);
+						appt.setWaitingList(waiting);
+						// end of the creation of appt 
+	
+						mAppts.put(appt.TimeSpan(),appt); // put the appt to the memory
+						int frequency = -1;
+						
+						if (mFreq.equals("Daily") == true){
+							frequency = TimeSpan.DAY;
 						}
+						else if (mFreq.equals("Weekly") == true) {
+							frequency = TimeSpan.WEEK;
+						}
+						else if (mFreq.equals("Monthly") == true) {
+							frequency = TimeSpan.MONTH;
+						}
+						
+						// if it is not one time event, we recursively schedule new appts until the end date
+						if(!mFreq.equals("Once") == true) {
+							ArrayList<Appt> apptlist = new ArrayList<Appt>();
+							Utility.createRepeatingAppts(appt, frequency, apptlist, Utility.reminderTimestampToMinutes(appt));
+							for(Appt app : apptlist){
+								mAppts.put(app.TimeSpan(), app);
+							}
+						}
+	
+						if(mApptID > largeID){
+							largeID = mApptID; // return the max top appt id to the ApptStorage
+							// System.out.ptintln("largeID " + largeID);
+						}
+	
 					}
-
-					if(mApptID>topid) topid = mApptID; // return the max top appt id to the ApptStorage
-
 				}
-
-				return (1+topid);
+				int nextID = largeID+1;
+				return nextID;
 
 			} catch (SAXException e) {
 				e.printStackTrace();
@@ -226,27 +281,34 @@ public class ApptXmlFactory {
 				e.printStackTrace();
 			}
 		}else{
-			// save a new xml
+			// new xml
+			DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder builder = null;
 			try{
-				DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-				DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-				Document document = docBuilder.newDocument();
+				builder = builderFactory.newDocumentBuilder();
+				Document document = builder.newDocument();
+				
 				Element appts = document.createElement("Appts");
 				document.appendChild(appts);
+				
 				Element user = document.createElement("user");
-				NamedNodeMap attributes = user.getAttributes(); // set id as attribute
+				
+				NamedNodeMap attributes = user.getAttributes(); 
+				
 				Node attNode = user.getOwnerDocument().createAttribute("id");
-				attNode.setNodeValue(userid);
+				
+				attNode.setNodeValue(userid); 
 				attributes.setNamedItem(attNode);
 				appts.appendChild(user); // append the new user tag to Appts tag
 
-				TransformerFactory transformerFactory = TransformerFactory.newInstance();
-				Transformer transformer = transformerFactory.newTransformer();
+				Transformer xformer = TransformerFactory.newInstance().newTransformer();
+
+				xformer.setOutputProperty(OutputKeys.INDENT, "yes");
+				xformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
+				
 				DOMSource source = new DOMSource(document);
-				StreamResult result = new StreamResult(new File(file));
-				transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-				transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
-				transformer.transform(source, result);	
+				StreamResult result = new StreamResult(new File(filepath));
+				xformer.transform(source, result);	
 			} catch (TransformerConfigurationException e) {
 				e.printStackTrace();
 			} catch (TransformerException e) {
@@ -254,10 +316,12 @@ public class ApptXmlFactory {
 			} catch (ParserConfigurationException e) {
 				e.printStackTrace();
 			}
-			return (1+topid);
+			int nextID = largeID+1;
+			return nextID;
 		}
-		return (topid+1);
-
+		int nextID = largeID+1;
+		return nextID;
+		
 	}
 
 	public void updateApptInXml(String file, Appt appt) {
@@ -266,27 +330,28 @@ public class ApptXmlFactory {
 
 	public void saveApptToXml(String file, Appt appt,String userid) {
 		File fileObject = new File(file);
+		
+		DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder builder = null;
 
 		Element appts = null;
 		Document document = null;
 		Element iddata;
 		try {
-			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder docBuilder = null;
-			docBuilder = docFactory.newDocumentBuilder();
+			builder = builderFactory.newDocumentBuilder();
 
 			// for the new xml, we need to create new document and create Appts node
 			if(!fileObject.isFile()) { 
 
-				document = docBuilder.newDocument();
+				document = builder.newDocument();
 				appts = document.createElement("Appts");
 				document.appendChild(appts);
 
 
 			}else{ // for the old one, we need to get the document
 
-				document = docBuilder.parse(fileObject);
-				document = docBuilder.parse(file);
+				document = builder.parse(fileObject);
+				document = builder.parse(file);
 				appts = (Element) document.getFirstChild();
 			}
 
@@ -318,22 +383,22 @@ public class ApptXmlFactory {
 			Element endDateTimeSpan =  document.createElement("endDateTimeSpan");
 
 			/* get the TimeSpan of startTime, startDate, endDate */
-			Element startTimeTimestamp =  document.createElement("startTimeTimestamp");
+			Element startTimeTimestamp =  document.createElement("startTimestamp");
 			startTimeTimestamp.appendChild(document.createTextNode(String.valueOf(appt.TimeSpan().StartTime().getTime())));
-			Element endTimeTimestamp =  document.createElement("endTimeTimestamp");
+			Element endTimeTimestamp =  document.createElement("endTimestamp");
 			endTimeTimestamp.appendChild(document.createTextNode(String.valueOf(appt.TimeSpan().EndTime().getTime())));
 			startTime.appendChild(startTimeTimestamp);
 			startTime.appendChild(endTimeTimestamp);
 
-			startTimeTimestamp =  document.createElement("startTimeTimestamp");
-			endTimeTimestamp =  document.createElement("endTimeTimestamp");
+			startTimeTimestamp =  document.createElement("startTimestamp");
+			endTimeTimestamp =  document.createElement("endTimestamp");
 			startTimeTimestamp.appendChild(document.createTextNode(String.valueOf(appt.getStartDate().StartTime().getTime())));
 			endTimeTimestamp.appendChild(document.createTextNode(String.valueOf(appt.getStartDate().EndTime().getTime())));
 			startDateTimeSpan.appendChild(startTimeTimestamp);
 			startDateTimeSpan.appendChild(endTimeTimestamp);
 
-			startTimeTimestamp =  document.createElement("startTimeTimestamp");
-			endTimeTimestamp =  document.createElement("endTimeTimestamp");
+			startTimeTimestamp =  document.createElement("startTimestamp");
+			endTimeTimestamp =  document.createElement("endTimestamp");
 			startTimeTimestamp.appendChild(document.createTextNode(String.valueOf(appt.getEndDate().StartTime().getTime())));
 			endTimeTimestamp.appendChild(document.createTextNode(String.valueOf(appt.getEndDate().EndTime().getTime())));
 			endDateTimeSpan.appendChild(startTimeTimestamp);
@@ -366,8 +431,8 @@ public class ApptXmlFactory {
 			Element joinApptID =  document.createElement("joinApptID");
 			joinApptID.appendChild(document.createTextNode(String.valueOf(appt.getJoinID())));
 
-			Element isjoint =  document.createElement("isjoint");
-			isjoint.appendChild(document.createTextNode(String.valueOf(appt.isJoint())));
+			Element isJoint =  document.createElement("isJoint");
+			isJoint.appendChild(document.createTextNode(String.valueOf(appt.isJoint())));
 
 			Element ispublic =  document.createElement("ispublic");
 			ispublic.appendChild(document.createTextNode(String.valueOf(appt.isPublic())));		
@@ -381,21 +446,24 @@ public class ApptXmlFactory {
 
 			LinkedList<String> attend = appt.getAttendList();
 			for (String name : attend){
-				Element ppt = document.createElement("ppt");
-				ppt.appendChild(document.createTextNode(name));
-				attendlist.appendChild(ppt);
+				Element ppl = document.createElement("ppl");
+				ppl.appendChild(document.createTextNode(name));
+				attendlist.appendChild(ppl);
+				
 			}
+			
 			LinkedList<String> reject = appt.getRejectList();
 			for (String name : reject){
-				Element ppt = document.createElement("ppt");
-				ppt.appendChild(document.createTextNode(name));
-				rejectlist.appendChild(ppt);
+				Element ppl = document.createElement("ppl");
+				ppl.appendChild(document.createTextNode(name));
+				rejectlist.appendChild(ppl);
 			}
+			
 			LinkedList<String> waiting = appt.getWaitingList();
 			for (String name : waiting){
-				Element ppt = document.createElement("ppt");
-				ppt.appendChild(document.createTextNode(name));
-				waitinglist.appendChild(ppt);
+				Element ppl = document.createElement("ppl");
+				ppl.appendChild(document.createTextNode(name));
+				waitinglist.appendChild(ppl);
 			}
 
 			apptNode.appendChild(startTime);
@@ -408,7 +476,7 @@ public class ApptXmlFactory {
 			apptNode.appendChild(mFreq);
 			apptNode.appendChild(mApptID);
 			apptNode.appendChild(joinApptID);
-			apptNode.appendChild(isjoint);
+			apptNode.appendChild(isJoint);
 			apptNode.appendChild(ispublic);
 			apptNode.appendChild(owner);
 			apptNode.appendChild(attendlist);
@@ -419,14 +487,15 @@ public class ApptXmlFactory {
 			/* end of the convertion */
 
 			// update the xml file
-			TransformerFactory transformerFactory = TransformerFactory.newInstance();
-			Transformer transformer;
-			transformer = transformerFactory.newTransformer();
+			Transformer xformer = TransformerFactory.newInstance().newTransformer();
+			
+			xformer.setOutputProperty(OutputKeys.INDENT, "yes");
+			xformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
+			
 			DOMSource source = new DOMSource(document);
 			StreamResult result = new StreamResult(new File(file));
-			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-			transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
-			transformer.transform(source, result);
+			
+			xformer.transform(source, result);
 
 		} catch (TransformerException e) {
 			e.printStackTrace();
@@ -445,38 +514,60 @@ public class ApptXmlFactory {
 	}
 
 	public void removeApptFromXml(String file, Appt appt,String userid) {
+		DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder builder = null;
+		int removeID = appt.getID();
 		try {
 
-			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-			Document doc = docBuilder.parse(file);
+			builder = builderFactory.newDocumentBuilder();
+			Document doc = builder.parse(file);
 
 			// get the appts of specific user
 			XPathFactory factory = XPathFactory.newInstance();
 			XPath xpath = factory.newXPath();
-			XPathExpression expr = xpath.compile("/Appts/user[@id='" + userid + "']");
-			NodeList user = (NodeList)expr.evaluate(doc, XPathConstants.NODESET); // the user nodelist
+			XPathExpression expression = xpath.compile("/Appts/user[@id='" + userid + "']");
+			NodeList user = (NodeList) expression.evaluate(doc, XPathConstants.NODESET); // the user nodelist
 			NodeList apptRootNode = user.item(0).getChildNodes(); // the appts nodelist of user
+			int length = apptRootNode.getLength();
 
-			for(int i = 0; i < apptRootNode.getLength(); i++) {
-				Node eAppt = apptRootNode.item(i); // the appt
-				if(eAppt.getNodeType() != Node.ELEMENT_NODE) continue; 
-				if( ((Element) eAppt).getElementsByTagName("mApptID").item(0).getTextContent().equals(String.valueOf(appt.getID())) ) { // == will return false, so that we need to use equals
-					((Node) apptRootNode).removeChild(eAppt);
-					break;
-				} else {
+			for(int i = 0; i < length; i++) {
+				Node innerAppt = apptRootNode.item(i); 	
+				// the appt
+				
+				if(innerAppt.getNodeType() != Node.ELEMENT_NODE) 
+					continue; 
+				if(innerAppt.getNodeType() == Node.ELEMENT_NODE) {
+					Document innerApptDoc = (Document) innerAppt;
+					Node innerApptID =  innerApptDoc.getElementsByTagName("mApptID").item(0);
+					String removeIDString = String.valueOf(removeID); // convert into string
+					int innerApptIDInt = Integer.parseInt(innerApptID.getTextContent());
+					// compare string
+					//if( innerApptID.getTextContent().equals(removeID) ) { 
+					if( innerApptIDInt == removeID ) { 
+					//if( innerApptID.getTextContent().equals(removeIDString) ) { 
+						Node temp = (Node) apptRootNode;
+						temp.removeChild(innerAppt);
+						System.out.println("innerApptIDInt == removeID");
+						System.out.println("innerApptIDInt: " + innerApptIDInt + " removeID: " +removeID);
+						break;
+					} else {
+						// != deltet id
+					}
 				}
 
 			}
 
 			// for saving
-			TransformerFactory transformerFactory = TransformerFactory.newInstance();
-			Transformer transformer = transformerFactory.newTransformer();
+			Transformer xformer = TransformerFactory.newInstance().newTransformer();
+
+
+			xformer.setOutputProperty(OutputKeys.INDENT, "yes");
+			xformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
+			
 			DOMSource source = new DOMSource(doc);
 			StreamResult result = new StreamResult(new File(file));
-			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-			transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
-			transformer.transform(source, result);
+			
+			xformer.transform(source, result);
 
 		} catch (ParserConfigurationException e) {
 			e.printStackTrace();
@@ -493,15 +584,16 @@ public class ApptXmlFactory {
 		}
 	}
 
-	private String getTextValue(Element ele, String tagName) {
-		String textVal = null;
-		NodeList nl = ele.getElementsByTagName(tagName);
+	private String getTextValue(Element element, String tagName) {
+		String value = null;
+		NodeList nl = element.getElementsByTagName(tagName);
 		if(nl != null && nl.getLength() > 0) {
-			Element el = (Element)nl.item(0);
-			textVal = el.getFirstChild().getNodeValue();
+			Element el = (Element) nl.item(0);
+			Node elnode = el.getFirstChild();
+			value = elnode.getNodeValue();
 		}
 
-		return textVal;
+		return value;
 	}
 
 	private int getIntValue(Element ele, String tagName) {
@@ -511,35 +603,79 @@ public class ApptXmlFactory {
 		return Long.parseLong(getTextValue(ele,tagName));
 	}
 
-	public void updateApptWithLocationName(String file, String locationName, String newLocationName) {
+	public void updateApptWithLocationName(String file, String fromLocation, String toLocation) {
+		
+		DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder builder = null;
+		
 		try {
-			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-			Document doc = docBuilder.parse(file);
+			builder = builderFactory.newDocumentBuilder();
+			Document doc = builder.parse(file);
 
 			NodeList users = doc.getElementsByTagName("user");
-			for(int i = 0; i < users.getLength(); i++) {
+			
+			Node firstNode = users.item(0);
+			
+			//if(firstNode.getNodeType() != Node.ELEMENT_NODE) {
+				//continue;
+			//}
+			if(firstNode.getNodeType() == Node.ELEMENT_NODE) {
+				Element element = (Element) firstNode;
+				
+				NodeList apptList = element.getElementsByTagName("Appt");
+				
+				for(int i = 0; i < apptList.getLength(); i++) {
+					Node apptNode = apptList.item(i);
+					if(apptNode.getNodeType() != Node.ELEMENT_NODE) {
+						continue;
+					}
+					if(apptNode.getNodeType() == Node.ELEMENT_NODE) {
+						
+						Element elementAppt = (Element) apptNode;
+						Node locationTag = elementAppt.getElementsByTagName("mLocation").item(0);
+						String location = locationTag.getTextContent();
+						if(location.equals(fromLocation) == true) {
+							//set location
+							locationTag.setTextContent(toLocation);
+							//elementAppt.getElementsByTagName("mLocation").item(0).setTextContent(toLocation);
+						}
+					}
+				}
+			}
+					
+			for(int i = 1; i < users.getLength(); i++) {
 				Node userNode = users.item(i);
+				if(userNode.getNodeType() != Node.ELEMENT_NODE) {
+					continue;
+				}
 				if(userNode.getNodeType() == Node.ELEMENT_NODE) {
-					Element eUser = (Element) userNode;
-					NodeList apptList = eUser.getElementsByTagName("Appt");
+					Element element = (Element) userNode;
+					NodeList apptList = element.getElementsByTagName("Appt");
+					
 					for(int j = 0; j < apptList.getLength(); j++) {
 						Node apptNode = apptList.item(j);
+						if(apptNode.getNodeType() != Node.ELEMENT_NODE) {
+							continue;
+						}
 						if(apptNode.getNodeType() == Node.ELEMENT_NODE) {
-							Element eAppt = (Element) apptNode;
-							if(locationName.equals(eAppt.getElementsByTagName("mLocation").item(0).getTextContent())) {
-								eAppt.getElementsByTagName("mLocation").item(0).setTextContent(newLocationName);
+							Element elementAppt = (Element) apptNode;
+							Node locationTag = elementAppt.getElementsByTagName("mLocation").item(0);
+							String location = locationTag.getTextContent();
+							if(location.equals(fromLocation) == true) {
+								locationTag.setTextContent(toLocation);
+								//elementAppt.getElementsByTagName("mLocation").item(0).setTextContent(toLocation);
 							}
 						}
 					}
 				}
 			}
 
-			TransformerFactory transformerFactory = TransformerFactory.newInstance();
-			Transformer transformer = transformerFactory.newTransformer();
+
+			Transformer xformer = TransformerFactory.newInstance().newTransformer();
+
 			DOMSource source = new DOMSource(doc);
 			StreamResult result = new StreamResult(new File(file));
-			transformer.transform(source, result);
+			xformer.transform(source, result);
 
 		} catch (ParserConfigurationException e) {
 			// TODO Auto-generated catch block
@@ -559,26 +695,38 @@ public class ApptXmlFactory {
 		}		
 	}
 
-	public void deleteApptWithLocationName(User user, String locationName) {
+	public void deleteApptWithLocationName(User user, String destination) {
 		String file = ApptStorage.apptFile;
+		DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder builder = null;
+		String id = user.ID();
 		try {
-			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-			Document doc = docBuilder.parse(file);
+			builder = builderFactory.newDocumentBuilder();
+			Document doc = builder.parse(file);
 
 			Node userRootNode = doc.getFirstChild();
 			NodeList users = doc.getElementsByTagName("user");
 			for(int i = 0; i < users.getLength(); i++) {
 				Node userNode = users.item(i);
+				if(userNode.getNodeType() != Node.ELEMENT_NODE) {
+					continue;
+				}
 				if(userNode.getNodeType() == Node.ELEMENT_NODE) {
-					Element eUser = (Element) userNode;
-					if(user.ID().equals(eUser.getAttribute("id"))) {
-						NodeList appts = eUser.getElementsByTagName("Appt");
+					Element element = (Element) userNode;
+					
+					if(id.equals(element.getAttribute("id")) == true) {
+						NodeList appts = element.getElementsByTagName("Appt");
 						for(int j = 0; j < appts.getLength(); j++) {
 							Node apptNode = appts.item(j);
+							if(apptNode.getNodeType() != Node.ELEMENT_NODE) {
+								continue;
+							}
 							if(apptNode.getNodeType() == Node.ELEMENT_NODE) {
-								Element eAppt = (Element) apptNode;
-								if(eAppt.getElementsByTagName("mLocation").item(0).getTextContent().equals(locationName)) {
+								Element elementAppt = (Element) apptNode;
+
+								Node locationTag = elementAppt.getElementsByTagName("mLocation").item(0);
+								String location = locationTag.getTextContent();
+								if(location.equals(destination) == true) {
 									userNode.removeChild(apptNode);
 								}
 							}
@@ -587,11 +735,12 @@ public class ApptXmlFactory {
 				}
 			}
 
-			TransformerFactory transformerFactory = TransformerFactory.newInstance();
-			Transformer transformer = transformerFactory.newTransformer();
+
+			Transformer xformer = TransformerFactory.newInstance().newTransformer();
+
 			DOMSource source = new DOMSource(doc);
 			StreamResult result = new StreamResult(new File(file));
-			transformer.transform(source, result);
+			xformer.transform(source, result);
 
 		} catch (ParserConfigurationException e) {
 			// TODO Auto-generated catch block
@@ -613,28 +762,35 @@ public class ApptXmlFactory {
 	
 	public void deleteUserAppt(User user) {
 		String file = ApptStorage.apptFile;
+		DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder builder = null;
 		try {
-			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-			Document doc = docBuilder.parse(file);
+			builder = builderFactory.newDocumentBuilder();
+			Document doc = builder.parse(file);
 
 			Node userRootNode = doc.getFirstChild();
 			NodeList users = doc.getElementsByTagName("user");
 			for(int i = 0; i < users.getLength(); i++) {
 				Node userNode = users.item(i);
+				if(userNode.getNodeType() != Node.ELEMENT_NODE) {
+					continue;
+				}
 				if(userNode.getNodeType() == Node.ELEMENT_NODE) {
-					Element eUser = (Element) userNode;
-					if(user.ID().equals(eUser.getAttribute("id"))) {
+					Element element = (Element) userNode;
+					String userID = user.ID();
+					String elementID = element.getAttribute("id");
+					if(userID.equals(elementID) == true) {
 						userRootNode.removeChild(userNode);
 					}
 				}
 			}
 
-			TransformerFactory transformerFactory = TransformerFactory.newInstance();
-			Transformer transformer = transformerFactory.newTransformer();
+
+			Transformer xformer = TransformerFactory.newInstance().newTransformer();
+
 			DOMSource source = new DOMSource(doc);
 			StreamResult result = new StreamResult(new File(file));
-			transformer.transform(source, result);
+			xformer.transform(source, result);
 
 		} catch (ParserConfigurationException e) {
 			// TODO Auto-generated catch block

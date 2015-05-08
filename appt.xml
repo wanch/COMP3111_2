@@ -7,4 +7,33 @@
   
   </user>
 <user id="regular"/>
+<user id="user1">
+    <Appt>
+      <startTime>
+        <startTimeTimestamp>1431046800000</startTimeTimestamp>
+        <endTimeTimestamp>1431048600000</endTimeTimestamp>
+      </startTime>
+      <startDateTimeSpan>
+        <startTimeTimestamp>1431046800000</startTimeTimestamp>
+        <endTimeTimestamp>1431048600000</endTimeTimestamp>
+      </startDateTimeSpan>
+      <endDateTimeSpan>
+        <startTimeTimestamp>1431046800000</startTimeTimestamp>
+        <endTimeTimestamp>1431048600000</endTimeTimestamp>
+      </endDateTimeSpan>
+      <reminder/>
+      <mTitle>a</mTitle>
+      <mInfo>a</mInfo>
+      <mLocation>a</mLocation>
+      <mFreq>OneTime</mFreq>
+      <mApptID>2</mApptID>
+      <joinApptID>-1</joinApptID>
+      <isjoint>false</isjoint>
+      <ispublic>false</ispublic>
+      <owner>user1</owner>
+      <attendlist/>
+      <rejectlist/>
+      <waitinglist/>
+    </Appt>
+  </user>
 </Appts>

@@ -22,7 +22,7 @@ public class LocationDialog extends JFrame implements ActionListener{
 	private JTextField locationName;
 	private JTextField locationCapacity;
 	private JLabel errorMsg;
-	private JButton saveButton;
+	private JButton addButton;
 	private JButton cancelButton;
 	private LocationStorageController locationController;
 	private Location location;
@@ -33,22 +33,21 @@ public class LocationDialog extends JFrame implements ActionListener{
 		setTitle("Add Location");
 		
 		
-		Container contentPane;
-		contentPane = getContentPane();
+		Container contentPane = getContentPane();
 		
 		JPanel top = new JPanel();
 		top.setLayout(new BoxLayout(top, BoxLayout.Y_AXIS));
 		
 		JPanel messPanel = new JPanel();
-		messPanel.add(new JLabel("Please input the new location"));
+		messPanel.add(new JLabel("Manage locations"));
 		top.add(messPanel);
 		
 		JPanel namePanel = new JPanel();
-		namePanel.add(new JLabel("Location Name:"));
+		//namePanel.add(new JLabel("Location Name:"));
 		locationName = new JTextField(15);
 		namePanel.add(locationName);
-		locationCapacity = new JTextField(15);
-		namePanel.add(locationCapacity);
+		//locationCapacity = new JTextField(15);
+		//namePanel.add(locationCapacity);
 		top.add(namePanel);
 		
 		JPanel error = new JPanel();
@@ -60,9 +59,9 @@ public class LocationDialog extends JFrame implements ActionListener{
 		JPanel butPanel = new JPanel();
 		butPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
 
-		saveButton = new JButton("Save location");
-		saveButton.addActionListener(this);
-		butPanel.add(saveButton);
+		addButton = new JButton("ADD");
+		addButton.addActionListener(this);
+		butPanel.add(addButton);
 		
 		cancelButton = new JButton("Cancel");
 		cancelButton.addActionListener(this);
@@ -78,9 +77,10 @@ public class LocationDialog extends JFrame implements ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
-		if(e.getSource() == saveButton) {
+		if(e.getSource() == addButton) {
 			boolean error = false;
-			location = new Location(locationName.getText(), Integer.parseInt(locationCapacity.getText()));
+			String locationInput = locationName.getText();
+			location = new Location((locationInput), Integer.parseInt(locationCapacity.getText()));
 			
 			try {
 				locationController.manageLocation(location, locationController.NEW);
@@ -92,12 +92,12 @@ public class LocationDialog extends JFrame implements ActionListener{
 			}
 			
 			if(!error) {
-				JOptionPane.showMessageDialog(null, "Location added successfully!");
+				JOptionPane.showMessageDialog(null, "Location added!");
 				setVisible(false);
 			}
 		}
 		else if(e.getSource() == cancelButton) {
-			setVisible(false); //you can't see me!
+			setVisible(false); 
 			dispose(); //Destroy the JFrame object
 		}
 	}

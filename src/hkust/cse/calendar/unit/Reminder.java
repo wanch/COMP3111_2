@@ -8,18 +8,18 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class Reminder implements Serializable {
-	private Timestamp mReminderTime;
+	private Timestamp mReminder;
 	
 	public Reminder() {
-		mReminderTime = null;
+		mReminder = null;
 	}
 	
-	public void setReminderTimestamp(Timestamp reminderTime) {
-		mReminderTime = reminderTime;
+	public void setReminderTimestamp(Timestamp reminder) {
+		mReminder = reminder;
 	}
 	
 	public Timestamp getReminderTimestamp() {
-		return mReminderTime;
+		return mReminder;
 	}
 
 }

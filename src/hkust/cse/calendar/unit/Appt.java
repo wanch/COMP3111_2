@@ -14,14 +14,17 @@ public class Appt implements Serializable {
 	private Reminder mReminder;					// Reminder for the appointment
 	
 	private int mApptID;						// The appointment id
-	private int joinApptID;						// The join appointment i
+	private int jointID;						// The join appointment i
+	
 	private String mTitle;						// The Title of the appointment
 	private String mInfo;						// Store the content of the appointments description
 	private Location mLocation;					// Location of the appointment
+	
 	private boolean ispublic;					// The appointment is a public appointment
 	private User owner;
 	
-	private boolean isjoint;					// The appointment is a joint appointment
+	private boolean isJoint;					// The appointment is a joint appointment
+	
 	private LinkedList<String> attend;			// The Attendant list
 	private LinkedList<String> reject;			// The reject list
 	private LinkedList<String> waiting;			// The waiting list
@@ -36,11 +39,11 @@ public class Appt implements Serializable {
 		mTitle = "Untitled";
 		mInfo = "";
 		mLocation = null;
-		isjoint = false;
+		isJoint = false;
 		attend = new LinkedList<String>();
 		reject = new LinkedList<String>();
 		waiting = new LinkedList<String>();
-		joinApptID = -1;
+		jointID = -1;
 		ispublic = false;
 		owner = null;
 	}
@@ -67,11 +70,11 @@ public class Appt implements Serializable {
 	
 	// Getter of the join appointment id
 	public int getJoinID(){
-		return joinApptID;
+		return jointID;
 	}
 
 	public void setJoinID(int joinID){
-		this.joinApptID = joinID;
+		this.jointID = joinID;
 	}
 	
 	public void setLocation(Location location) {
@@ -212,12 +215,12 @@ public class Appt implements Serializable {
 	
 	// check whether this is a joint appointment
 	public boolean isJoint(){
-		return isjoint;
+		return isJoint;
 	}
 
 	// setter of the isJoint
 	public void setJoint(boolean isjoint){
-		this.isjoint = isjoint;
+		this.isJoint = isjoint;
 	}
 	
 	public Appt[] retrieveAppt(TimeSpan timeSpan) {

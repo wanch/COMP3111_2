@@ -19,14 +19,6 @@ public abstract class LocationStorage {
 	
 	public abstract void removeLocation(Location location);	//abstract method to remove an appointment record
 	
-	public abstract void saveLocationToXml(Location location);		//abstract method to load appointment from xml reocrd into hash map
-	
-	public abstract void updateLocationInXml(Location location, String newLocationName, int newLocationCapacity);		//abstract method to load appointment from xml reocrd into hash map
-	
-	public abstract void removeLocationFromXml(Location location);
-	
-	public abstract void loadLocationFromXml();		//abstract method to load appointment from xml reocrd into hash map
-	
 	public abstract Location[] retrieveLocations();	//abstract method to retrieve an appointment record by a given timespan
 	
 	public abstract boolean checkLocationExists(Location location);	
@@ -36,4 +28,14 @@ public abstract class LocationStorage {
 	public abstract void addLocationToToBeDeleteList(Location location);
 	
 	public abstract Location[] getLocationInToBeDelete();
+	
+	public abstract void saveLocationToXml(Location location);		//abstract method to load appointment from xml reocrd into hash map
+	
+	public abstract void updateLocationInXml(Location location, String newLocationName, int newLocationCapacity);		//abstract method to load appointment from xml reocrd into hash map
+	
+	public abstract void removeLocationFromXml(Location location);
+	
+	public abstract void loadLocationFromXml();		//abstract method to load appointment from xml reocrd into hash map
+	
+	
 }

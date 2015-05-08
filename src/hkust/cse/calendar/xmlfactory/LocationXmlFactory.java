@@ -26,21 +26,29 @@ import org.xml.sax.SAXException;
 public class LocationXmlFactory {
 	public void loadLocationFromXml(ArrayList<Location> mLocations) {
 		File locationFile = new File(LocationStorage.locationDataFile);
+		
 		if(locationFile.isFile()) {
+			DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder builder = null;
 			try {
-				DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-				DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-				Document document = docBuilder.parse(locationFile);
+				builder = builderFactory.newDocumentBuilder();
+				
+				Document document = builder.parse(locationFile);
 				document.getDocumentElement().normalize();
 
 				NodeList locations = document.getElementsByTagName("Location");
+				
 				for(int i = 0; i < locations.getLength(); i++) {
 					Node node = locations.item(i);
+					if(node.getNodeType() != Node.ELEMENT_NODE) {
+						continue;
+					}
 					if(node.getNodeType() == Node.ELEMENT_NODE) {
 						Element element = (Element) node;
-
-						String name = element.getElementsByTagName("Name").item(0).getTextContent();
-						int capacity = Integer.parseInt(element.getElementsByTagName("Capacity").item(0).getTextContent());
+						Node nameNode = element.getElementsByTagName("Name").item(0);
+						String name = nameNode.getTextContent();
+						Node capNode = element.getElementsByTagName("Capacity").item(0);
+						int capacity = Integer.parseInt(capNode.getTextContent());
 						
 						Location location = new Location(name, capacity);
 						mLocations.add(location);
@@ -62,20 +70,27 @@ public class LocationXmlFactory {
 	public void saveLocationToXml(Location location) {
 		// TODO Auto-generated method stub
 		File file = new File(LocationStorage.locationDataFile);
+		String locationName = location.getLocationName();
+		int locationCapacity = location.getCapacity();
 		if(file.isFile()) {
+			DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder builder = null;
 			try {
-				DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-				DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-				Document document = docBuilder.parse(LocationStorage.locationDataFile);
+				builder = builderFactory.newDocumentBuilder();
+				Document document = builder.parse(LocationStorage.locationDataFile);
 
-				Node locations = document.getFirstChild();
+				Node locations = document.getFirstChild();		// <locations>
+				
 				Element newLocation = document.createElement("Location");
-				Element locationName = document.createElement("Name");
-				locationName.appendChild(document.createTextNode(location.getLocationName()));
-				newLocation.appendChild(locationName);
-				Element locationCapacity = document.createElement("Capacity");
-				locationCapacity.appendChild(document.createTextNode(new Integer(location.getCapacity()).toString()));
-				newLocation.appendChild(locationCapacity);
+				Element newLocationName = document.createElement("Name");
+				newLocationName.appendChild(document.createTextNode(locationName));
+				
+				Element newLocationCapacity = document.createElement("Capacity");
+				String temp = String.valueOf(locationCapacity);
+				newLocationCapacity.appendChild(document.createTextNode(temp));
+				
+				newLocation.appendChild(newLocationName);
+				newLocation.appendChild(newLocationCapacity);
 
 				locations.appendChild(newLocation);
 
@@ -103,24 +118,28 @@ public class LocationXmlFactory {
 			}	
 		}
 		else {
+			DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder builder = null;
 			try {
-				DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-				DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+				builder = builderFactory.newDocumentBuilder();
 
-				Document document = docBuilder.newDocument();
+				Document document = builder.newDocument();
 				Element locations = document.createElement("Locations");
 				document.appendChild(locations);
 
 				Element newLocation = document.createElement("Location");
 				locations.appendChild(newLocation);
 					
-				Element locationName = document.createElement("Name");
-				locationName.appendChild(document.createTextNode(location.getLocationName()));
-				newLocation.appendChild(locationName);
+				Element newlocationName = document.createElement("Name");
+				Node newNode = document.createTextNode(locationName);
+				newlocationName.appendChild(newNode);
+				newLocation.appendChild(newlocationName);
 				
-				Element locationCapacity = document.createElement("Capacity");
-				locationCapacity.appendChild(document.createTextNode(new Integer(location.getCapacity()).toString()));
-				newLocation.appendChild(locationCapacity);
+				Element newlocationCapacity = document.createElement("Capacity");
+				String capacityString = String.valueOf(locationCapacity);
+				Node newCapacity = document.createTextNode(capacityString);
+				newlocationCapacity.appendChild(newCapacity);
+				newLocation.appendChild(newlocationCapacity);
 				
 				TransformerFactory transformerFactory = TransformerFactory.newInstance();
 				Transformer transformer = transformerFactory.newTransformer();
@@ -143,19 +162,31 @@ public class LocationXmlFactory {
 	
 	public void updateLocationInXml(Location location, String locationName, int locationCapacity) {
 		// TODO Auto-generated method stub
+		DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder builder = null;
 		try {
-			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-			Document doc = docBuilder.parse(LocationStorage.locationDataFile);
+
+			builder = builderFactory.newDocumentBuilder();
+			Document doc = builder.parse(LocationStorage.locationDataFile);
 
 			NodeList locations = doc.getElementsByTagName("Location");
 			for(int i = 0; i < locations.getLength(); i++) {
 				Node locationNode = locations.item(i);
+				if(locationNode.getNodeType() != Node.ELEMENT_NODE) {
+					continue;
+				}
 				if(locationNode.getNodeType() == Node.ELEMENT_NODE) {
-					Element eLocation = (Element) locationNode;
-					if(location.getLocationName().equals(eLocation.getElementsByTagName("Name").item(0).getTextContent())) {
-						eLocation.getElementsByTagName("Name").item(0).setTextContent(locationName);
-						eLocation.getElementsByTagName("Capacity").item(0).setTextContent(new Integer(locationCapacity).toString());
+					Element element = (Element) locationNode;
+					
+					Node nameTag = element.getElementsByTagName("Name").item(0);
+					Node capacityTag = element.getElementsByTagName("Capacity").item(0);
+					
+					String locationNameTag = nameTag.getTextContent();
+					String locationCapacityString = String.valueOf(locationCapacity);
+					
+					if(locationName.equals(locationNameTag) == true) {
+						nameTag.setTextContent(locationNameTag);
+						capacityTag.setTextContent(locationCapacityString);
 						break;
 					}
 				}
@@ -187,15 +218,18 @@ public class LocationXmlFactory {
 	
 	public void addLocationToToBeDeleteList(Location location) {
 		File fileObject = new File(LocationStorage.toBeDeleteLocationFile);
+		String locationName = location.getLocationName();
 		if(fileObject.isFile()) {
+			DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder builder = null;
 			try {
-				DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-				DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-				Document document = docBuilder.parse(LocationStorage.toBeDeleteLocationFile);
+
+				builder = builderFactory.newDocumentBuilder();
+				Document document = builder.parse(LocationStorage.toBeDeleteLocationFile);
 
 				Node locations = document.getFirstChild();
 				Element newLocation = document.createElement("Location");
-				newLocation.appendChild(document.createTextNode(location.getLocationName()));
+				newLocation.appendChild(document.createTextNode(locationName));
 
 				locations.appendChild(newLocation);
 
@@ -223,17 +257,19 @@ public class LocationXmlFactory {
 			}	
 		}
 		else {
+			DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder builder = null;
 			try {
-				DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-				DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
 
-				Document document = docBuilder.newDocument();
+				builder = builderFactory.newDocumentBuilder();
+
+				Document document = builder.newDocument();
 				Element locations = document.createElement("Locations");
 				document.appendChild(locations);
 
 				Element newLocation = document.createElement("Location");
 				locations.appendChild(newLocation);
-				newLocation.appendChild(document.createTextNode(location.getLocationName()));
+				newLocation.appendChild(document.createTextNode(locationName));
 
 				TransformerFactory transformerFactory = TransformerFactory.newInstance();
 				Transformer transformer = transformerFactory.newTransformer();
@@ -260,15 +296,18 @@ public class LocationXmlFactory {
 		ArrayList<Location> locations = new ArrayList<Location>();
 		
 		if(fileObject.isFile()) {
+			DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder builder = null;
 			try {
-				DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-				DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-				Document document = docBuilder.parse(locationFile);
+
+				builder = builderFactory.newDocumentBuilder();
+				Document document = builder.parse(locationFile);
 				document.getDocumentElement().normalize();
 
-				NodeList locationList = document.getElementsByTagName("Location");
-				for(int i = 0; i < locationList.getLength(); i++) {
-					Node node = locationList.item(i);
+				NodeList list = document.getElementsByTagName("Location");
+				
+				for(int i = 0; i < list.getLength(); i++) {
+					Node node = list.item(i);
 					if(node.getNodeType() == Node.ELEMENT_NODE) {
 						Element element = (Element) node;
 						String name = element.getTextContent();
@@ -294,18 +333,27 @@ public class LocationXmlFactory {
 	
 	public void deleteLocationInToBeDelete(Location location) {
 		String file = LocationStorage.toBeDeleteLocationFile;
+		DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder builder = null;
+		String locationName = location.getLocationName();
+		
 		try {
-			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-			Document doc = docBuilder.parse(file);
+
+			builder = builderFactory.newDocumentBuilder();
+			Document doc = builder.parse(file);
 
 			Node locationRootNode = doc.getFirstChild();
 			NodeList locations = doc.getElementsByTagName("Location");
 			for(int i = 0; i < locations.getLength(); i++) {
 				Node locationNode = locations.item(i);
+				if(locationNode.getNodeType() != Node.ELEMENT_NODE) {
+					continue;	
+				}
 				if(locationNode.getNodeType() == Node.ELEMENT_NODE) {
-					Element eLocation = (Element) locationNode;
-					if(location.getLocationName().equals(eLocation.getTextContent())) {
+					Element element = (Element) locationNode;
+					String elementName = element.getTextContent();
+
+					if(locationName.equals(elementName) == true) {
 						locationRootNode.removeChild(locationNode);
 						break;
 					}
@@ -337,19 +385,27 @@ public class LocationXmlFactory {
 	}
 	
 	public void removeLocationFromXml(Location location) {
+		String locationName = location.getLocationName();
+		DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder builder = null;
 		try {
-			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-			Document doc = docBuilder.parse(LocationStorage.locationDataFile);
+
+			builder = builderFactory.newDocumentBuilder();
+			Document doc = builder.parse(LocationStorage.locationDataFile);
 
 			Node locationRootNode = doc.getFirstChild();
 			NodeList locations = doc.getElementsByTagName("Location");
 			for(int i = 0; i < locations.getLength(); i++) {
 				Node locationNode = locations.item(i);
+				if(locationNode.getNodeType() != Node.ELEMENT_NODE) {
+					continue;
+				}
 				if(locationNode.getNodeType() == Node.ELEMENT_NODE) {
-					Element eLocation = (Element) locationNode;
-					if(location.getLocationName().equals(eLocation.getElementsByTagName("Name").item(0).getTextContent())) {
-//						System.out.println("hi");
+					Element element = (Element) locationNode;
+					Node tempE = element.getElementsByTagName("name").item(0);
+					String elementName = tempE.getTextContent();
+					if (elementName.equals(locationName) == true){
+					
 						locationRootNode.removeChild(locationNode);
 						break;
 					}

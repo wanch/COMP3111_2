@@ -410,7 +410,7 @@ public class CalGrid extends JFrame implements ActionListener {
 		Access.setMnemonic('A');
 		Access.getAccessibleContext().setAccessibleDescription("Account Access Management");
 		
-		mi = (JMenuItem) Access.add(new JMenuItem("Account Setting"));
+		/*mi = (JMenuItem) Access.add(new JMenuItem("Account Setting"));
 		mi.setMnemonic('S');
 		mi.getAccessibleContext().setAccessibleDescription("Change account information");
 		mi.addActionListener(new ActionListener() {
@@ -419,7 +419,7 @@ public class CalGrid extends JFrame implements ActionListener {
 				// TODO Auto-generated method stub
 				ProfileManager profileManger = new ProfileManager(mCurrUser);
 			}
-		});
+		});*/
 
 		mi = (JMenuItem) Access.add(new JMenuItem("Logout"));	//adding a Logout menu button for user to logout
 		mi.setMnemonic('L');
