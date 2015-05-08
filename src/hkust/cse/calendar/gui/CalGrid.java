@@ -369,7 +369,7 @@ public class CalGrid extends JFrame implements ActionListener {
 
 		ActionListener listener = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (e.getActionCommand().equals("Manual Scheduling")) {
+				if (e.getActionCommand().equals("New Appointment")) {
 					AppScheduler a = new AppScheduler("New", CalGrid.this);
 					a.updateSetApp(hkust.cse.calendar.gui.Utility
 							.createDefaultAppt(currentY, currentM, currentD,
@@ -458,10 +458,10 @@ public class CalGrid extends JFrame implements ActionListener {
 		apptMenu.setMnemonic('p');
 		apptMenu.getAccessibleContext().setAccessibleDescription(
 				"Appointment Management");
-		mi = new JMenuItem("Manual Scheduling");
+		mi = new JMenuItem("New Appointment");
 		mi.addActionListener(listener);
 		apptMenu.add(mi);
-		intivationMenuItem = new JMenuItem("Reply to Invitation");
+		intivationMenuItem = new JMenuItem("Appointment Invitation");
 		intivationMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -759,7 +759,7 @@ public class CalGrid extends JFrame implements ActionListener {
 			UpdateCal();
 		}
 		
-		intivationMenuItem.setText("Reply to Invitation (" + controller.RetrieveJointApptsInWaitlist().length + ")");
+		intivationMenuItem.setText("Appointment Invitation (" + controller.RetrieveJointApptsInWaitlist().length + ")");
 	}
 	
 	private boolean waitingJoint() {

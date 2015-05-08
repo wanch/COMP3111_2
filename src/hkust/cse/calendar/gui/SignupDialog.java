@@ -31,7 +31,6 @@ import javax.swing.border.TitledBorder;
 
 
 public class SignupDialog extends JDialog implements ActionListener {
-	private static String adminSecretCode = "p@ssw0rd";
 	private UserStorageController userController;
 	private JTextField usernameField;
 	private JPasswordField passwordField;
@@ -45,7 +44,6 @@ public class SignupDialog extends JDialog implements ActionListener {
 	private JButton signUpButton;
 	private JButton cancelButton;
 	private JCheckBox adminCheckBox;
-	private JTextField adminSecretPasswordField;
 	private User newUser;
 
 	public SignupDialog() {
@@ -85,11 +83,6 @@ public class SignupDialog extends JDialog implements ActionListener {
 		adminCheckBox = new JCheckBox("Sign up as admin");
 		adminCheckBox.addActionListener(this);
 		adminPanel.add(adminCheckBox);
-		adminPanel.add(new JLabel("\t\t\tSecret code:"));
-		adminSecretPasswordField = new JTextField(10);
-		adminSecretPasswordField.setEditable(false);
-		adminSecretPasswordField.setEnabled(false);
-		adminPanel.add(adminSecretPasswordField);
 		top.add(adminPanel);
 
 		contentPane.add("North", top);
@@ -167,16 +160,6 @@ public class SignupDialog extends JDialog implements ActionListener {
 				dispose();
 			}
 		}
-		else if(e.getSource() == adminCheckBox) {
-			if(adminCheckBox.isSelected()) {
-				adminSecretPasswordField.setEditable(true);
-				adminSecretPasswordField.setEnabled(true);
-			}
-			else {
-				adminSecretPasswordField.setEditable(false);
-				adminSecretPasswordField.setEnabled(false);
-			}
-		}
 	}
 	
 	private boolean sigUpButtonResponse() {
@@ -211,13 +194,8 @@ public class SignupDialog extends JDialog implements ActionListener {
 		TimeSpan birthday = new TimeSpan(start, end);
 		
 		if(adminCheckBox.isSelected()) {
-			if(validateAdminCode(adminSecretPasswordField.getText())) {
 				newUser = new Admin(userId, pw);
 				newUser = UserFactory.getInstance().createUser("Admin", userId, pw);
-			}
-			else {
-				return false;
-			}
 		}
 		else {
 			newUser = UserFactory.getInstance().createUser("Regular", userId, pw);
@@ -348,16 +326,6 @@ public class SignupDialog extends JDialog implements ActionListener {
 		else {
 			JOptionPane.showMessageDialog(this, "Invalid lastname", "Input Error", JOptionPane.ERROR_MESSAGE);
 			return null;
-		}
-	}
-	
-	private boolean validateAdminCode(String code) {
-		if(code.equals(adminSecretCode)) {
-			return true;
-		}
-		else {
-			JOptionPane.showMessageDialog(this, "Invalid code", "Input Error", JOptionPane.ERROR_MESSAGE);
-			return false;
 		}
 	}
 }

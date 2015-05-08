@@ -199,7 +199,7 @@ import javax.swing.event.ListSelectionListener;
 				int option = JOptionPane.showOptionDialog(null, "Are you sure to delete " + selectedLocation + "?", "Warning", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]); 
 				
 				if(option == 0) {
-					if(apptController.checkApptsHaveLocation(selectedLocation.getLocationName())) {
+					if(apptController.checkApptLocation(selectedLocation.getLocationName())) {
 						
 						JOptionPane.showMessageDialog(null, "Location is using .", "Error", JOptionPane.ERROR_MESSAGE);
 						JOptionPane.showMessageDialog(null, "Location is using.\nLocation will be deleted after confirmed by initiators of related events", "Warning", JOptionPane.ERROR_MESSAGE);

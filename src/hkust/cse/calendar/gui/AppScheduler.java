@@ -670,13 +670,6 @@ public class AppScheduler extends JDialog implements ActionListener, ComponentLi
 		timeInterval[7] = Utility.getNumber(startDayField.getText());
 		timeInterval[8] = Utility.getNumber(startHourField.getText());
 		timeInterval[9] = Utility.getNumber(startMinuteField.getText());
-		/**System.out.print(timeInterval[0]);
-		System.out.println();
-		System.out.print(timeInterval[1]);
-		System.out.println();
-		System.out.print(timeInterval[2]);
-		System.out.println();
-		System.out.print(timeInterval[3]);*/
 	
 		// check year
 		if (timeInterval[0] > timeInterval[5]){
@@ -803,7 +796,7 @@ public class AppScheduler extends JDialog implements ActionListener, ComponentLi
 		}
 
 		//		System.out.println(this.parent.controller.checkotherApptsHaveLocation(newAppt, locationlist.getSelectedItem().toString()));
-		if(this.parent.controller.checkotherApptsHaveLocation(newAppt, locationlist.getSelectedItem().toString())) {
+		if(this.parent.controller.checkOtherApptLocation(newAppt, locationlist.getSelectedItem().toString())) {
 			JOptionPane.showMessageDialog(null, "Appointment Overlapped! Your location has been used by other people in this timeslot." , "Error", JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
@@ -812,7 +805,7 @@ public class AppScheduler extends JDialog implements ActionListener, ComponentLi
 		if(newAppt.isJoint()){
 			invited = newAppt.getAllPeople();
 			invitedppl = initializeUserList(invited);
-			if(!this.parent.controller.checkotherUsersTimespan(startTime, invitedppl)){
+			if(!this.parent.controller.checkOtherTimespan(startTime, invitedppl)){
 				JOptionPane.showMessageDialog(null, "Appointment Overlapped! Other people used in this timeslot." , "Error", JOptionPane.ERROR_MESSAGE);
 				return false;
 			}
@@ -825,7 +818,7 @@ public class AppScheduler extends JDialog implements ActionListener, ComponentLi
 
 		// if we are modifing an appt, remove the old appts in the memory first
 		if(selectedApptId != -1){
-			this.parent.controller.removeApptFromXml(newAppt);
+			this.parent.controller.removeApptXml(newAppt);
 			this.parent.controller.ManageAppt(newAppt, parent.controller.REMOVE); // for memory
 		}
 
@@ -835,7 +828,7 @@ public class AppScheduler extends JDialog implements ActionListener, ComponentLi
 			this.parent.controller.ManageAppt(appt, parent.controller.NEW); // for memory
 		}
 
-		this.parent.controller.saveApptToXml(newAppt);
+		this.parent.controller.saveApptXml(newAppt);
 
 		return true;
 	}

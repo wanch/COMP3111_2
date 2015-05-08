@@ -25,10 +25,10 @@ public class ApptStorageNullImpl extends ApptStorage {
 		mAppts = new HashMap<TimeSpan, Appt>();
 		mAssignedApptID = 0;
 		mAssignedJointID = 0;
-		apptXmlFactory = new ApptXmlFactory();
+		apptXml = new ApptXmlFactory();
 		userStorage = UserStorageController.getInstance();
 
-		loadApptFromXml(user, mAppts);
+		loadApptXml(user, mAppts);
 		mUserToAppts.put(defaultUser, mAppts);
 
 		ArrayList<Appt> apptlist = new ArrayList<Appt>(); // store the related joint appts from other users
@@ -38,13 +38,13 @@ public class ApptStorageNullImpl extends ApptStorage {
 		for(User u : users){
 			if(u == defaultUser) continue;
 			HashMap<TimeSpan, Appt> appts = new HashMap<TimeSpan, Appt> ();
-			loadApptFromXml(u, appts);
+			loadApptXml(u, appts);
 			mUserToAppts.put(u, appts);
 			loadJointAppts(appts,apptlist);
 
 		}
 		int id[] = getMaxIDs();
-		setAssignedJointID(id[1]+1);
+		setJointID(id[1]+1);
 
 		//ApptStorage.mUserToAppts.put(defaultUser, mAppts);
 
@@ -62,7 +62,7 @@ public class ApptStorageNullImpl extends ApptStorage {
 	}
 
 	@Override
-	public boolean checkOverlap(Appt appt,Appt entry){
+	public boolean checkOverLap(Appt appt,Appt entry){
 
 		// if the user is in waiting list, don't check that appt
 		//if(isCurrUserInTheList(defaultUser.ID(),entry.getWaitingList())) return false; 
@@ -84,7 +84,7 @@ public class ApptStorageNullImpl extends ApptStorage {
 					// if it is an old appt, then don't check overlap
 					if(appt.getID() == entry.getValue().getID()) continue;
 					// if overlap, then return true. otherwise, check next appt
-					if(checkOverlap(appt,entry.getValue())){
+					if(checkOverLap(appt,entry.getValue())){
 						return true;
 					}
 
@@ -244,42 +244,41 @@ public class ApptStorageNullImpl extends ApptStorage {
 
 	/* begining of xml management functions*/
 	@Override
-	public void loadApptFromXml(User user, HashMap<TimeSpan,Appt> appts) {
-		int id = apptXmlFactory.loadApptFromXml(ApptStorage.apptFile, appts, user.ID());
+	public void loadApptXml(User user, HashMap<TimeSpan,Appt> appts) {
+		int id = apptXml.loadApptFromXml(ApptStorage.apptFile, appts, user.ID());
 		// if we are loading the current user's appt, then we set mAssignedApptID equal to the largest appt id +1 of the user
 		if(user.ID().equals(defaultUser.ID())) 
 			mAssignedApptID = id;
 	}
 
 	@Override
-	public void saveApptToXml(Appt appt) {
-		apptXmlFactory.saveApptToXml(ApptStorage.apptFile, appt, defaultUser.ID());
+	public void saveApptXml(Appt appt) {
+		apptXml.saveApptToXml(ApptStorage.apptFile, appt, defaultUser.ID());
 	}
 	@Override
-	public void removeApptFromXml(Appt appt) {
-		apptXmlFactory.removeApptFromXml(ApptStorage.apptFile, appt, defaultUser.ID());
+	public void removeApptXml(Appt appt) {
+		apptXml.removeApptFromXml(ApptStorage.apptFile, appt, defaultUser.ID());
 	}
 	/* end of xml management functions*/
 
 	@Override // added a method to get the assigned appt id
-	public int getAssignedApptID(){
+	public int getApptID(){
 		return mAssignedApptID;
 	}
 	@Override
-	public void setAssignedApptID(int id) {
+	public void setApptID(int id) {
 		mAssignedApptID = id;
 	}
 	@Override 
-	public int getAssignedJointID(){
+	public int getJointID(){
 		return mAssignedJointID;
 	}
 	@Override
-	public void setAssignedJointID(int id) {
+	public void setJointID(int id) {
 		mAssignedJointID = id;
 	}
 	@Override
-	public boolean checkApptsHaveLocation(String locationName) {
-		// TODO Auto-generated method stub
+	public boolean checkApptLocation(String locationName) {
 		for(HashMap<TimeSpan, Appt> apptMap: mUserToAppts.values()) {
 			for(Appt appt : apptMap.values()) {
 				if(appt.getLocation().getLocationName().equals(locationName)) {
@@ -287,19 +286,11 @@ public class ApptStorageNullImpl extends ApptStorage {
 				}
 			}
 		}
-
 		return false;
-
-		/*for(Appt mAppt : mAppts.values()) {
-			if(mAppt.getLocation().getLocationName().equals(locationName)) {
-				return true;
-			}
-		}
-		return false;*/
 	}
 
 	@Override
-	public boolean checkotherApptsHaveLocation(Appt appt, String locationName) {
+	public boolean checkOtherApptLocation(Appt appt, String locationName) {
 
 		for(Entry<User, HashMap<TimeSpan, Appt>> apptslistEntry : mUserToAppts.entrySet()){
 			HashMap<TimeSpan,Appt> apptslist = apptslistEntry.getValue(); 
@@ -342,7 +333,7 @@ public class ApptStorageNullImpl extends ApptStorage {
 	 * */
 
 	@Override
-	public Appt[] retrieveAllAppts(User user) {
+	public Appt[] retrieveAllAppt(User user) {
 		// TODO Auto-generated method stub
 		ArrayList<Appt> appts = new ArrayList<Appt>();
 		HashMap<TimeSpan, Appt> userAppt = ApptStorage.mUserToAppts.get(user);
@@ -381,7 +372,7 @@ public class ApptStorageNullImpl extends ApptStorage {
 	}
 
 	@Override
-	public boolean checkotherUsersTimespan(TimeSpan suggestedTimeSpan, User[] users){
+	public boolean checkOtherTimespan(TimeSpan suggestedTimeSpan, User[] users){
 		for(User user : users) {
 			Appt[] apptsOfUser = RetrieveAppts2(user, suggestedTimeSpan);
 			if(apptsOfUser.length != 0) {
@@ -398,7 +389,7 @@ public class ApptStorageNullImpl extends ApptStorage {
 			Appt appt = entry.getValue();
 			if(appt.isJoint() && (isCurrUserInTheList(defaultUser.ID(), appt.getAttendList()) || isCurrUserInTheList(defaultUser.ID(), appt.getWaitingList()))) {				
 				Appt clone = entry.getValue().clone(entry.getValue().TimeSpan());
-				clone.setID(getAssignedApptID()+1);
+				clone.setID(getApptID()+1);
 				apptlist.add(clone);
 			}
 		}
@@ -457,7 +448,7 @@ public class ApptStorageNullImpl extends ApptStorage {
 		int i = 0;
 		while(true) {
 			//TODO: Generate suggested timespan
-			if(checkotherUsersTimespan(suggestedTimeSpan, users)) {
+			if(checkOtherTimespan(suggestedTimeSpan, users)) {
 				suggestedTimeSpanList.add(suggestedTimeSpan);
 				//				System.out.println("added" + suggestedTimeSpan.toString());
 				i++;
@@ -528,7 +519,7 @@ public class ApptStorageNullImpl extends ApptStorage {
 			Appt appt = it.next().getValue();
 			if(appt.getLocation().getLocationName().equals(locationName) && appt.getOwner().ID().equals(defaultUser.ID())) {
 				it.remove();
-				apptXmlFactory.deleteApptWithLocationName(defaultUser, locationName);
+				apptXml.deleteApptWithLocationName(defaultUser, locationName);
 			}
 		}
 	}

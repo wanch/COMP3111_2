@@ -137,7 +137,7 @@ public class UserApptManager extends JFrame implements ActionListener, ListSelec
 	}
 	
 	public void updateApptList(User user) {
-		Appt[] appts = apptController.retrieveAllAppts(user);
+		Appt[] appts = apptController.retrieveAllAppt(user);
 		if(appts == null) {
 			apptList.setListData(new Appt[0]);
 		}

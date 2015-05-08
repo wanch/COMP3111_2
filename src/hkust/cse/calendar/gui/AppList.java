@@ -433,7 +433,7 @@ public class AppList extends JPanel implements ActionListener {
 			return;
 		}
 		
-		this.parent.controller.removeApptFromXml(apptTitle);
+		this.parent.controller.removeApptXml(apptTitle);
 		this.parent.controller.ManageAppt(apptTitle,1);
 		
 		parent.updateAppList();

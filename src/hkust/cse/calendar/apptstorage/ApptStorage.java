@@ -20,8 +20,8 @@ public abstract class ApptStorage {
 	public static int mAssignedJointID = 0;	//a global joint appointment ID for each appointment record
 	
 	public UserStorageController userStorage;
-	public static String apptFile = "appt.xml";  // xml file name to appts
-	public ApptXmlFactory apptXmlFactory; // the object to control the convertion between appts obj and xml
+	public static String apptFile = "appt.xml";  // xml file contains appointments
+	public ApptXmlFactory apptXml; // link between appointment object and xml file
 
 	public ApptStorage() {	//default constructor
 	}
@@ -30,15 +30,15 @@ public abstract class ApptStorage {
 		return ApptStorage.mUserToAppts;
 	}
 
-	public abstract void SaveAppt(Appt appt);	//abstract method to save an appointment record
+	public abstract void SaveAppt(Appt appt);	//abstract method to save an appointment 
 
 	public abstract Appt[] RetrieveAppts(TimeSpan d);	//abstract method to retrieve an appointment record by a given timespan
 
 	public abstract Appt[] RetrieveAppts(User entity, TimeSpan time);	//overloading abstract method to retrieve an appointment record by a given user object and timespan
 	
-	public abstract Appt[] RetrieveAppts(User user,int joinApptID);					// overload method to retrieve appointment with the given joint appointment id
+	public abstract Appt[] RetrieveAppts(User user,int joinApptID);		// overload method to retrieve appointment with the given joint appointment id
 	
-	public abstract Appt[] RetrieveJointApptsInWaitlist();
+	public abstract Appt[] RetrieveJointApptsInWaitlist();				//abstract method to retrieve appointment in the wait list
 
 	public abstract void UpdateAppt(Appt appt);	//abstract method to update an appointment record
 
@@ -46,33 +46,33 @@ public abstract class ApptStorage {
 	
 	public abstract User getDefaultUser();		//abstract method to return the current user object
 
-	public abstract int getAssignedApptID();	// return the assigned appt id
+	public abstract int getApptID();	// return the appointment id
 	
-	public abstract void setAssignedApptID(int id);	// return the assigned appt id
+	public abstract void setApptID(int id);	// return the appointment id
 
-	public abstract int getAssignedJointID();	// return the assigned Joint id
+	public abstract int getJointID();	// return the assigned joint id
 	
-	public abstract void setAssignedJointID(int id);	// return the assigned Joint id
+	public abstract void setJointID(int id);	// return the assigned joint id
 
-	/* begining of xml management functions*/
-	public abstract void loadApptFromXml(User user, HashMap<TimeSpan,Appt> appts);		//abstract method to load appointment from xml reocrd into hash map
+	/* xml thing*/
+	public abstract void loadApptXml(User user, HashMap<TimeSpan,Appt> appts);		//abstract method to load appointment from xml to hash map
 
-	public abstract void saveApptToXml(Appt appt);		//abstract method to save appointment To hash map to xml file
+	public abstract void saveApptXml(Appt appt);		//abstract method to save appointment from hash map to xml 
 
-	public abstract void removeApptFromXml(Appt appt);	//abstract method to remove appointment from xml reocrd into hash map
-	/* end of xml management functions*/
+	public abstract void removeApptXml(Appt appt);	//abstract method to remove appointment from xml to hash map
 
-	public abstract boolean checkOverlap(Appt appt, Appt entry);		
+
+	public abstract boolean checkOverLap(Appt appt, Appt entry);		
 	
 	public abstract boolean checkOverLaps(ArrayList<Appt> apptlist);
 	
-	public abstract boolean checkApptsHaveLocation(String locationName);
+	public abstract boolean checkApptLocation(String locationName);
 
-	public abstract boolean checkotherApptsHaveLocation(Appt appt, String locationName);
+	public abstract boolean checkOtherApptLocation(Appt appt, String locationName);
 	
-	public abstract Appt[] retrieveAllAppts(User user);
+	public abstract Appt[] retrieveAllAppt(User user);
 	
-	public abstract boolean checkotherUsersTimespan(TimeSpan suggestedTimeSpan, User[] users);
+	public abstract boolean checkOtherTimespan(TimeSpan suggestedTimeSpan, User[] users);
 
 	public abstract TimeSpan[] getSuggestedTimeSpan(User[] users, Timestamp stamp);
 	

@@ -63,7 +63,7 @@ public class ConfirmLocationDeleteDialog extends JDialog implements ActionListen
 		// TODO Auto-generated method stub
 		if(e.getSource() == confirmButton) {
 			controller.deleteApptWithLocationName(locationName);
-			if(!controller.checkApptsHaveLocation(locationName)) {
+			if(!controller.checkApptLocation(locationName)) {
 				LocationStorageController locationController = LocationStorageController.getInstance();
 				Location location = locationController.findLocationByName(locationName);
 				locationController.manageLocation(location, LocationStorageController.REMOVE);
