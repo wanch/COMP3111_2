@@ -24,19 +24,15 @@ public class UserStorageModel extends UserStorage {
 	}
 
 	@Override
-	public int getSize() {
-		int size = mUsers.size();
-		return size;
+	public Integer getSize() {
+		return new Integer(mUsers.size());
 	}
 	
 	@Override
 	public void saveUser(User user) {
 		// TODO Auto-generated method stub
-
-		String id = user.ID();
-		mUsers.put(id, user);
+		mUsers.put(user.ID(), user);
 		saveUserXml(user);
-
 	}
 
 	@Override
@@ -86,17 +82,14 @@ public class UserStorageModel extends UserStorage {
 	}
 
 	@Override
-	public User retrieveUser(String id, String password) {
-		User user = mUsers.get(id);
-		String pw = user.Password();
+	public User retrieveUser(String userId, String password) {
 		// TODO Auto-generated method stub
-		if(mUsers.get(id) == null) {
+		if(mUsers.get(userId) == null) {
 			return null;
 		}
-		else if(pw.equals(password)) {
-			return mUsers.get(id);
+		else if(mUsers.get(userId).Password().equals(password)) {
+			return mUsers.get(userId);
 		}
-		
 		return null;
 	}
 
@@ -117,21 +110,15 @@ public class UserStorageModel extends UserStorage {
 	@Override
 	public void putUserToDeletedList(User user) {
 		// TODO Auto-generated method stub
-
-		String id = user.ID();
-		mToBeDeletedUsers.add(id);
+		mToBeDeletedUsers.add(user.ID());
 		addUserToDeletedListXml(user);
-
 	}
 
 	@Override
 	public void removeUserFromDeletedList(User user) {
 		// TODO Auto-generated method stub
-
-		String id = user.ID();
-		mToBeDeletedUsers.remove(id);
+		mToBeDeletedUsers.remove(user.ID());
 		removeUserFromDeletedListXml(user);
-
 	}
 
 	@Override
@@ -161,7 +148,6 @@ public class UserStorageModel extends UserStorage {
 	@Override
 	public boolean checkUserInDeleteList(User user) {
 		// TODO Auto-generated method stub
-		String id = user.ID();
-		return mToBeDeletedUsers.contains(id);
+		return mToBeDeletedUsers.contains(user.ID());
 	}
 }
