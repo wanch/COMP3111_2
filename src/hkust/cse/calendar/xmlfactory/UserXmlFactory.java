@@ -31,55 +31,46 @@ import org.xml.sax.SAXException;
 
 public class UserXmlFactory {
 
-
 	public void loadUserXml(String file, HashMap<String, User> mUsers) {
-		File userFile = new File(file);
-		if(userFile.isFile()) {
-			DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder builder = null;
-
+		File userDataFile = new File(file);
+		if(userDataFile.isFile()) {
 			try {
-				builder = builderFactory.newDocumentBuilder();
-				Document document = builder.parse(userFile);
+				DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+				DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+				Document document = docBuilder.parse(userDataFile);
 				document.getDocumentElement().normalize();
 
 				NodeList users = document.getElementsByTagName("User");
 
 				for(int i = 0; i < users.getLength(); i++) {
-					Node userNode = users.item(i);
-					if(userNode.getNodeType() == Node.ELEMENT_NODE) {
-						Element element = (Element) userNode;
+					Node node = users.item(i);
+					if(node.getNodeType() == Node.ELEMENT_NODE) {
+						Element element = (Element) node;
 
-						Node elementNode = element.getElementsByTagName("ID").item(0);
-						String id = elementNode.getTextContent();
-						elementNode = element.getElementsByTagName("Password").item(0);
-						String password = elementNode.getTextContent();
-						elementNode = element.getElementsByTagName("Email").item(0);
-						String email = elementNode.getTextContent();
-						elementNode = element.getElementsByTagName("Role").item(0);
-						String role = elementNode.getTextContent();
+						String id = element.getElementsByTagName("ID").item(0).getTextContent();
+						String password = element.getElementsByTagName("Password").item(0).getTextContent();
+						String email = element.getElementsByTagName("Email").item(0).getTextContent();
+						String role = element.getElementsByTagName("Role").item(0).getTextContent();
 
 						Element name = (Element) element.getElementsByTagName("Name").item(0);
-						Node nameNode = name.getElementsByTagName("FirstName").item(0);
-						String firstName = nameNode.getTextContent();
-						nameNode = name.getElementsByTagName("LastName").item(0);
-						String lastName = nameNode.getTextContent();
+						String firstName = name.getElementsByTagName("FirstName").item(0).getTextContent();
+						String lastName = name.getElementsByTagName("LastName").item(0).getTextContent();
 
-						/*Element birthday = (Element) element.getElementsByTagName("Birthday").item(0);
+						Element birthday = (Element) element.getElementsByTagName("Birthday").item(0);
 						String yearString = birthday.getElementsByTagName("Year").item(0).getTextContent();
 						String monthString = birthday.getElementsByTagName("Month").item(0).getTextContent();
 						String dateString = birthday.getElementsByTagName("Date").item(0).getTextContent();
 						int year = Integer.parseInt(yearString);
 						int month = Integer.parseInt(monthString);
-						int date = Integer.parseInt(dateString);*/
+						int date = Integer.parseInt(dateString);
 
-						User user = UserFactory.getInstance().createAccount(id, password, role, firstName, lastName, email);
+						User user = UserFactory.getInstance().createUser(role, id, password);
 						user.setEmail(email);
 						user.setName(firstName, lastName);
-						/*int[] bday = {year, month, date};
+						int[] bday = {year, month, date};
 						Timestamp start = TimeSpan.CreateTimeStamp(bday, 0);
 						Timestamp end = TimeSpan.CreateTimeStamp(bday, 23 * 60 + 59);
-						user.setBirthday(new TimeSpan(start, end));*/
+						user.setBirthday(new TimeSpan(start, end));
 
 						mUsers.put(user.ID(), user);
 
@@ -98,38 +89,23 @@ public class UserXmlFactory {
 		}
 	}
 
-		
-
 	public void updateUserXml(String file, User user) {
-		DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder builder = null;
-		
-		String id = user.ID();
-		String pw = user.Password();
-		String email = user.getEmail();
-		String firstname = user.getFirstName();
-		String lastname = user.getLastName();
 		try {
-
-			builder = builderFactory.newDocumentBuilder();
-			Document doc = builder.parse(file);
+			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+			Document doc = docBuilder.parse(file);
 
 			NodeList users = doc.getElementsByTagName("User");
 			for(int i = 0; i < users.getLength(); i++) {
 				Node userNode = users.item(i);
 				if(userNode.getNodeType() == Node.ELEMENT_NODE) {
-					Element element = (Element) userNode;
-					Node temp = element.getElementsByTagName("ID").item(0);
-					String tempString = temp.getTextContent();
-					if(tempString.equals(id) == true) {
-						Node tempNode = element.getElementsByTagName("Password").item(0);
-						tempNode.setTextContent(pw);
-						tempNode = element.getElementsByTagName("Email").item(0);
-						tempNode.setTextContent(email);
-						
-						Node name = element.getElementsByTagName("Name").item(0);
-						((Element) name).getElementsByTagName("FirstName").item(0).setTextContent(firstname);
-						((Element) name).getElementsByTagName("LastName").item(0).setTextContent(lastname);
+					Element eUser = (Element) userNode;
+					if(user.ID().equals(eUser.getElementsByTagName("ID").item(0).getTextContent())) {
+						eUser.getElementsByTagName("Password").item(0).setTextContent(user.Password());
+						eUser.getElementsByTagName("Email").item(0).setTextContent(user.getEmail());
+						Element name = (Element) eUser.getElementsByTagName("Name").item(0);
+						name.getElementsByTagName("FirstName").item(0).setTextContent(user.getFirstName());
+						name.getElementsByTagName("LastName").item(0).setTextContent(user.getLastName());
 						break;
 					}
 				}
@@ -161,6 +137,7 @@ public class UserXmlFactory {
 
 	public void saveUserXml(String file, User user) {
 		// TODO Auto-generated method stub
+<<<<<<< HEAD
 		String id = user.ID();
 		String pw = user.Password();
 		String type = user.getType();
@@ -168,43 +145,50 @@ public class UserXmlFactory {
 		String lastname = user.getLastName();
 		String email = user.getEmail();
 		
+=======
+>>>>>>> refs/remotes/origin/master
 		File fileObject = new File(file);
 		if(fileObject.isFile()) {
-			DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder builder = null;
 			try {
-				builder = builderFactory.newDocumentBuilder();
-				Document document = builder.parse(file);
+				DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+				DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+				Document document = docBuilder.parse(file);
 
 				Node users = document.getFirstChild();
 				Element newUser = document.createElement("User");
 
 				Element userId = document.createElement("ID");
-				userId.appendChild(document.createTextNode(id));
+				userId.appendChild(document.createTextNode(user.ID()));
 				newUser.appendChild(userId);
 
 				Element password = document.createElement("Password");
-				password.appendChild(document.createTextNode(pw));
+				password.appendChild(document.createTextNode(user.Password()));
 				newUser.appendChild(password);
 
+<<<<<<< HEAD
 				Element userRole = document.createElement("Type");
 				userRole.appendChild(document.createTextNode(type));
 				newUser.appendChild(userRole);
+=======
+				Element role = document.createElement("Role");
+				role.appendChild(document.createTextNode(user.getRole()));
+				newUser.appendChild(role);
+>>>>>>> refs/remotes/origin/master
 
 				Element name = document.createElement("Name");
 				Element firstName = document.createElement("FirstName");
-				firstName.appendChild(document.createTextNode(firstname));
+				firstName.appendChild(document.createTextNode(user.getFirstName()));
 				name.appendChild(firstName);
 				Element lastName = document.createElement("LastName");
-				lastName.appendChild(document.createTextNode(lastname));
+				lastName.appendChild(document.createTextNode(user.getLastName()));
 				name.appendChild(lastName);
 				newUser.appendChild(name);
-				
-				Element userEmail = document.createElement("Email");
-				userEmail.appendChild(document.createTextNode(email));
-				newUser.appendChild(userEmail);
 
-				/*Element birthday = document.createElement("Birthday");
+				Element email = document.createElement("Email");
+				email.appendChild(document.createTextNode(user.getEmail()));
+				newUser.appendChild(email);
+
+				Element birthday = document.createElement("Birthday");
 				Element year = document.createElement("Year");
 				year.appendChild(document.createTextNode(new Integer(user.getBirthday().StartTime().getYear() + 1900).toString()));
 				birthday.appendChild(year);
@@ -214,7 +198,7 @@ public class UserXmlFactory {
 				Element date = document.createElement("Date");
 				date.appendChild(document.createTextNode(new Integer(user.getBirthday().StartTime().getDate()).toString()));
 				birthday.appendChild(date);
-				newUser.appendChild(birthday);*/
+				newUser.appendChild(birthday);
 
 				users.appendChild(newUser);
 
@@ -242,13 +226,11 @@ public class UserXmlFactory {
 			}	
 		}
 		else {
-			DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder builder = null;
 			try {
+				DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+				DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
 
-				builder = builderFactory.newDocumentBuilder();
-
-				Document document = builder.newDocument();
+				Document document = docBuilder.newDocument();
 				Element users = document.createElement("Users");
 				document.appendChild(users);
 
@@ -256,30 +238,37 @@ public class UserXmlFactory {
 				users.appendChild(newUser);
 
 				Element userId = document.createElement("ID");
-				userId.appendChild(document.createTextNode(id));
+				userId.appendChild(document.createTextNode(user.ID()));
+				newUser.appendChild(userId);
 
 				Element password = document.createElement("Password");
-				password.appendChild(document.createTextNode(pw));
+				password.appendChild(document.createTextNode(user.Password()));
+				newUser.appendChild(password);
 
+<<<<<<< HEAD
 				Element userRole = document.createElement("Role");
 				userRole.appendChild(document.createTextNode(type));
 				
+=======
+				Element role = document.createElement("Role");
+				role.appendChild(document.createTextNode(user.getRole()));
+				newUser.appendChild(role);
+>>>>>>> refs/remotes/origin/master
 
 				Element name = document.createElement("Name");
-				
 				Element firstName = document.createElement("FirstName");
-				firstName.appendChild(document.createTextNode(firstname));
+				firstName.appendChild(document.createTextNode(user.getFirstName()));
 				name.appendChild(firstName);
 				Element lastName = document.createElement("LastName");
-				lastName.appendChild(document.createTextNode(lastname));
+				lastName.appendChild(document.createTextNode(user.getLastName()));
 				name.appendChild(lastName);
-				
-				
-				Element userEmail = document.createElement("Email");
-				userEmail.appendChild(document.createTextNode(email));
-				newUser.appendChild(userEmail);
+				newUser.appendChild(name);
 
-				/*Element birthday = document.createElement("Birthday");
+				Element email = document.createElement("Email");
+				email.appendChild(document.createTextNode(user.getEmail()));
+				newUser.appendChild(email);
+
+				Element birthday = document.createElement("Birthday");
 				Element year = document.createElement("Year");
 				year.appendChild(document.createTextNode(new Integer(user.getBirthday().StartTime().getYear() + 1900).toString()));
 				birthday.appendChild(year);
@@ -289,12 +278,7 @@ public class UserXmlFactory {
 				Element date = document.createElement("Date");
 				date.appendChild(document.createTextNode(new Integer(user.getBirthday().StartTime().getDate()).toString()));
 				birthday.appendChild(date);
-				//newUser.appendChild(birthday);*/
-				
-				newUser.appendChild(userId);
-				newUser.appendChild(password);
-				newUser.appendChild(userRole);
-				newUser.appendChild(name);
+				newUser.appendChild(birthday);
 
 				TransformerFactory transformerFactory = TransformerFactory.newInstance();
 				Transformer transformer = transformerFactory.newTransformer();
@@ -315,31 +299,19 @@ public class UserXmlFactory {
 		}
 	}
 
-
 	public void removeUserXml(String file, User user) {
-		DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder builder = null;
-		String id = user.ID();
-
 		try {
-
-			builder = builderFactory.newDocumentBuilder();
-			Document doc = builder.parse(file);
+			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+			Document doc = docBuilder.parse(file);
 
 			Node userRootNode = doc.getFirstChild();
 			NodeList users = doc.getElementsByTagName("User");
-			int usersLength = users.getLength();
-			
-			for(int i = 0; i < usersLength; i++) {
+			for(int i = 0; i < users.getLength(); i++) {
 				Node userNode = users.item(i);
-				if(userNode.getNodeType() != Node.ELEMENT_NODE) {
-					continue;
-				}
 				if(userNode.getNodeType() == Node.ELEMENT_NODE) {
-					Element element = (Element) userNode;
-					Node elementID = element.getElementsByTagName("ID").item(0);
-					String IDString = elementID.getTextContent();
-					if(IDString.equals(id) == true) {
+					Element eUser = (Element) userNode;
+					if(user.ID().equals(eUser.getElementsByTagName("ID").item(0).getTextContent())) {
 						userRootNode.removeChild(userNode);
 						break;
 					}
@@ -372,24 +344,21 @@ public class UserXmlFactory {
 
 	public void addUserToDeletedListXml(String file, User user) {
 		File fileObject = new File(file);
-		String id = user.ID();
 		if(fileObject.isFile()) {
-			DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder builder = null;
 			try {
+				DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+				DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+				Document document = docBuilder.parse(file);
 
-				builder = builderFactory.newDocumentBuilder();
-				Document doc = builder.parse(file);
-
-				Node users = doc.getFirstChild();
-				Element newUser = doc.createElement("User");
-				newUser.appendChild(doc.createTextNode(id));
+				Node users = document.getFirstChild();
+				Element newUser = document.createElement("User");
+				newUser.appendChild(document.createTextNode(user.ID()));
 
 				users.appendChild(newUser);
 
 				TransformerFactory transformerFactory = TransformerFactory.newInstance();
 				Transformer transformer = transformerFactory.newTransformer();
-				DOMSource source = new DOMSource(doc);
+				DOMSource source = new DOMSource(document);
 				StreamResult result = new StreamResult(new File(file));
 				transformer.transform(source, result);
 
@@ -411,23 +380,21 @@ public class UserXmlFactory {
 			}	
 		}
 		else {
-			DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder builder = null;
 			try {
+				DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+				DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
 
-				builder = builderFactory.newDocumentBuilder();
+				Document document = docBuilder.newDocument();
+				Element users = document.createElement("Users");
+				document.appendChild(users);
 
-				Document doc = builder.newDocument();
-				Element users = doc.createElement("Users");
-				doc.appendChild(users);
-
-				Element newUser = doc.createElement("User");
+				Element newUser = document.createElement("User");
 				users.appendChild(newUser);
-				newUser.appendChild(doc.createTextNode(id));
+				newUser.appendChild(document.createTextNode(user.ID()));
 
 				TransformerFactory transformerFactory = TransformerFactory.newInstance();
 				Transformer transformer = transformerFactory.newTransformer();
-				DOMSource source = new DOMSource(doc);
+				DOMSource source = new DOMSource(document);
 				StreamResult result = new StreamResult(new File(file));
 
 				transformer.transform(source, result);
@@ -440,33 +407,26 @@ public class UserXmlFactory {
 			} catch (TransformerException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			} 
+			}
 		}
 	}
 
-
-	public void loadUserFromDeletedListXml(String file, ArrayList<String> ToBeDeleted) {
-
+	public void loadUserFromDeletedListXml(String file, ArrayList<String> mToBeDeletedUsers) {
 		File userDataFile = new File(file);
-		ArrayList<String> temp = ToBeDeleted;
 		if(userDataFile.isFile()) {
-			DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder builder = null;
 			try {
+				DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+				DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+				Document document = docBuilder.parse(userDataFile);
+				document.getDocumentElement().normalize();
 
-				builder = builderFactory.newDocumentBuilder();
-				Document doc = builder.parse(userDataFile);
-				doc.getDocumentElement().normalize();
-
-				NodeList users = doc.getElementsByTagName("User");
+				NodeList users = document.getElementsByTagName("User");
 				for(int i = 0; i < users.getLength(); i++) {
 					Node node = users.item(i);
 					Element eUser = (Element) node;
 					String userId = eUser.getTextContent();	
-					temp.add(userId);
+					mToBeDeletedUsers.add(userId);
 				}
-				
-				ToBeDeleted = temp;
 			} catch (SAXException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -480,29 +440,19 @@ public class UserXmlFactory {
 		}
 	}
 	
-
 	public void removeUserFromDeletedListXml(String file, User user) {
-		DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder builder = null;
-		String id = user.ID();
-
 		try {
-
-			builder = builderFactory.newDocumentBuilder();
-			Document doc = builder.parse(file);
+			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+			Document doc = docBuilder.parse(file);
 
 			Node userRootNode = doc.getFirstChild();
 			NodeList users = doc.getElementsByTagName("User");
-			int usersLength = users.getLength();
-			for(int i = 0; i < usersLength; i++) {
+			for(int i = 0; i < users.getLength(); i++) {
 				Node userNode = users.item(i);
-				if(userNode.getNodeType() != Node.ELEMENT_NODE) {
-					continue;
-				}
 				if(userNode.getNodeType() == Node.ELEMENT_NODE) {
-					Element element = (Element) userNode;
-					String temp = element.getTextContent();
-					if(temp.equals(id) == true) {
+					Element eUser = (Element) userNode;
+					if(user.ID().equals(eUser.getTextContent())) {
 						userRootNode.removeChild(userNode);
 						break;
 					}
@@ -515,16 +465,19 @@ public class UserXmlFactory {
 			StreamResult result = new StreamResult(new File(file));
 			transformer.transform(source, result);
 
+		} catch (ParserConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		} catch (SAXException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (TransformerException e) {
+		} catch (TransformerConfigurationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (ParserConfigurationException e) {
+		} catch (TransformerException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

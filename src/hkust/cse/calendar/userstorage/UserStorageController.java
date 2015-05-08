@@ -15,7 +15,6 @@ public class UserStorageController {
 	private UserStorageController(UserStorage userStorage) {
 		mUserStorage = userStorage;
 	}
-	
 	public static UserStorageController getInstance() {
 		return userController;
 	}
@@ -32,7 +31,7 @@ public class UserStorageController {
 		}
 	}
 	
-	public Integer getNumberOfUsers() {
+	public Integer getSize() {
 		return mUserStorage.getSize();
 	}
 	

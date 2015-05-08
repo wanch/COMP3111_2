@@ -264,6 +264,4 @@ public class TimeSpan implements Serializable {
 	public String toString() {
 		return "Start from " + mStartTime + "\t Until " + mEndTime;
 	}
-	
-	
 }

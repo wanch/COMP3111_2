@@ -416,8 +416,8 @@ public class AppScheduler extends JDialog implements ActionListener, ComponentLi
 				ApptXmlFactory apptxmlfactory = new ApptXmlFactory();
 				Appt[] appts = this.parent.controller.RetrieveAppts(newAppt.getOwner(), newAppt.getJoinID());
 				for(Appt appt : appts){
-					apptxmlfactory.removeApptFromXml("appt.xml", appt, newAppt.getOwner().ID());
-					apptxmlfactory.saveApptToXml("appt.xml", appt, newAppt.getOwner().ID());					
+					apptxmlfactory.removeApptXml("appt.xml", appt, newAppt.getOwner().ID());
+					apptxmlfactory.saveApptXml("appt.xml", appt, newAppt.getOwner().ID());					
 				}
 
 				this.setVisible(false);
@@ -442,7 +442,7 @@ public class AppScheduler extends JDialog implements ActionListener, ComponentLi
 				ApptXmlFactory apptxmlfactory = new ApptXmlFactory();
 				Appt[] appts = this.parent.controller.RetrieveAppts(newAppt.getOwner(), newAppt.getJoinID());
 				for(Appt appt : appts){
-					apptxmlfactory.removeApptFromXml("appt.xml", appt, newAppt.getOwner().ID());
+					apptxmlfactory.removeApptXml("appt.xml", appt, newAppt.getOwner().ID());
 				}
 
 			};
@@ -567,8 +567,6 @@ public class AppScheduler extends JDialog implements ActionListener, ComponentLi
 	return true;
 }
 	
-	
-	
 	private int getTime(JTextField h, JTextField min) {
 
 		int hour = Utility.getNumber(h.getText());
@@ -652,8 +650,6 @@ public class AppScheduler extends JDialog implements ActionListener, ComponentLi
 		}
 		
 		//check month
-		System.out.print(timeInterval[1]);
-		System.out.print(timeInterval[6]);
 		if ((timeInterval[0] <= timeInterval[5]) && (timeInterval[1] > timeInterval[6]) ){
 			JOptionPane.showMessageDialog(null, "Time passed ,check month" , "Error", JOptionPane.ERROR_MESSAGE);
 			return null;

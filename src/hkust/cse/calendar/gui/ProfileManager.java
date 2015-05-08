@@ -107,30 +107,6 @@ public class ProfileManager extends JDialog implements ActionListener{
 		emailPanel.add(emailField);
 		personalInfoPanel.add(emailPanel);
 
-		/*JPanel bDayPanel = new JPanel();
-		Border bDayBorder = new TitledBorder("Birthday");
-		bDayPanel.setBorder(bDayBorder);
-		bDayPanel.setLayout(new BoxLayout(bDayPanel, BoxLayout.X_AXIS));
-		bDayPanel.add(new JLabel("YEAR: "));
-		bdYearField = new JTextField(5);
-		bdYearField.setText(new Integer(user.getBirthday().StartTime().getYear() + 1900).toString());
-		bdYearField.setEditable(false);
-		bdYearField.setEnabled(false);
-		bDayPanel.add(bdYearField);
-		bDayPanel.add(new JLabel("MONTH: "));
-		bdMonthField = new JTextField(5);
-		bdMonthField.setText(new Integer(user.getBirthday().StartTime().getMonth() + 1).toString());
-		bdMonthField.setEditable(false);
-		bdMonthField.setEnabled(false);
-		bDayPanel.add(bdMonthField);
-		bDayPanel.add(new JLabel("DAY: "));
-		bdDateField = new JTextField(5);
-		bdDateField.setText(new Integer(user.getBirthday().StartTime().getDate()).toString());
-		bdDateField.setEditable(false);
-		bdDateField.setEnabled(false);
-		bDayPanel.add(bdDateField);
-		personalInfoPanel.add(bDayPanel);*/
-
 		contentPane.add("Center", personalInfoPanel);
 
 		JPanel buttonPanel = new JPanel();
@@ -253,5 +229,4 @@ public class ProfileManager extends JDialog implements ActionListener{
 			return null;
 		}
 	}
-
 }

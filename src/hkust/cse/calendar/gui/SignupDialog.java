@@ -106,7 +106,6 @@ public class SignupDialog extends JDialog implements ActionListener {
 		emailPanel.add(emailField);
 		personalInfoPanel.add(emailPanel);
 
-
 		contentPane.add("Center", personalInfoPanel);
 
 		JPanel buttonPanel = new JPanel();
@@ -166,26 +165,15 @@ public class SignupDialog extends JDialog implements ActionListener {
 		if(email == null) {
 			return false;
 		}
-
-		/*int[] bDay = getValidDate();		
-		if(bDay == null) {
-			return false;
-		}		
-		Timestamp start = CreateTimeStamp(bDay, 0);
-		Timestamp end = CreateTimeStamp(bDay, 23 * 60 + 59);
-		TimeSpan birthday = new TimeSpan(start, end);*/
-		UserFactory userFactpry = UserFactory.getInstance();
+		
 		if(adminCheckBox.isSelected()) {
-			System.out.println("Hi");
-			//newUser = new Admin(userId, pw);
-			newUser = userFactpry.createAccount(userId, pw, "Admin", firstName, lastName, email);
-			System.out.println("newUSer " + newUser);
+				newUser = new Admin(userId, pw);
+				newUser = UserFactory.getInstance().createAccount("Admin", userId, pw);
 		}
 		else {
-			newUser = userFactpry.createAccount(userId, pw, "Regular", firstName, lastName, email);
+			newUser = UserFactory.getInstance().createAccount("Regular", userId, pw);
 		}
-		System.out.println(firstName + " " + lastName);
-
+		
 		newUser.setName(firstName, lastName);
 		newUser.setEmail(email);
 		

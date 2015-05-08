@@ -401,6 +401,7 @@ public class CalGrid extends JFrame implements ActionListener {
 		
 		JMenu Access = (JMenu) menuBar.add(new JMenu("Account"));
 		Access.getAccessibleContext().setAccessibleDescription("Account Access Management");
+
 		mi = (JMenuItem) Access.add(new JMenuItem("Account Setting"));
 		mi.getAccessibleContext().setAccessibleDescription("Change account information");
 		mi.addActionListener(new ActionListener() {

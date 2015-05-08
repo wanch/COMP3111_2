@@ -12,7 +12,6 @@ public abstract class User implements Serializable {
 	protected String mEmail;					// User email
 	//protected TimeSpan mBirthday;				// User Birthday
 	protected String mType;	
-
 	
 	public String getType() {
 		return mType;
@@ -34,7 +33,6 @@ public abstract class User implements Serializable {
 		mFirstName = "";
 		mLastName = "";
 		mEmail = "";
-		//mBirthday = null;
 	}
 
 	//  Get user password
@@ -54,14 +52,6 @@ public abstract class User implements Serializable {
 	public String getEmail() {
 		return mEmail;
 	}
-	
-	/*public void setBirthday(TimeSpan bDay) {
-		mBirthday = bDay;
-	}
-	
-	public TimeSpan getBirthday() {
-		return mBirthday;
-	}*/
 	
 	public void setName(String firstname, String lastnamem) {
 		mFirstName = firstname;

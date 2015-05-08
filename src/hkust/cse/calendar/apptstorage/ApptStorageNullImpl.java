@@ -223,11 +223,11 @@ public class ApptStorageNullImpl extends ApptStorage {
 
 	@Override
 	public void saveApptXml(Appt appt) {
-		apptXml.saveApptToXml(ApptStorage.apptFile, appt, defaultUser.ID());
+		apptXml.saveApptXml(ApptStorage.apptFile, appt, defaultUser.ID());
 	}
 	@Override
 	public void removeApptXml(Appt appt) {
-		apptXml.removeApptFromXml(ApptStorage.apptFile, appt, defaultUser.ID());
+		apptXml.removeApptXml(ApptStorage.apptFile, appt, defaultUser.ID());
 	}
 
 	@Override 

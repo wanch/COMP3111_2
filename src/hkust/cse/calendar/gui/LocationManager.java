@@ -105,8 +105,7 @@ import javax.swing.event.ListSelectionListener;
 				JOptionPane.showMessageDialog(null, "Please enter the name and capacity.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 			else{
-				//String locationInput = locationName.getText();
-				//String locationCapacityInput = locationCapacity.getText();
+
 				Location location = new Location(locationName.getText(), Integer.parseInt(locationCapacity.getText()));
 
 				try {
@@ -196,7 +195,6 @@ import javax.swing.event.ListSelectionListener;
 			else {
 				Object[] options ={ "Yes", "No" };  
 				int option = JOptionPane.showOptionDialog(null, "Are you sure to delete " + selectedLocation + "?", "Warning", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]); 
-				
 				if(option == 0) {
 					if(apptController.checkApptLocation(selectedLocation.getLocationName())) {
 						
@@ -223,8 +221,6 @@ import javax.swing.event.ListSelectionListener;
 			dispose(); 
 		}
 	}
-
-
 	@Override
 	public void valueChanged(ListSelectionEvent e) {
 		Location selectedLocation = locationList.getSelectedValue();

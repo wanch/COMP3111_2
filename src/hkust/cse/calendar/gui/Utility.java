@@ -79,7 +79,7 @@ public class Utility {
 		end.setHours(dur / 60);
 		end.setMinutes(dur % 60);
 
-		newAppt.setLocation(new Location((""), 0));
+		newAppt.setLocation(new Location("", 0));
 		newAppt.setEndDate(new TimeSpan(start,end));
 		newAppt.setTimeSpan(new TimeSpan(start, end));
 		User[] temp = new User[1];
