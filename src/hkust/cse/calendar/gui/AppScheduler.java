@@ -647,7 +647,7 @@ public class AppScheduler extends JDialog implements ActionListener, ComponentLi
 	
 		// check year
 		if (timeInterval[0] > timeInterval[5]){
-			JOptionPane.showMessageDialog(null, "Time passed,check year" , "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, "Time passed ,check year" , "Error", JOptionPane.ERROR_MESSAGE);
 			return null;
 		}
 		
@@ -655,27 +655,27 @@ public class AppScheduler extends JDialog implements ActionListener, ComponentLi
 		System.out.print(timeInterval[1]);
 		System.out.print(timeInterval[6]);
 		if ((timeInterval[0] <= timeInterval[5]) && (timeInterval[1] > timeInterval[6]) ){
-			JOptionPane.showMessageDialog(null, "Time passed,check month" , "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, "Time passed ,check month" , "Error", JOptionPane.ERROR_MESSAGE);
 			return null;
 		}
 		//check day
 		if ((timeInterval[0] <= timeInterval[5]) && (timeInterval[1] <= timeInterval[6]) &&
 				(timeInterval[2] > timeInterval[7])){
-			JOptionPane.showMessageDialog(null, "Time passed,check day" , "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, "Time passed ,check day" , "Error", JOptionPane.ERROR_MESSAGE);
 			return null;
 		}
 		
 		//check hour
 		if ((timeInterval[0] == timeInterval[5]) && (timeInterval[1] == timeInterval[6]) &&
 				(timeInterval[2] == timeInterval[7]) && (timeInterval[3] > timeInterval[8])){
-			JOptionPane.showMessageDialog(null, "Time passed,check hour" , "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, "Time passed ,check hour" , "Error", JOptionPane.ERROR_MESSAGE);
 			return null;
 		}
 		
 		//check minute
 		if ((timeInterval[0] == timeInterval[5]) && (timeInterval[1] == timeInterval[6]) &&
 				(timeInterval[2] == timeInterval[7]) && (timeInterval[3] == timeInterval[8]) && (timeInterval[4] > timeInterval[9])){
-			JOptionPane.showMessageDialog(null, "Time passed,check minute" , "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, "Time passed ,check minute" , "Error", JOptionPane.ERROR_MESSAGE);
 			return null;
 		}
 		return result;

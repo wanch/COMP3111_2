@@ -95,11 +95,11 @@ public class JointApptUserManager extends JDialog implements ActionListener {
 	    
 		JPanel center = new JPanel();
 		
-		addButton = new JButton(">>");
+		addButton = new JButton("Add");
 		addButton.addActionListener(this);
-		addallButton = new JButton(">> All");
+		addallButton = new JButton("Add all on list");
 		addallButton.addActionListener(this);
-		removeButton = new JButton("<<");
+		removeButton = new JButton("Remove");
 		removeButton.addActionListener(this);
 		center.add(addButton);
 		center.add(addallButton);

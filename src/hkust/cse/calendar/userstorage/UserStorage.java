@@ -13,7 +13,7 @@ public abstract class UserStorage {
 	protected static String toBeDeleteUserFile = "toBeDeleteUserFile.xml";
 	public HashMap<String, User> mUsers;
 	public ArrayList<String> mToBeDeletedUsers;
-	public UserXmlFactory userXmlFactory;
+	public UserXmlFactory userXml;
 	
 	public UserStorage() {
 	}
@@ -26,13 +26,13 @@ public abstract class UserStorage {
 	
 	public abstract void removeUser(User user);
 	
-	public abstract void loadUserFromXml();
+	public abstract void loadUserXml();
 	
-	public abstract void saveUserToXml(User user);
+	public abstract void saveUserXml(User user);
 	
-	public abstract void updateUserInXml(User user);
+	public abstract void updateUserXml(User user);
 	
-	public abstract void removeUserFromXml(User user);
+	public abstract void removeUserXml(User user);
 	
 	public abstract User retrieveUser(String userId, String password);
 	
@@ -42,17 +42,17 @@ public abstract class UserStorage {
 	
 	public abstract boolean checkUserExists(String id);
 	
-	public abstract void putUserToBeDeletedList(User user);
+	public abstract void putUserToDeletedList(User user);
 	
-	public abstract void removeUserFromToBeDeletedList(User user);
+	public abstract void removeUserFromDeletedList(User user);
 	
-	public abstract ArrayList<String> retrieveUsersFromToBeDeletedList();
+	public abstract ArrayList<String> retrieveUsersFromDeletedList();
 	
-	public abstract void loadUserFromToBeDeletedListXml();
+	public abstract void loadUserFromDeletedListXml();
 	
-	public abstract void addUserToToBeDeletedListXml(User user);
+	public abstract void addUserToDeletedListXml(User user);
 	
-	public abstract void removeUserFromToBeDeletedListXml(User user);
+	public abstract void removeUserFromDeletedListXml(User user);
 	
-	public abstract boolean checkUserInToBeDeleteList(User user);
+	public abstract boolean checkUserInDeleteList(User user);
 }

@@ -31,7 +31,7 @@ import org.xml.sax.SAXException;
 
 public class UserXmlFactory {
 
-	public void loadUserFromXml(String file, HashMap<String, User> mUsers) {
+	public void loadUserXml(String file, HashMap<String, User> mUsers) {
 		File userDataFile = new File(file);
 		if(userDataFile.isFile()) {
 			try {
@@ -89,7 +89,7 @@ public class UserXmlFactory {
 		}
 	}
 
-	public void updateUserInXml(String file, User user) {
+	public void updateUserXml(String file, User user) {
 		try {
 			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
@@ -135,7 +135,7 @@ public class UserXmlFactory {
 		}		
 	}
 
-	public void saveUserToXml(String file, User user) {
+	public void saveUserXml(String file, User user) {
 		// TODO Auto-generated method stub
 		File fileObject = new File(file);
 		if(fileObject.isFile()) {
@@ -277,7 +277,7 @@ public class UserXmlFactory {
 		}
 	}
 
-	public void removeUserFromXml(String file, User user) {
+	public void removeUserXml(String file, User user) {
 		try {
 			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
@@ -320,7 +320,7 @@ public class UserXmlFactory {
 		}
 	}
 
-	public void addUserToToBeDeletedListXml(String file, User user) {
+	public void addUserToDeletedListXml(String file, User user) {
 		File fileObject = new File(file);
 		if(fileObject.isFile()) {
 			try {
@@ -389,7 +389,7 @@ public class UserXmlFactory {
 		}
 	}
 
-	public void loadUserFromToBeDeletedListXml(String file, ArrayList<String> mToBeDeletedUsers) {
+	public void loadUserFromDeletedListXml(String file, ArrayList<String> mToBeDeletedUsers) {
 		File userDataFile = new File(file);
 		if(userDataFile.isFile()) {
 			try {
@@ -418,7 +418,7 @@ public class UserXmlFactory {
 		}
 	}
 	
-	public void removeUserFromToBeDeletedListXml(String file, User user) {
+	public void removeUserFromDeletedListXml(String file, User user) {
 		try {
 			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();

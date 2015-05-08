@@ -25,7 +25,7 @@ public class LocationStorageController {
 	}
 	
 	public Location[] retrieveLocations() {
-		return mLocationStorage.retrieveLocations();
+		return mLocationStorage.retrieveLocation();
 	}
 	
 	public void manageLocation(Location location, int action) throws IllegalArgumentException {
@@ -66,22 +66,22 @@ public class LocationStorageController {
 	}
 	
 	public boolean checkLocationExists(Location location) {
-		return mLocationStorage.checkLocationExists(location);
+		return mLocationStorage.locationExists(location);
 	}
 	
 	public void loadLocationFromXml() {
-		mLocationStorage.loadLocationFromXml();
+		mLocationStorage.loadLocationXml();
 	}
 	
 	public Location findLocationByName(String locationName) {
-		return mLocationStorage.findLocationByName(locationName);
+		return mLocationStorage.findLocation(locationName);
 	}
 	
 	public void addLocationToToBeDeleteList(Location location) {
-		mLocationStorage.addLocationToToBeDeleteList(location);
+		mLocationStorage.addLocationToDeleteList(location);
 	}
 	
-	public Location[] getLocationInToBeDelete() {
-		return mLocationStorage.getLocationInToBeDelete();
+	public Location[] getLocationInDeleteList() {
+		return mLocationStorage.getLocationInDeleteList();
 	}
 }

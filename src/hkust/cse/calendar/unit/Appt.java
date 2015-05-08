@@ -18,10 +18,10 @@ public class Appt implements Serializable {
 	private String mTitle;						// The Title of the appointment
 	private String mInfo;						// Store the content of the appointments description
 	private Location mLocation;					// Location of the appointment
-	private boolean ispublic;					// The appointment is a public appointment
+	private boolean isPublic;					// The appointment is a public appointment
 	private User owner;
 	
-	private boolean isjoint;					// The appointment is a joint appointment
+	private boolean isJoint;					// The appointment is a joint appointment
 	private LinkedList<String> attend;			// The Attendant list
 	private LinkedList<String> reject;			// The reject list
 	private LinkedList<String> waiting;			// The waiting list
@@ -36,12 +36,12 @@ public class Appt implements Serializable {
 		mTitle = "Untitled";
 		mInfo = "";
 		mLocation = null;
-		isjoint = false;
+		isJoint = false;
 		attend = new LinkedList<String>();
 		reject = new LinkedList<String>();
 		waiting = new LinkedList<String>();
 		joinApptID = -1;
-		ispublic = false;
+		isPublic = false;
 		owner = null;
 	}
 
@@ -212,12 +212,12 @@ public class Appt implements Serializable {
 	
 	// check whether this is a joint appointment
 	public boolean isJoint(){
-		return isjoint;
+		return isJoint;
 	}
 
 	// setter of the isJoint
 	public void setJoint(boolean isjoint){
-		this.isjoint = isjoint;
+		this.isJoint = isjoint;
 	}
 	
 	public Appt[] retrieveAppt(TimeSpan timeSpan) {
@@ -265,11 +265,11 @@ public class Appt implements Serializable {
 	}
 	
 	public boolean isPublic() {
-		return ispublic;
+		return isPublic;
 	}
 	
-	public void setIsPublic(boolean isPublic) {
-		ispublic = isPublic;
+	public void setIsPublic(boolean isPub) {
+		isPublic = isPub;
 	}
 	public User getOwner() {
 		return owner;

@@ -85,7 +85,7 @@ public class ReplyJointApptPanel extends JDialog implements ActionListener, List
 			Appt selectedAppt = apptList.getSelectedValue();
 			
 			if(e.getSource() == acceptButton) {
-				if (JOptionPane.showConfirmDialog(this, "Accept this joint appointment?", "Confirmation", JOptionPane.YES_NO_OPTION) == 0){
+				if (JOptionPane.showConfirmDialog(this, "Accept joint appointment?", "Confirmation", JOptionPane.YES_NO_OPTION) == 0){
 					selectedAppt.addAttendant(this.parent.getCurrUser());
 					selectedAppt.getRejectList().remove(this.parent.getCurrUser().ID());
 					selectedAppt.getWaitingList().remove(this.parent.getCurrUser().ID());
@@ -99,7 +99,7 @@ public class ReplyJointApptPanel extends JDialog implements ActionListener, List
 				}
 			}
 			else if(e.getSource() == rejectButton) {
-				if (JOptionPane.showConfirmDialog(this, "Reject this joint appointment?", "Confirmation", JOptionPane.YES_NO_OPTION) == 0){				
+				if (JOptionPane.showConfirmDialog(this, "Reject joint appointment?", "Confirmation", JOptionPane.YES_NO_OPTION) == 0){				
 					selectedAppt.addReject(this.parent.getCurrUser());
 					selectedAppt.getAttendList().remove(this.parent.getCurrUser().ID());
 					selectedAppt.getWaitingList().remove(this.parent.getCurrUser().ID());

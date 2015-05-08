@@ -36,8 +36,8 @@ public class UserStorageController {
 		return mUserStorage.getNumberOfUsers();
 	}
 	
-	public void loadUserFromXml() {
-		mUserStorage.loadUserFromXml();
+	public void loadUserXml() {
+		mUserStorage.loadUserXml();
 	}
 	
 	public User retrieveUser(String userId, String password) {
@@ -57,18 +57,18 @@ public class UserStorageController {
 	}
 	
 	public ArrayList<String> retrieveUsersFromToBeDeletedList() {
-		return mUserStorage.retrieveUsersFromToBeDeletedList();
+		return mUserStorage.retrieveUsersFromDeletedList();
 	}
 	
 	public void putUserToBeDeletedList(User user) {
-		mUserStorage.putUserToBeDeletedList(user);
+		mUserStorage.putUserToDeletedList(user);
 	}
 	
-	public void removeUserFromToBeDeletedList(User user) {
-		mUserStorage.removeUserFromToBeDeletedList(user);
+	public void removeUserFromDeletedList(User user) {
+		mUserStorage.removeUserFromDeletedList(user);
 	}
 	
 	public boolean checkUserInToBeDeleteList(User user) {
-		return mUserStorage.checkUserInToBeDeleteList(user);
+		return mUserStorage.checkUserInDeleteList(user);
 	}
 }

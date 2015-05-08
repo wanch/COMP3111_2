@@ -64,7 +64,7 @@ public class TimeSpan implements Serializable {
 
 	}
 
-	/* Calculate the length of the time span if the starting time and ending time are within the same day */
+	/* Get length of the time span for starting time and ending time on the same day */
 	public int TimeLength() {
 		
 		/* return -1 if the starting time and ending time are not in the same day */
