@@ -10,7 +10,7 @@ public abstract class User implements Serializable {
 	protected String mLastName;				// Last Name
 	protected String mEmail;				// User email
 	protected TimeSpan mBirthday;			// User Birthday
-	protected String mRole;					// level of user
+	protected String mRole;
 	
 	public String getRole() {
 		return mRole;
@@ -85,5 +85,6 @@ public abstract class User implements Serializable {
 	public String toString() {
 		return getName() + " (" + ID() + ")";
 	}
+	
 	public abstract boolean isAdmin();
 }
