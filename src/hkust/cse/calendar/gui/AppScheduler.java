@@ -567,6 +567,8 @@ public class AppScheduler extends JDialog implements ActionListener, ComponentLi
 	return true;
 }
 	
+	
+	
 	private int getTime(JTextField h, JTextField min) {
 
 		int hour = Utility.getNumber(h.getText());
@@ -684,6 +686,10 @@ public class AppScheduler extends JDialog implements ActionListener, ComponentLi
 		int[] date = getValidDate();
 		boolean interval = getValidDateInterval();
 		if(time == null || date == null || interval == false) {
+			return false;
+		}
+		if(locationlist.getSelectedItem() == null) {
+			JOptionPane.showMessageDialog(null, "Please add location" , "Error", JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
 
