@@ -416,8 +416,8 @@ public class AppScheduler extends JDialog implements ActionListener, ComponentLi
 				ApptXmlFactory apptxmlfactory = new ApptXmlFactory();
 				Appt[] appts = this.parent.controller.RetrieveAppts(newAppt.getOwner(), newAppt.getJoinID());
 				for(Appt appt : appts){
-					apptxmlfactory.removeApptFromXml("appt.xml", appt, newAppt.getOwner().ID());
-					apptxmlfactory.saveApptToXml("appt.xml", appt, newAppt.getOwner().ID());					
+					apptxmlfactory.removeApptXml("appt.xml", appt, newAppt.getOwner().ID());
+					apptxmlfactory.saveApptXml("appt.xml", appt, newAppt.getOwner().ID());					
 				}
 
 				this.setVisible(false);
@@ -442,7 +442,7 @@ public class AppScheduler extends JDialog implements ActionListener, ComponentLi
 				ApptXmlFactory apptxmlfactory = new ApptXmlFactory();
 				Appt[] appts = this.parent.controller.RetrieveAppts(newAppt.getOwner(), newAppt.getJoinID());
 				for(Appt appt : appts){
-					apptxmlfactory.removeApptFromXml("appt.xml", appt, newAppt.getOwner().ID());
+					apptxmlfactory.removeApptXml("appt.xml", appt, newAppt.getOwner().ID());
 				}
 
 			};
