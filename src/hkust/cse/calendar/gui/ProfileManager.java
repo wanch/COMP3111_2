@@ -26,15 +26,15 @@ import javax.swing.border.TitledBorder;
 
 public class ProfileManager extends JDialog implements ActionListener{
 	private UserStorageController userController;
-	private JTextField usernameField;
+	private JTextField nameField;
 	private JPasswordField passwordField;
 	private JPasswordField rePasswordField;
 	private JTextField firstNameField;
 	private JTextField lastNameField;
 	private JTextField emailField;
-	private JTextField bDayYearField;
-	private JTextField bDayMonthField;
-	private JTextField bDayDateField;
+	private JTextField bdYearField;
+	private JTextField bdMonthField;
+	private JTextField bdDateField;
 	private JButton saveButton;
 	private JButton cancelButton;
 	private User user;
@@ -60,11 +60,11 @@ public class ProfileManager extends JDialog implements ActionListener{
 		
 		JPanel usernamePanel = new JPanel();
 		usernamePanel.add(new JLabel("Username: "));
-		usernameField = new JTextField(10);
-		usernameField.setText(user.ID());
-		usernameField.setEditable(false);
-		usernameField.setEnabled(false);
-		usernamePanel.add(usernameField);
+		nameField = new JTextField(10);
+		nameField.setText(user.ID());
+		nameField.setEditable(false);
+		nameField.setEnabled(false);
+		usernamePanel.add(nameField);
 		top.add(usernamePanel);
 
 		JPanel passwordPanel = new JPanel();
@@ -107,29 +107,29 @@ public class ProfileManager extends JDialog implements ActionListener{
 		emailPanel.add(emailField);
 		personalInfoPanel.add(emailPanel);
 
-		JPanel bDayPanel = new JPanel();
+		/*JPanel bDayPanel = new JPanel();
 		Border bDayBorder = new TitledBorder("Birthday");
 		bDayPanel.setBorder(bDayBorder);
 		bDayPanel.setLayout(new BoxLayout(bDayPanel, BoxLayout.X_AXIS));
 		bDayPanel.add(new JLabel("YEAR: "));
-		bDayYearField = new JTextField(5);
-		bDayYearField.setText(new Integer(user.getBirthday().StartTime().getYear() + 1900).toString());
-		bDayYearField.setEditable(false);
-		bDayYearField.setEnabled(false);
-		bDayPanel.add(bDayYearField);
+		bdYearField = new JTextField(5);
+		bdYearField.setText(new Integer(user.getBirthday().StartTime().getYear() + 1900).toString());
+		bdYearField.setEditable(false);
+		bdYearField.setEnabled(false);
+		bDayPanel.add(bdYearField);
 		bDayPanel.add(new JLabel("MONTH: "));
-		bDayMonthField = new JTextField(5);
-		bDayMonthField.setText(new Integer(user.getBirthday().StartTime().getMonth() + 1).toString());
-		bDayMonthField.setEditable(false);
-		bDayMonthField.setEnabled(false);
-		bDayPanel.add(bDayMonthField);
+		bdMonthField = new JTextField(5);
+		bdMonthField.setText(new Integer(user.getBirthday().StartTime().getMonth() + 1).toString());
+		bdMonthField.setEditable(false);
+		bdMonthField.setEnabled(false);
+		bDayPanel.add(bdMonthField);
 		bDayPanel.add(new JLabel("DAY: "));
-		bDayDateField = new JTextField(5);
-		bDayDateField.setText(new Integer(user.getBirthday().StartTime().getDate()).toString());
-		bDayDateField.setEditable(false);
-		bDayDateField.setEnabled(false);
-		bDayPanel.add(bDayDateField);
-		personalInfoPanel.add(bDayPanel);
+		bdDateField = new JTextField(5);
+		bdDateField.setText(new Integer(user.getBirthday().StartTime().getDate()).toString());
+		bdDateField.setEditable(false);
+		bdDateField.setEnabled(false);
+		bDayPanel.add(bdDateField);
+		personalInfoPanel.add(bDayPanel);*/
 
 		contentPane.add("Center", personalInfoPanel);
 

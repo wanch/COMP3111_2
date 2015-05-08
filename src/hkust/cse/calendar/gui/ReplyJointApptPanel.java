@@ -123,8 +123,7 @@ public class ReplyJointApptPanel extends JDialog implements ActionListener, List
 
 	@Override
 	public void valueChanged(ListSelectionEvent e) {
-		// TODO Auto-generated method stub
-		
+		// TODO Auto-generated method stub	
 	}
 
 	private void setApptList() {

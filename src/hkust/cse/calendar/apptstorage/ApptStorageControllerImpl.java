@@ -58,15 +58,15 @@ public class ApptStorageControllerImpl {
 	// part arraylist appt
 	public void ManageAppt(Appt appt, int action) {
 
-		if (action == NEW) {				// Save the Appt into the storage if it is new and non-null
+		if (action == NEW) {				// Save Appointment
 			if (appt == null)
 				return;
 			mApptStorage.SaveAppt(appt);
-		} else if (action == MODIFY) {		// Update the Appt in the storage if it is modified and non-null
+		} else if (action == MODIFY) {		// Update Appointment
 			if (appt == null)
 				return;
 			mApptStorage.UpdateAppt(appt);
-		} else if (action == REMOVE) {		// Remove the Appt from the storage if it should be removed
+		} else if (action == REMOVE) {		// Remove Appointment 
 			mApptStorage.RemoveAppt(appt);
 		} 
 	}
@@ -74,8 +74,8 @@ public class ApptStorageControllerImpl {
 	/* Manage the Appt in the storage
 	 * parameters: the Appt involved, the action to take on the Appt */
 	
-	public boolean checkApptsHaveLocation(String locationName) {
-		return mApptStorage.checkApptsHaveLocation(locationName);
+	public boolean checkApptLocation(String locationName) {
+		return mApptStorage.checkApptLocation(locationName);
 	}
 
 	/* Get the defaultUser of mApptStorage */
@@ -83,78 +83,81 @@ public class ApptStorageControllerImpl {
 		return mApptStorage.getDefaultUser();
 	}
 	public int getAssignedApptID() {
-		return mApptStorage.getAssignedApptID();
+		return mApptStorage.getApptID();
 	}
 	public void setAssignedApptID(int id){
-		mApptStorage.setAssignedApptID(id);
+		mApptStorage.setApptID(id);
 	}
 	public int getAssignedJointID() {
-		return mApptStorage.getAssignedJointID();
+		return mApptStorage.getJointID();
 	}
 	public void setAssignedJointID(int id){
-		mApptStorage.setAssignedJointID(id);
+		mApptStorage.setJointID(id);
 	}
-	// method used to load appointment from xml record into hash map
+	
 	public boolean checkOverLap(Appt appt, Appt entry){
-		return mApptStorage.checkOverlap(appt,entry);
+		return mApptStorage.checkOverLap(appt,entry);
 	}
 	
 	public boolean checkOverLaps(ArrayList<Appt> apptlist){
 		return mApptStorage.checkOverLaps(apptlist);
 	}
-	/* begining of xml management functions*/
+	
+	/*  xml functions*/
+	// method used to load appointment from xml 
 	public void loadApptFromXml(User user, HashMap<TimeSpan,Appt> appts){
-		mApptStorage.loadApptFromXml(user,appts);
+		mApptStorage.loadApptXml(user,appts);
 	}
-
-	public void saveApptToXml(Appt appt) {
-		mApptStorage.saveApptToXml(appt);
+	// method used to save appointment to xml 
+	public void saveApptXml(Appt appt) {
+		mApptStorage.saveApptXml(appt);
 	}
-
-	public void removeApptFromXml(Appt appt) {
-		mApptStorage.removeApptFromXml(appt);
+	// method used to remove appointment from xml 
+	public void removeApptXml(Appt appt) {
+		mApptStorage.removeApptXml(appt);
 	}
-	/* delete the old appts in the xml and resave all them to the */
+	
+	/* delete the old appointment in the xml  */
 	public void closeSaving(){
 		for(Iterator<Entry<TimeSpan, Appt>>it=mApptStorage.mAppts.entrySet().iterator();it.hasNext();){
 		     Entry<TimeSpan, Appt> entry = it.next();
-				removeApptFromXml(entry.getValue());
+				removeApptXml(entry.getValue());
 		}
 		for(Iterator<Entry<TimeSpan, Appt>>it=mApptStorage.mAppts.entrySet().iterator();it.hasNext();){
 		     Entry<TimeSpan, Appt> entry = it.next();
-				saveApptToXml(entry.getValue());
+				saveApptXml(entry.getValue());
 		}
 	}
-	/* end of xml management functions*/
-	public Appt[] retrieveAllAppts(User user) {
-		return mApptStorage.retrieveAllAppts(user);
+
+	public Appt[] retrieveAllAppt(User user) {
+		return mApptStorage.retrieveAllAppt(user);
 	}
 
-	public boolean checkotherApptsHaveLocation(Appt appt, String locationName) {
-		return mApptStorage.checkotherApptsHaveLocation(appt, locationName);
+	public boolean checkOtherApptLocation(Appt appt, String locationName) {
+		return mApptStorage.checkOtherApptLocation(appt, locationName);
 	}
 	
-	public TimeSpan[] getSuggestedTimeSpan(User[] users, Timestamp stamp) {
-		return mApptStorage.getSuggestedTimeSpan(users, stamp);
+	public TimeSpan[] getSuggestTimeSpan(User[] users, Timestamp stamp) {
+		return mApptStorage.getSuggestTimeSpan(users, stamp);
 	}
 
-	public boolean checkotherUsersTimespan(TimeSpan suggestedTimeSpan, User[] users) {
-		return mApptStorage.checkotherUsersTimespan(suggestedTimeSpan, users);
+	public boolean checkOtherTimespan(TimeSpan suggestedTimeSpan, User[] users) {
+		return mApptStorage.checkOtherTimespan(suggestedTimeSpan, users);
 	}
 	
-	public boolean checkLocationCapacityEnough(Appt appt) {
-		return mApptStorage.checkLocationCapacityEnough(appt);
+	public boolean checkLocationCapacity(Appt appt) {
+		return mApptStorage.checkLocationCapacity(appt);
 	}
 	
-	public void deleteApptWithLocationName(String locationName) {
-		mApptStorage.deleteApptWithLocationName(locationName);
+	public void deleteApptByLocation(String locationName) {
+		mApptStorage.deleteApptByLocation(locationName);
 	}
 	
 	public Appt[] getApptForLocation(Location location) {
 		return mApptStorage.getApptForLocation(location);
 }
 	
-	public Appt[] getApptThatLocationInToBeDelete() {
-		return mApptStorage.getApptThatLocationInToBeDelete();
+	public Appt[] getApptInDeleteLocation() {
+		return mApptStorage.getApptInDeleteLocation();
 	}
 }

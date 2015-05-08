@@ -134,15 +134,15 @@ public class UserManager extends JDialog implements ActionListener, ListSelectio
 			User selectedUser = userList.getSelectedValue();
 
 			if(selectedUser == null) {
-				JOptionPane.showMessageDialog(null, "No user is selected!", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null, "Please select a user ", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 			else {
 				if(selectedUser.isAdmin()) {
-					JOptionPane.showMessageDialog(null, "Admin cannot be delete!", "Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null, "Cannot delete admin", "Error", JOptionPane.ERROR_MESSAGE);
 				}
 				else {
 					Object[] options ={ "Yes", "No" };  
-					int option = JOptionPane.showOptionDialog(null, "Are you sure to delete " + selectedUser.ID() + "?\nOperation cannot be canceled", "Warning", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]); 
+					int option = JOptionPane.showOptionDialog(null, "Are you sure to delete " + selectedUser.ID() + "?", "Warning", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]); 
 					if(option == 0) {
 						userController.putUserToBeDeletedList(selectedUser);
 						updateUserList();
@@ -152,8 +152,8 @@ public class UserManager extends JDialog implements ActionListener, ListSelectio
 			}
 		}
 		else if(e.getSource() == cancelButton) {
-			setVisible(false); //you can't see me!
-			dispose(); //Destroy the JFrame object
+			setVisible(false); 
+			dispose(); 
 		}
 	}
 

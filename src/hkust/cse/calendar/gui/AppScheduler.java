@@ -8,6 +8,7 @@ import hkust.cse.calendar.unit.TimeSpan;
 import hkust.cse.calendar.unit.User;
 import hkust.cse.calendar.userstorage.UserStorageController;
 import hkust.cse.calendar.xmlfactory.ApptXmlFactory;
+import hkust.cse.calendar.system.TimeMachine;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -107,11 +108,11 @@ public class AppScheduler extends JDialog implements ActionListener, ComponentLi
 	private JSplitPane pDes;
 	JPanel apptDescripFieldPanel;
 
-	//	private JTextField attendField;
-	//	private JTextField rejectField;
-	//	private JTextField waitingField;
 	private int selectedApptId = -1;
-
+	private Timestamp today;
+	int date[] = new int [3];
+	int time[] = new int [3];
+	
 	private void commonConstructor(String title, CalGrid cal, boolean inivitation) {
 		parent = cal;
 		this.setAlwaysOnTop(false);
@@ -138,12 +139,6 @@ public class AppScheduler extends JDialog implements ActionListener, ComponentLi
 		psDate.add(startDayLabel);
 		startDayField = new JTextField(4);
 		psDate.add(startDayField);
-
-		/*JPanel pDate = new JPanel();
-		pDate.setLayout(new BorderLayout());
-
-		pDate.add("West", psDate);
-		pDate.add("East", peDate);*/
 
 		JPanel psTime = new JPanel();
 		Border stimeBorder = new TitledBorder(null, "START TIME");
@@ -344,13 +339,11 @@ public class AppScheduler extends JDialog implements ActionListener, ComponentLi
 		contentPane.add("South", panel2);
 
 		if (this.getTitle().equals("Join Appointment Content Change") || this.getTitle().equals("Join Appointment Invitation")){
-			//			inviteBut.show(false);
 			rejectButton.show(true);
 			cancelButton.setText("Consider Later");
 			saveButton.setText("Accept");
 		}
 		if (this.getTitle().equals("Someone has responded to your Joint Appointment invitation") ){
-			//			inviteBut.show(false);
 			rejectButton.show(false);
 			cancelButton.show(false);
 			saveButton.setText("confirmed");
@@ -359,7 +352,6 @@ public class AppScheduler extends JDialog implements ActionListener, ComponentLi
 			allDisableEdit();
 		}
 		pack();
-
 	}
 
 	AppScheduler(String title, CalGrid cal, int selectedApptId) {
@@ -370,9 +362,7 @@ public class AppScheduler extends JDialog implements ActionListener, ComponentLi
 		}else{
 			commonConstructor(title, cal,false);
 		}
-
 	}
-
 
 	AppScheduler(String title, CalGrid cal) {
 		locationControl = LocationStorageController.getInstance();
@@ -459,7 +449,6 @@ public class AppScheduler extends JDialog implements ActionListener, ComponentLi
 			this.setVisible(false);
 			dispose();
 		}
-
 		parent.getAppList().clear();
 		parent.updateAppList();
 		parent.repaint();
@@ -480,7 +469,6 @@ public class AppScheduler extends JDialog implements ActionListener, ComponentLi
 		POperaPane.add(browsePane, BorderLayout.CENTER);
 		POperaPane.setBorder(new BevelBorder(BevelBorder.LOWERED));
 		return POperaPane;
-
 	}
 
 	private int[] getValidDate() {
@@ -512,7 +500,6 @@ public class AppScheduler extends JDialog implements ActionListener, ComponentLi
 					JOptionPane.ERROR_MESSAGE);
 			return null;
 		}
-
 		return date;
 	}
 	private int[] getValidEndDate() {
@@ -545,11 +532,43 @@ public class AppScheduler extends JDialog implements ActionListener, ComponentLi
 					JOptionPane.ERROR_MESSAGE);
 			return null;
 		}
-
 		return date;
 	}
 
-
+	
+	private boolean getValidDateInterval() {
+		int[] Interval = new int[6];
+		Interval[0] = Utility.getNumber(startYearField.getText());
+		Interval[1] = Utility.getNumber(startMonthField.getText());
+		Interval[2] = Utility.getNumber(startDayField.getText());
+		Interval[3] = Utility.getNumber(endYearField.getText());
+		Interval[4] = Utility.getNumber(endMonthField.getText());
+		Interval[5] = Utility.getNumber(endDayField.getText());
+	if (Interval[3] < Interval[0]) {
+		JOptionPane.showMessageDialog(this,
+				"Please check year",
+				"Input Error", JOptionPane.ERROR_MESSAGE);
+		return false;
+	}
+	
+	if ((Interval[3] >= Interval[0]) && (Interval[4] < Interval[1])) {
+		JOptionPane.showMessageDialog(this,
+				"Please check month",
+				"Input Error", JOptionPane.ERROR_MESSAGE);
+		return false;
+	}
+	
+	if ((Interval[3] >= Interval[0]) && (Interval[4] >= Interval[1]) &&((Interval[5] < Interval[2]))) {
+		JOptionPane.showMessageDialog(this,
+				"Please check date",
+				"Input Error", JOptionPane.ERROR_MESSAGE);
+		return false;
+	}
+	return true;
+}
+	
+	
+	
 	private int getTime(JTextField h, JTextField min) {
 
 		int hour = Utility.getNumber(h.getText());
@@ -560,7 +579,6 @@ public class AppScheduler extends JDialog implements ActionListener, ComponentLi
 			return -1;
 
 		return (hour * 60 + minute);
-
 	}
 
 	private int getReminder(JComboBox reminder) {
@@ -570,7 +588,6 @@ public class AppScheduler extends JDialog implements ActionListener, ComponentLi
 			return -1;
 
 		return (minute);
-
 	}
 
 	private String rollBackReminderTimestamp(Appt appt) {
@@ -587,17 +604,11 @@ public class AppScheduler extends JDialog implements ActionListener, ComponentLi
 		int[] result = new int[2];
 		result[0] = getTime(startHourField, startMinuteField);
 		result[1] = getTime(endHourField, endMinuteField);
+		
+		// check minute
 		if ((result[0] % 15) != 0 || (result[1] % 15) != 0) {
 			JOptionPane.showMessageDialog(this,
-					"Minute Must be 0, 15, 30, or 45 !", "Input Error",
-					JOptionPane.ERROR_MESSAGE);
-			return null;
-		}
-
-		if (!startMinuteField.getText().equals("0") && !startMinuteField.getText().equals("15") && !startMinuteField.getText().equals("30") && !startMinuteField.getText().equals("45") 
-				|| !endMinuteField.getText().equals("0") && !endMinuteField.getText().equals("15") && !endMinuteField.getText().equals("30") && !endMinuteField.getText().equals("45")){
-			JOptionPane.showMessageDialog(this,
-					"Minute Must be 0, 15, 30, or 45 !", "Input Error",
+					"Minute Must be 0, 15, 30, or 45 ", "Input Error",
 					JOptionPane.ERROR_MESSAGE);
 			return null;
 		}
@@ -619,7 +630,54 @@ public class AppScheduler extends JDialog implements ActionListener, ComponentLi
 					"Input Error", JOptionPane.ERROR_MESSAGE);
 			return null;
 		}
-
+		
+		// check start time less than current time
+		int[] timeInterval = new int[10];
+		today = new Timestamp(System.currentTimeMillis());
+		timeInterval[0] = today.getYear() + 1900;
+		timeInterval[1] = today.getMonth() + 1;
+		timeInterval[2] = today.getDate();
+		timeInterval[3] = today.getHours();
+		timeInterval[4] = today.getMinutes();
+		timeInterval[5] = Utility.getNumber(startYearField.getText());
+		timeInterval[6] = Utility.getNumber(startMonthField.getText());
+		timeInterval[7] = Utility.getNumber(startDayField.getText());
+		timeInterval[8] = Utility.getNumber(startHourField.getText());
+		timeInterval[9] = Utility.getNumber(startMinuteField.getText());
+	
+		// check year
+		if (timeInterval[0] > timeInterval[5]){
+			JOptionPane.showMessageDialog(null, "Time passed,check year" , "Error", JOptionPane.ERROR_MESSAGE);
+			return null;
+		}
+		
+		//check month
+		System.out.print(timeInterval[1]);
+		System.out.print(timeInterval[6]);
+		if ((timeInterval[0] <= timeInterval[5]) && (timeInterval[1] > timeInterval[6]) ){
+			JOptionPane.showMessageDialog(null, "Time passed,check month" , "Error", JOptionPane.ERROR_MESSAGE);
+			return null;
+		}
+		//check day
+		if ((timeInterval[0] <= timeInterval[5]) && (timeInterval[1] <= timeInterval[6]) &&
+				(timeInterval[2] > timeInterval[7])){
+			JOptionPane.showMessageDialog(null, "Time passed,check day" , "Error", JOptionPane.ERROR_MESSAGE);
+			return null;
+		}
+		
+		//check hour
+		if ((timeInterval[0] == timeInterval[5]) && (timeInterval[1] == timeInterval[6]) &&
+				(timeInterval[2] == timeInterval[7]) && (timeInterval[3] > timeInterval[8])){
+			JOptionPane.showMessageDialog(null, "Time passed,check hour" , "Error", JOptionPane.ERROR_MESSAGE);
+			return null;
+		}
+		
+		//check minute
+		if ((timeInterval[0] == timeInterval[5]) && (timeInterval[1] == timeInterval[6]) &&
+				(timeInterval[2] == timeInterval[7]) && (timeInterval[3] == timeInterval[8]) && (timeInterval[4] > timeInterval[9])){
+			JOptionPane.showMessageDialog(null, "Time passed,check minute" , "Error", JOptionPane.ERROR_MESSAGE);
+			return null;
+		}
 		return result;
 	}
 
@@ -628,8 +686,8 @@ public class AppScheduler extends JDialog implements ActionListener, ComponentLi
 		// create an appt
 		int[] time = getValidTimeInterval();
 		int[] date = getValidDate();
-
-		if(time == null || date == null) {
+		boolean interval = getValidDateInterval();
+		if(time == null || date == null || interval == false) {
 			return false;
 		}
 
@@ -708,13 +766,12 @@ public class AppScheduler extends JDialog implements ActionListener, ComponentLi
 
 		// overlap checking
 		if(this.parent.controller.checkOverLaps(apptlist)) {
-			JOptionPane.showMessageDialog(null, "Appointment Overlapped!" , "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, "Appointment Overlap" , "Error", JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
 
-		//		System.out.println(this.parent.controller.checkotherApptsHaveLocation(newAppt, locationlist.getSelectedItem().toString()));
-		if(this.parent.controller.checkotherApptsHaveLocation(newAppt, locationlist.getSelectedItem().toString())) {
-			JOptionPane.showMessageDialog(null, "Appointment Overlapped! Your location has been used by other people in this timeslot." , "Error", JOptionPane.ERROR_MESSAGE);
+		if(this.parent.controller.checkOtherApptLocation(newAppt, locationlist.getSelectedItem().toString())) {
+			JOptionPane.showMessageDialog(null, "Appointment Overlap. Your location is used by others." , "Error", JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
 
@@ -722,20 +779,20 @@ public class AppScheduler extends JDialog implements ActionListener, ComponentLi
 		if(newAppt.isJoint()){
 			invited = newAppt.getAllPeople();
 			invitedppl = initializeUserList(invited);
-			if(!this.parent.controller.checkotherUsersTimespan(startTime, invitedppl)){
-				JOptionPane.showMessageDialog(null, "Appointment Overlapped! Other people used in this timeslot." , "Error", JOptionPane.ERROR_MESSAGE);
+			if(!this.parent.controller.checkOtherTimespan(startTime, invitedppl)){
+				JOptionPane.showMessageDialog(null, "Appointment Overlap. Other people used this time." , "Error", JOptionPane.ERROR_MESSAGE);
 				return false;
 			}
 
-			if(!this.parent.controller.checkLocationCapacityEnough(newAppt)) {
-				JOptionPane.showMessageDialog(null, "Location Capacity not enough!" , "Error", JOptionPane.ERROR_MESSAGE);
+			if(!this.parent.controller.checkLocationCapacity(newAppt)) {
+				JOptionPane.showMessageDialog(null, "Not enough place at the location" , "Error", JOptionPane.ERROR_MESSAGE);
 				return false;
 			}
 		}
 
 		// if we are modifing an appt, remove the old appts in the memory first
 		if(selectedApptId != -1){
-			this.parent.controller.removeApptFromXml(newAppt);
+			this.parent.controller.removeApptXml(newAppt);
 			this.parent.controller.ManageAppt(newAppt, parent.controller.REMOVE); // for memory
 		}
 
@@ -744,9 +801,7 @@ public class AppScheduler extends JDialog implements ActionListener, ComponentLi
 			// System.out.println(this.parent.controller.getAssignedApptID());
 			this.parent.controller.ManageAppt(appt, parent.controller.NEW); // for memory
 		}
-
-		this.parent.controller.saveApptToXml(newAppt);
-
+		this.parent.controller.saveApptXml(newAppt);
 		return true;
 	}
 
@@ -884,13 +939,7 @@ public class AppScheduler extends JDialog implements ActionListener, ComponentLi
 		startMinuteField.setEditable(false);
 		endHourField.setEditable(false);
 		endMinuteField.setEditable(false);
-	}
-
-	//public static void testu(Appt appt) {
-	/*for (Appt lol = appt ; lol.TimeSpan().EndTime().before(new Timestamp(114,10,30,23,59,59,0)) ; lol = lol.clone()){
-			System.out.println(lol.TimeSpan().StartTime()+" "+lol.getReminder().getReminderTimestamp());
-		}*/
-	//}	
+	}	
 	public static Date setTime(int hour,int minute) {
 		Calendar c = GregorianCalendar.getInstance();
 		Date d = c.getTime();

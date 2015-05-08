@@ -163,7 +163,7 @@ public class SuggestedTime extends JDialog implements ActionListener {
 	
 	private void initializeTimeSpanList(User[] user, TimeSpan[] suggestion) {
 		Timestamp stamp = new_appt.TimeSpan().StartTime();
-		suggestion = parent.controller.getSuggestedTimeSpan(user, stamp);
+		suggestion = parent.controller.getSuggestTimeSpan(user, stamp);
 		updateTimeSpanList(suggestion);
 		selectfirst();
 	}

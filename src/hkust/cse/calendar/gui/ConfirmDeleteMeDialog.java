@@ -41,7 +41,7 @@ public class ConfirmDeleteMeDialog extends JDialog implements ActionListener {
 		top.setLayout(new BoxLayout(top, BoxLayout.Y_AXIS));
 		
 		JPanel msgPanel = new JPanel();
-		msgPanel.add(new JLabel("Your account is going to be deleted =(\nAll your information and appointment will be deleted"));
+		msgPanel.add(new JLabel("Your account is deleted by admin\nAll your information and appointment will also be deleted"));
 		top.add(msgPanel);
 		
 		JPanel buttonPanel = new JPanel();
@@ -75,9 +75,8 @@ public class ConfirmDeleteMeDialog extends JDialog implements ActionListener {
 			apptFactory.deleteUserAppt(mUser);
 			
 			CalendarMain.logOut = true;
-			setVisible(false); //you can't see me!
-			dispose(); //Destroy the JFrame object
+			setVisible(false); 
+			dispose(); 
 		}
 	}
-
 }

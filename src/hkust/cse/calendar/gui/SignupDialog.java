@@ -31,7 +31,6 @@ import javax.swing.border.TitledBorder;
 
 
 public class SignupDialog extends JDialog implements ActionListener {
-	private static String adminSecretCode = "p@ssw0rd";
 	private UserStorageController userController;
 	private JTextField usernameField;
 	private JPasswordField passwordField;
@@ -45,7 +44,6 @@ public class SignupDialog extends JDialog implements ActionListener {
 	private JButton signUpButton;
 	private JButton cancelButton;
 	private JCheckBox adminCheckBox;
-	private JTextField adminSecretPasswordField;
 	private User newUser;
 
 	public SignupDialog() {
@@ -85,11 +83,6 @@ public class SignupDialog extends JDialog implements ActionListener {
 		adminCheckBox = new JCheckBox("Sign up as admin");
 		adminCheckBox.addActionListener(this);
 		adminPanel.add(adminCheckBox);
-		adminPanel.add(new JLabel("\t\t\tSecret code:"));
-		adminSecretPasswordField = new JTextField(10);
-		adminSecretPasswordField.setEditable(false);
-		adminSecretPasswordField.setEnabled(false);
-		adminPanel.add(adminSecretPasswordField);
 		top.add(adminPanel);
 
 		contentPane.add("North", top);
@@ -109,13 +102,13 @@ public class SignupDialog extends JDialog implements ActionListener {
 		namePanel.add(lastNameField);
 		personalInfoPanel.add(namePanel);
 
-		/*JPanel emailPanel = new JPanel();
+		JPanel emailPanel = new JPanel();
 		emailPanel.add(new JLabel("Email: "));
 		emailField = new JTextField(30);
 		emailPanel.add(emailField);
 		personalInfoPanel.add(emailPanel);
 
-		JPanel bDayPanel = new JPanel();
+		/*JPanel bDayPanel = new JPanel();
 		Border bDayBorder = new TitledBorder("Birthday");
 		bDayPanel.setBorder(bDayBorder);
 		bDayPanel.setLayout(new BoxLayout(bDayPanel, BoxLayout.X_AXIS));
@@ -138,8 +131,6 @@ public class SignupDialog extends JDialog implements ActionListener {
 		signUpButton = new JButton("Sign up now");
 		signUpButton.addActionListener(this);
 		buttonPanel.add(signUpButton);
-		// set default button so that the login button will be pressed when u press enter
-		this.getRootPane().setDefaultButton(signUpButton);
 
 		cancelButton = new JButton("Canel");
 		cancelButton.addActionListener(this);
@@ -167,16 +158,6 @@ public class SignupDialog extends JDialog implements ActionListener {
 				dispose();
 			}
 		}
-		else if(e.getSource() == adminCheckBox) {
-			if(adminCheckBox.isSelected()) {
-				adminSecretPasswordField.setEditable(true);
-				adminSecretPasswordField.setEnabled(true);
-			}
-			else {
-				adminSecretPasswordField.setEditable(false);
-				adminSecretPasswordField.setEnabled(false);
-			}
-		}
 	}
 	
 	private boolean sigUpButtonResponse() {
@@ -197,10 +178,10 @@ public class SignupDialog extends JDialog implements ActionListener {
 			return false;
 		}
 
-		/*String email = checkValidEmail(emailField.getText());
+		String email = checkValidEmail(emailField.getText());
 		if(email == null) {
 			return false;
-		}*/
+		}
 
 		/*int[] bDay = getValidDate();		
 		if(bDay == null) {
@@ -209,23 +190,20 @@ public class SignupDialog extends JDialog implements ActionListener {
 		Timestamp start = CreateTimeStamp(bDay, 0);
 		Timestamp end = CreateTimeStamp(bDay, 23 * 60 + 59);
 		TimeSpan birthday = new TimeSpan(start, end);*/
-		
+		UserFactory userFactpry = UserFactory.getInstance();
 		if(adminCheckBox.isSelected()) {
-			if(validateAdminCode(adminSecretPasswordField.getText())) {
-				newUser = new Admin(userId, pw);
-				newUser = UserFactory.getInstance().createUser("Admin", userId, pw);
-			}
-			else {
-				return false;
-			}
+			System.out.println("Hi");
+			//newUser = new Admin(userId, pw);
+			newUser = userFactpry.createAccount(userId, pw, "Admin", firstName, lastName, email);
+			System.out.println("newUSer " + newUser);
 		}
 		else {
-			newUser = UserFactory.getInstance().createUser("Regular", userId, pw);
+			newUser = userFactpry.createAccount(userId, pw, "Regular", firstName, lastName, email);
 		}
-		
+		System.out.println(firstName + " " + lastName);
+
 		newUser.setName(firstName, lastName);
-		//newUser.setBirthday(birthday);
-		//newUser.setEmail(email);
+		newUser.setEmail(email);
 		
 		userController.manageUsers(newUser, UserStorageController.NEW);
 		
@@ -331,7 +309,7 @@ public class SignupDialog extends JDialog implements ActionListener {
 	}
 	
 	private String checkValidFirstName(String firstname) {
-		// hugo: changed this validate check 
+
 		if(firstname.matches("[a-zA-z]+([ '-][a-zA-Z]+)*")) {
 			return firstname;
 		}
@@ -340,7 +318,7 @@ public class SignupDialog extends JDialog implements ActionListener {
 			return null;
 		}
 	}
-	// hugo: changed this validate check because the original one don't allow space between two words like "kwok kit"
+
 	private String checkValidLastName(String lastname) {
 		if(lastname.matches("[a-zA-z]+([ '-][a-zA-Z]+)*")) {
 			return lastname;
@@ -348,16 +326,6 @@ public class SignupDialog extends JDialog implements ActionListener {
 		else {
 			JOptionPane.showMessageDialog(this, "Invalid lastname", "Input Error", JOptionPane.ERROR_MESSAGE);
 			return null;
-		}
-	}
-	
-	private boolean validateAdminCode(String code) {
-		if(code.equals(adminSecretCode)) {
-			return true;
-		}
-		else {
-			JOptionPane.showMessageDialog(this, "Invalid code", "Input Error", JOptionPane.ERROR_MESSAGE);
-			return false;
 		}
 	}
 }

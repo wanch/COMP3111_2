@@ -43,7 +43,6 @@ import javax.swing.event.ListSelectionListener;
 		controller = LocationStorageController.getInstance();
 
 		setTitle("Location Manager");
-		//setSize(700, 700);
 
 		Container contentPane;
 		contentPane = getContentPane();
@@ -62,10 +61,8 @@ import javax.swing.event.ListSelectionListener;
 		JPanel bottom = new JPanel();
 		locationName = new JTextField(10);
 		locationName.setText("-NAME-");
-		//locationName.setToolTipText("Please enter a new location name");
 		locationCapacity = new JTextField(7);
 		locationCapacity.setText("-CAPACITY-");
-		//locationName.setToolTipText("Please enter the capacity of the location");
 		bottom.add(locationName);
 		bottom.add(locationCapacity);
 
@@ -201,7 +198,7 @@ import javax.swing.event.ListSelectionListener;
 				int option = JOptionPane.showOptionDialog(null, "Are you sure to delete " + selectedLocation + "?", "Warning", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]); 
 				
 				if(option == 0) {
-					if(apptController.checkApptsHaveLocation(selectedLocation.getLocationName())) {
+					if(apptController.checkApptLocation(selectedLocation.getLocationName())) {
 						
 						JOptionPane.showMessageDialog(null, "Location is using .", "Error", JOptionPane.ERROR_MESSAGE);
 						JOptionPane.showMessageDialog(null, "Location is using.\nLocation will be deleted after confirmed by initiators of related events", "Warning", JOptionPane.ERROR_MESSAGE);

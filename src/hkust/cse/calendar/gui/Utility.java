@@ -22,7 +22,7 @@ public class Utility {
 			return -1;
 		if (s.trim().indexOf(" ") != -1) {
 			JOptionPane.showMessageDialog(null,
-					"Can't Contain Whitespace In Number !");
+					"Cannot have blank");
 			return -1;
 		}
 		int result = 0;
@@ -37,7 +37,6 @@ public class Utility {
 	public static Appt createDefaultAppt(int currentY, int currentM,
 			int currentD, User me) {
 		Appt newAppt = new Appt();
-		//newAppt.setID(0);
 		Timestamp start = new Timestamp(0);
 		start.setYear(currentY);
 		start.setMonth(currentM - 1);
@@ -56,7 +55,6 @@ public class Utility {
 		newAppt.setTimeSpan(new TimeSpan(start, end));
 		User[] temp = new User[1];
 		temp[0] = me;
-		// newAppt.setParticipants(temp);
 
 		newAppt.setTitle("Untitled");
 		newAppt.setInfo("Input description of this appointment");
@@ -66,7 +64,6 @@ public class Utility {
 	public static Appt createDefaultAppt(int currentY, int currentM,
 			int currentD, User me, int startTime) {
 		Appt newAppt = new Appt();
-		//newAppt.setID(0);
 		Timestamp start = new Timestamp(0);
 		start.setYear(currentY);
 		start.setMonth(currentM - 1);
@@ -92,15 +89,6 @@ public class Utility {
 		newAppt.setInfo("Input description of this appointment");
 		return newAppt;
 	}
-	
-	
-	/* 
-	 * function: this function will recurively clone the appts for you, and put it back to the ArrayList that you provide
-	 * @param[appt]: the original appointment 
-	 * @param[frequency]: the frequency of the repeating appt, eg daily, monthly, weekly
-	 * @param[applist]: the ArrayList that you want the function to give the clone appts back to you
-	 * @param[reminder]: the reminder minutes of this series of appts
-	 * */
 
 	public static void createRepeatingAppts(Appt appt, int frequency, ArrayList<Appt> apptlist, int reminder){
 		
@@ -113,12 +101,6 @@ public class Utility {
 		}
 		
 	}
-	
-	/* 
-	 * function: input a timestamp, the function will minus the reminder minutes, and then give the new timestamp to you
-	 * @param[minute]: the minute before a certain timestamp 
-	 * @param[start]: a certain timestamp that we want to set an offset 
-	 * */
 	
 	public static Timestamp convertReminderToTimestamp(int minutes, Timestamp start) {
 		if(minutes==-1)
@@ -133,10 +115,6 @@ public class Utility {
 
 	}
 	
-	/* 
-	 * function: input an appointment, the function get back the reminder minutes, 
-	 * if the reminder is null, it will return -1 
-	 * */
 	
 	public static int reminderTimestampToMinutes(Appt appt) {
 		if(appt.getReminder().getReminderTimestamp() == null) {
@@ -146,5 +124,4 @@ public class Utility {
 			return (new TimeSpan(appt.TimeSpan().StartTime(),appt.getReminder().getReminderTimestamp()).TimeLength());
 		}	
 	}	
-
 }

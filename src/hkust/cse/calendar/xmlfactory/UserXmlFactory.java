@@ -71,7 +71,7 @@ public class UserXmlFactory {
 						int month = Integer.parseInt(monthString);
 						int date = Integer.parseInt(dateString);*/
 
-						User user = UserFactory.getInstance().createUser(id, password, role);
+						User user = UserFactory.getInstance().createAccount(id, password, role, firstName, lastName, email);
 						user.setEmail(email);
 						user.setName(firstName, lastName);
 						/*int[] bday = {year, month, date};

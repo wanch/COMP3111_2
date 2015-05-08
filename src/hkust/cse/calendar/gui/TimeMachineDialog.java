@@ -24,19 +24,19 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 public class TimeMachineDialog extends JFrame implements ActionListener,ChangeListener{
-	private JLabel selectmsg;
-	private JRadioButton defaulttime;
-	private JRadioButton customtime;
-	private ButtonGroup timegp;
+	private JLabel selectMessage;
+	private JRadioButton defaultTime;
+	private JRadioButton customTime;
+	private ButtonGroup timeButGroup;
 	
-	private JSpinner yearSpinner;
-	private JSpinner monthSpinner;
-	private JSpinner dateSpinner;
-	private JSpinner hourSpinner;
-	private JSpinner minuteSpinner;
-	private JSpinner secondSpinner;
-	private Timestamp timestamp;
-	private JButton saveBut;
+	private JSpinner yearSpin;
+	private JSpinner monthSpin;
+	private JSpinner dateSpin;
+	private JSpinner hourSpin;
+	private JSpinner minuteSpin;
+	private JSpinner secondSpin;
+	private Timestamp timeStamp;
+	private JButton saveButton;
 	private CalGrid parent;
 	
 	private Timestamp today;
@@ -45,7 +45,7 @@ public class TimeMachineDialog extends JFrame implements ActionListener,ChangeLi
 	
 	public TimeMachineDialog(CalGrid cal) {
 		setAlwaysOnTop(true);
-		setTitle("Change Time Setting");
+		setTitle("Change Time ");
 		parent = cal;
 		Container contentPane;
 		contentPane = getContentPane();
@@ -57,42 +57,42 @@ public class TimeMachineDialog extends JFrame implements ActionListener,ChangeLi
 		Border selectBorder = new TitledBorder(null, "SELECT TIME SETTING");
 		selectPanel.setBorder(selectBorder);
 		
-		selectmsg = new JLabel("Please select the time setting   ");
-		selectPanel.add(selectmsg);
+		selectMessage = new JLabel("Please select the time    ");
+		selectPanel.add(selectMessage);
 		
-		defaulttime = new JRadioButton("USE SYSTEM TIME   ");
-		customtime = new JRadioButton("USE CUSTOM TIME   ");
-		defaulttime.setActionCommand("default");
-		customtime.setActionCommand("custom");
-		timegp = new ButtonGroup();
-		timegp.add(defaulttime);
-		timegp.add(customtime);
-		selectPanel.add(defaulttime);
-		selectPanel.add(customtime);
-		defaulttime.setSelected(true);
-		defaulttime.addActionListener(this);
-		customtime.addActionListener(this);
+		defaultTime = new JRadioButton("Use Current Time   ");
+		customTime = new JRadioButton("Set Custom Time   ");
+		defaultTime.setActionCommand("default");
+		customTime.setActionCommand("custom");
+		timeButGroup = new ButtonGroup();
+		timeButGroup.add(defaultTime);
+		timeButGroup.add(customTime);
+		selectPanel.add(defaultTime);
+		selectPanel.add(customTime);
+		defaultTime.setSelected(true);
+		defaultTime.addActionListener(this);
+		customTime.addActionListener(this);
 		top.add(selectPanel, BorderLayout.NORTH);
 		
 		// panel
 		JPanel timePanel = new JPanel();
 		Border timeBorder = new TitledBorder(null, "TIME MACHINE");
 		timePanel.setBorder(timeBorder);
-		timestamp = TimeMachine.getInstance().getNowTimestamp();
+		timeStamp = TimeMachine.getInstance().getNowTimestamp();
 
-		yearSpinner = new JSpinner(new SpinnerNumberModel (timestamp.getYear()+1900,1900,2100,1));
-		monthSpinner = new JSpinner(new SpinnerNumberModel (timestamp.getMonth()+1,1,12,1));
-		dateSpinner = new JSpinner(new SpinnerNumberModel (timestamp.getDate(),1,31,1));
-		hourSpinner = new JSpinner(new SpinnerNumberModel (timestamp.getHours(),0,23,1));
-		minuteSpinner = new JSpinner(new SpinnerNumberModel (timestamp.getMinutes(),0,59,1));
-		secondSpinner = new JSpinner(new SpinnerNumberModel (timestamp.getSeconds(),0,59,1));
+		yearSpin = new JSpinner(new SpinnerNumberModel (timeStamp.getYear()+1900,1900,2100,1));
+		monthSpin = new JSpinner(new SpinnerNumberModel (timeStamp.getMonth()+1,1,12,1));
+		dateSpin = new JSpinner(new SpinnerNumberModel (timeStamp.getDate(),1,31,1));
+		hourSpin = new JSpinner(new SpinnerNumberModel (timeStamp.getHours(),0,23,1));
+		minuteSpin = new JSpinner(new SpinnerNumberModel (timeStamp.getMinutes(),0,59,1));
+		secondSpin = new JSpinner(new SpinnerNumberModel (timeStamp.getSeconds(),0,59,1));
 
-		yearSpinner.addChangeListener(this);
-		monthSpinner.addChangeListener(this);
-		dateSpinner.addChangeListener(this);
-		hourSpinner.addChangeListener(this);
-		minuteSpinner.addChangeListener(this);
-		secondSpinner.addChangeListener(this);
+		yearSpin.addChangeListener(this);
+		monthSpin.addChangeListener(this);
+		dateSpin.addChangeListener(this);
+		hourSpin.addChangeListener(this);
+		minuteSpin.addChangeListener(this);
+		secondSpin.addChangeListener(this);
 		
 		JLabel yearLabel = new JLabel("YEAR: ");
 		JLabel monthLabel = new JLabel("MONTH: ");
@@ -106,26 +106,26 @@ public class TimeMachineDialog extends JFrame implements ActionListener,ChangeLi
 		setAllEnabled(false);
 
 		timePanel.add(yearLabel);
-		timePanel.add(yearSpinner);
+		timePanel.add(yearSpin);
 		timePanel.add(monthLabel);
-		timePanel.add(monthSpinner);
+		timePanel.add(monthSpin);
 		timePanel.add(dateLabel);
-		timePanel.add(dateSpinner);
+		timePanel.add(dateSpin);
 		timePanel.add(hourLabel);
-		timePanel.add(hourSpinner);
+		timePanel.add(hourSpin);
 		timePanel.add(minuteLabel);
-		timePanel.add(minuteSpinner);
+		timePanel.add(minuteSpin);
 		timePanel.add(secondLabel);
-		timePanel.add(secondSpinner);
+		timePanel.add(secondSpin);
 
 		top.add(timePanel, BorderLayout.SOUTH);
 		
 		contentPane.add("North", top);
 		
 		JPanel savePanel = new JPanel();
-		saveBut = new JButton("Save Time");
-		saveBut.addActionListener(this);
-		savePanel.add(saveBut);
+		saveButton = new JButton("Save Time");
+		saveButton.addActionListener(this);
+		savePanel.add(saveButton);
 		contentPane.add("South", savePanel);
 		
 		setResizable(false);
@@ -136,15 +136,15 @@ public class TimeMachineDialog extends JFrame implements ActionListener,ChangeLi
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub		
-		if (e.getSource() == saveBut) {
-			boolean succeed = saveButResponse(timegp.getSelection().getActionCommand());
+		if (e.getSource() == saveButton) {
+			boolean succeed = saveButResponse(timeButGroup.getSelection().getActionCommand());
 			if (succeed) {
 				setVisible(false);
 				dispose();
 			}
 		} 
 		
-		if (defaulttime.isSelected()) {
+		if (defaultTime.isSelected()) {
 
 			// set spinner to the current time of time machine
 			today = new Timestamp(System.currentTimeMillis());
@@ -155,19 +155,19 @@ public class TimeMachineDialog extends JFrame implements ActionListener,ChangeLi
 			time[1] = today.getMinutes();
 			time[2] = today.getSeconds();
 			
-			yearSpinner.setValue(date[0]);
-			monthSpinner.setValue(date[1]);
-			dateSpinner.setValue(date[2]);
-			hourSpinner.setValue(time[0]);
-			minuteSpinner.setValue(time[1]);
-			secondSpinner.setValue(time[2]);
+			yearSpin.setValue(date[0]);
+			monthSpin.setValue(date[1]);
+			dateSpin.setValue(date[2]);
+			hourSpin.setValue(time[0]);
+			minuteSpin.setValue(time[1]);
+			secondSpin.setValue(time[2]);
 
 			// disable the spinner
 			setAllEnabled(false);
 			setAllTextFieldEnabled(false);
 
 
-		} else if (customtime.isSelected()) {
+		} else if (customTime.isSelected()) {
 			// enable the spinner
 			setAllEnabled(true);
 			setAllTextFieldEnabled(true);
@@ -177,20 +177,18 @@ public class TimeMachineDialog extends JFrame implements ActionListener,ChangeLi
 	private int[] getDate() {
 
 		int[] date = new int[3];
-		date[0] = (Integer) yearSpinner.getValue();
-		date[1] = (Integer) monthSpinner.getValue();
-		date[2] = (Integer) dateSpinner.getValue();
-
+		date[0] = (Integer) yearSpin.getValue();
+		date[1] = (Integer) monthSpin.getValue();
+		date[2] = (Integer) dateSpin.getValue();
 		return date;
 	}
 
 	private int[] getTime(){
 		int[] time = new int[3];
-		time[0] = (Integer) hourSpinner.getValue();
-		time[1] = (Integer) minuteSpinner.getValue();
-		time[2] = (Integer) secondSpinner.getValue();
+		time[0] = (Integer) hourSpin.getValue();
+		time[1] = (Integer) minuteSpin.getValue();
+		time[2] = (Integer) secondSpin.getValue();
 		return time;
-
 	}
 
 	private boolean saveButResponse(String tmsetting){
@@ -204,7 +202,6 @@ public class TimeMachineDialog extends JFrame implements ActionListener,ChangeLi
 
 			return true;
 		} else {
-			
 			// system time
 			today = new Timestamp(System.currentTimeMillis());
 			date[0] = today.getYear() + 1900;
@@ -213,7 +210,6 @@ public class TimeMachineDialog extends JFrame implements ActionListener,ChangeLi
 			time[0] = today.getHours();
 			time[1] = today.getMinutes();
 			time[2] = today.getSeconds();
-//			System.out.println(date[0] + " " + date[1] +  " " +date[2] +  " " +time[0] +  " " +time[1] +  " " +time[2]);
 
 			TimeMachine timeMachine = TimeMachine.getInstance();
 			timeMachine.setTimeMachine(date[0], date[1], date[2], time[0], time[1], time[2]);
@@ -225,29 +221,29 @@ public class TimeMachineDialog extends JFrame implements ActionListener,ChangeLi
 	@Override
 	public void stateChanged(ChangeEvent e) {
 		
-		if((JSpinner)e.getSource()==yearSpinner || (JSpinner)e.getSource()==monthSpinner){
+		if((JSpinner)e.getSource()==yearSpin || (JSpinner)e.getSource()==monthSpin){
 			Calendar c = Calendar.getInstance();
-			c.set(Calendar.YEAR,(Integer) yearSpinner.getValue());
-			c.set(Calendar.MONTH,(Integer) monthSpinner.getValue()-1);
-			dateSpinner.setModel(new SpinnerNumberModel (1,1,c.getActualMaximum(Calendar.DATE),1));
+			c.set(Calendar.YEAR,(Integer) yearSpin.getValue());
+			c.set(Calendar.MONTH,(Integer) monthSpin.getValue()-1);
+			dateSpin.setModel(new SpinnerNumberModel (1,1,c.getActualMaximum(Calendar.DATE),1));
 		}
 	}
 	
 	private void setAllTextFieldEnabled(boolean c){
-		((JSpinner.DefaultEditor) yearSpinner.getEditor()).getTextField().setEditable(c);
-		((JSpinner.DefaultEditor) monthSpinner.getEditor()).getTextField().setEditable(c);
-		((JSpinner.DefaultEditor) dateSpinner.getEditor()).getTextField().setEditable(c);
-		((JSpinner.DefaultEditor) hourSpinner.getEditor()).getTextField().setEditable(c);
-		((JSpinner.DefaultEditor) minuteSpinner.getEditor()).getTextField().setEditable(c);
-		((JSpinner.DefaultEditor) secondSpinner.getEditor()).getTextField().setEditable(c);
+		((JSpinner.DefaultEditor) yearSpin.getEditor()).getTextField().setEditable(c);
+		((JSpinner.DefaultEditor) monthSpin.getEditor()).getTextField().setEditable(c);
+		((JSpinner.DefaultEditor) dateSpin.getEditor()).getTextField().setEditable(c);
+		((JSpinner.DefaultEditor) hourSpin.getEditor()).getTextField().setEditable(c);
+		((JSpinner.DefaultEditor) minuteSpin.getEditor()).getTextField().setEditable(c);
+		((JSpinner.DefaultEditor) secondSpin.getEditor()).getTextField().setEditable(c);
 	}
 
 	private void setAllEnabled(boolean c){
-		yearSpinner.setEnabled(c);
-		monthSpinner.setEnabled(c);
-		dateSpinner.setEnabled(c);
-		hourSpinner.setEnabled(c);
-		minuteSpinner.setEnabled(c);
-		secondSpinner.setEnabled(c);
+		yearSpin.setEnabled(c);
+		monthSpin.setEnabled(c);
+		dateSpin.setEnabled(c);
+		hourSpin.setEnabled(c);
+		minuteSpin.setEnabled(c);
+		secondSpin.setEnabled(c);
 	}
 }
