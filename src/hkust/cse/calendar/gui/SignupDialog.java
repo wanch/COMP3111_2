@@ -108,7 +108,7 @@ public class SignupDialog extends JDialog implements ActionListener {
 		emailPanel.add(emailField);
 		personalInfoPanel.add(emailPanel);
 
-		/*JPanel bDayPanel = new JPanel();
+		JPanel bDayPanel = new JPanel();
 		Border bDayBorder = new TitledBorder("Birthday");
 		bDayPanel.setBorder(bDayBorder);
 		bDayPanel.setLayout(new BoxLayout(bDayPanel, BoxLayout.X_AXIS));
@@ -121,7 +121,7 @@ public class SignupDialog extends JDialog implements ActionListener {
 		bDayPanel.add(new JLabel("DAY: "));
 		bDayDateField = new JTextField(5);
 		bDayPanel.add(bDayDateField);
-		personalInfoPanel.add(bDayPanel);*/
+		personalInfoPanel.add(bDayPanel);
 
 		contentPane.add("Center", personalInfoPanel);
 
@@ -183,26 +183,24 @@ public class SignupDialog extends JDialog implements ActionListener {
 			return false;
 		}
 
-		/*int[] bDay = getValidDate();		
+		int[] bDay = getValidDate();		
 		if(bDay == null) {
 			return false;
 		}		
 		Timestamp start = CreateTimeStamp(bDay, 0);
 		Timestamp end = CreateTimeStamp(bDay, 23 * 60 + 59);
-		TimeSpan birthday = new TimeSpan(start, end);*/
-		UserFactory userFactpry = UserFactory.getInstance();
+		TimeSpan birthday = new TimeSpan(start, end);
+		
 		if(adminCheckBox.isSelected()) {
-			System.out.println("Hi");
-			//newUser = new Admin(userId, pw);
-			newUser = userFactpry.createAccount(userId, pw, "Admin", firstName, lastName, email);
-			System.out.println("newUSer " + newUser);
+				newUser = new Admin(userId, pw);
+				newUser = UserFactory.getInstance().createUser("Admin", userId, pw);
 		}
 		else {
-			newUser = userFactpry.createAccount(userId, pw, "Regular", firstName, lastName, email);
+			newUser = UserFactory.getInstance().createUser("Regular", userId, pw);
 		}
-		System.out.println(firstName + " " + lastName);
-
+		
 		newUser.setName(firstName, lastName);
+		newUser.setBirthday(birthday);
 		newUser.setEmail(email);
 		
 		userController.manageUsers(newUser, UserStorageController.NEW);
