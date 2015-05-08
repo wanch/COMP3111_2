@@ -43,7 +43,6 @@ import javax.swing.event.ListSelectionListener;
 		controller = LocationStorageController.getInstance();
 
 		setTitle("Location Manager");
-		//setSize(700, 700);
 
 		Container contentPane;
 		contentPane = getContentPane();
@@ -62,10 +61,8 @@ import javax.swing.event.ListSelectionListener;
 		JPanel bottom = new JPanel();
 		locationName = new JTextField(10);
 		locationName.setText("-NAME-");
-		//locationName.setToolTipText("Please enter a new location name");
 		locationCapacity = new JTextField(7);
 		locationCapacity.setText("-CAPACITY-");
-		//locationName.setToolTipText("Please enter the capacity of the location");
 		bottom.add(locationName);
 		bottom.add(locationCapacity);
 

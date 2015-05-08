@@ -33,11 +33,11 @@ public class ConfirmLocationDeleteDialog extends JDialog implements ActionListen
 		contentPane.add("Center", top);
 		
 		JPanel msgPanel = new JPanel();
-		msgPanel.add(new JLabel("Location \"" + locationName + "\" is going to be delete."));
+		msgPanel.add(new JLabel("Location \"" + locationName + "\" will be deleted ."));
 		top.add(msgPanel);
 		
 		JPanel msg2Panel = new JPanel();
-		msg2Panel.add(new JLabel("All you appointments with location \"" + locationName + "\" will be deleted"));
+		msg2Panel.add(new JLabel("All the appointments with location \"" + locationName + "\" will be deleted"));
 		top.add(msg2Panel);
 		
 		JPanel buttonPanel = new JPanel();
@@ -62,20 +62,19 @@ public class ConfirmLocationDeleteDialog extends JDialog implements ActionListen
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		if(e.getSource() == confirmButton) {
-			controller.deleteApptWithLocationName(locationName);
+			controller.deleteApptByLocation(locationName);
 			if(!controller.checkApptLocation(locationName)) {
 				LocationStorageController locationController = LocationStorageController.getInstance();
 				Location location = locationController.findLocationByName(locationName);
 				locationController.manageLocation(location, LocationStorageController.REMOVE);
 			}
-			setVisible(false); //you can't see me!
-			dispose(); //Destroy the JFrame object
+			setVisible(false); 
+			dispose();
 			
 		}
 		else if(e.getSource() == noButton) {
-			setVisible(false); //you can't see me!
-			dispose(); //Destroy the JFrame object
+			setVisible(false); 
+			dispose(); 
 		}
 	}
-
 }

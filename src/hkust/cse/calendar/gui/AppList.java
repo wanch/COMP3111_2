@@ -43,7 +43,7 @@ class AppCellRenderer extends DefaultTableCellRenderer {
 			int colorCMD, Color currColor) {
 
 		Font font1 = new Font("Helvetica", Font.ITALIC, 11);
-		
+
 		if (override) {
 			if (row % 2 == 0)
 				setBackground(new Color(153, 204, 255));
@@ -112,13 +112,13 @@ public class AppList extends JPanel implements ActionListener {
 	public Appt selectedAppt=null;
 	private MouseEvent tempe;
 	private TimeMachine timeMachine;
-	
+
 	public AppList() {
 		timeMachine = TimeMachine.getInstance();
 		setLayout(new BorderLayout());
 		currentRow = 0;
 		currentCol = 0;
-		
+
 		TitledBorder b = BorderFactory
 				.createTitledBorder("Appointment Contents");
 		b.setTitleColor(new Color(102, 0, 51));
@@ -214,7 +214,7 @@ public class AppList extends JPanel implements ActionListener {
 			public void mouseReleased(MouseEvent e) {
 				releaseResponse(e);
 				if(e.getButton()==1)
-				calculateDrag(e);
+					calculateDrag(e);
 			}
 		});
 
@@ -319,7 +319,7 @@ public class AppList extends JPanel implements ActionListener {
 		TableModel t = tableView.getModel();
 		return (String) t.getValueAt(currentRow, currentCol);
 	}
-	
+
 	public void setTodayAppt(Appt[] list) {
 		if (list == null)
 			return;
@@ -338,7 +338,7 @@ public class AppList extends JPanel implements ActionListener {
 			color = currColor;
 		else
 			color = currColorForJoint;
-		
+
 		if (appt == null)
 			return;
 
@@ -374,18 +374,9 @@ public class AppList extends JPanel implements ActionListener {
 				} else {
 					cellCMD[pos[0]][1] = COLORED;
 					cellColor[pos[0]][1] = color;
-					
 				}
-
 			}
 		}
-
-		//if (currColor.equals(Color.yellow))
-		//	currColor = Color.pink;
-		//else
-		//	currColor = Color.yellow;
-		
-
 	}
 
 	public int[] calRowColNum(int total) {
@@ -415,50 +406,46 @@ public class AppList extends JPanel implements ActionListener {
 	}
 
 	private void delete() {
-		
+
 		Appt apptTitle = getSelectedAppTitle();
 
 		if (apptTitle == null){
 			JOptionPane.showMessageDialog(this, "No Appointment in the timeslot.", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
-	}		
-		
+		}		
+
 		if (apptTitle.TimeSpan().StartTime().before(timeMachine.getNowTimestamp())){
 			JOptionPane.showMessageDialog(null, "Appointment already past!" , "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-		
+
 		if(!apptTitle.getOwner().ID().equals(CalGrid.currUser.ID())) {
 			JOptionPane.showMessageDialog(null, "Cannot delete others' appointment!" , "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-		
+
 		this.parent.controller.removeApptXml(apptTitle);
 		this.parent.controller.ManageAppt(apptTitle,1);
-		
+
 		parent.updateAppList();
 		parent.UpdateCal();
-		
-		
-
 	}
 
 	private void modify() {
 		Appt apptTitle = getSelectedAppTitle();
 		if (apptTitle == null)
 			return;
-		
-		//System.out.println(apptTitle.TimeSpan().StartTime().toString() + "  " + timeMachine.getNowTimestamp().toString());
+
 		if (apptTitle.getStartDate().StartTime().before(timeMachine.getNowTimestamp())){
 			JOptionPane.showMessageDialog(null, "Appointment already past!" , "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-		
+
 		if(!apptTitle.getOwner().ID().equals(CalGrid.currUser.ID())) {
 			JOptionPane.showMessageDialog(null, "Cannot modify others' appointment!" , "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-				
+
 		AppScheduler setAppDial = new AppScheduler("Modify", parent,apptTitle.getID());
 		Appt clone = apptTitle.clone(apptTitle.TimeSpan());
 		setAppDial.updateSetApp(clone);
@@ -468,12 +455,12 @@ public class AppList extends JPanel implements ActionListener {
 	}
 
 	public Appt getSelectedAppTitle() {
-		
+
 		Object apptTitle;
 		if (currentRow < 0 || currentRow > ROWNUM - 1) {
 			JOptionPane.showMessageDialog(parent, "Please Select Again !",
 					"Error", JOptionPane.ERROR_MESSAGE);
-			
+
 			selectedAppt=null;
 			return selectedAppt;
 		}
@@ -481,7 +468,7 @@ public class AppList extends JPanel implements ActionListener {
 			apptTitle = tableView.getModel().getValueAt(currentRow, 1);
 		} else
 			apptTitle = tableView.getModel().getValueAt(currentRow, 4);
-		
+
 
 		if (apptTitle instanceof Appt)
 		{
@@ -493,19 +480,16 @@ public class AppList extends JPanel implements ActionListener {
 			selectedAppt=null;
 			return selectedAppt;
 		}
-			
-
 	}
-	
-	private void newAppt() {
 
+	private void newAppt() {
 		if (currentRow < 0 || currentRow > ROWNUM - 1) {
 			JOptionPane.showMessageDialog(parent, "Please Select Again !",
 					"Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		int startTime;
-		
+
 		if (currentCol < 3)
 			startTime = currentRow * 15 + 480;
 		else
@@ -516,7 +500,6 @@ public class AppList extends JPanel implements ActionListener {
 				parent.mCurrUser, startTime));
 		a.setLocationRelativeTo(null);
 		a.show();
-		
 	}
 
 	private void pressResponse(MouseEvent e) {
@@ -527,27 +510,26 @@ public class AppList extends JPanel implements ActionListener {
 			pop.show(e.getComponent(), e.getX(), e.getY());
 	}
 	private void releaseResponse(MouseEvent e) {
-		
+
 		releaseRow = tableView.getSelectedRow();
 		releaseCol = tableView.getSelectedColumn();
 		if ((e.getModifiers() & InputEvent.BUTTON3_MASK) != 0)
 			pop.show(e.getComponent(), e.getX(), e.getY());
 	}
 	private void calculateDrag(MouseEvent e){
-		
+
 		if(releaseRow==pressRow){		
 			currentRow = tableView.getSelectedRow()+tableView.getSelectedRowCount()-1;			
 		}else{
 			currentRow = releaseRow;
-			
 		}
-		
+
 		if(releaseCol==pressCol){			
 			currentCol = tableView.getSelectedColumn()+tableView.getSelectedColumnCount()-1;
 		}else{
 			currentCol = releaseCol;
 		}
-		
+
 	}
 	public void setParent(CalGrid grid) {
 		parent = grid;
@@ -556,9 +538,6 @@ public class AppList extends JPanel implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == tableView) {
 			pop.show(tableView, currentRow * 20, currentRow * 20);
-
-		}
-		
+		}	
 	}
-
 }

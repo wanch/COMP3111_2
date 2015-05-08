@@ -74,7 +74,6 @@ public class CalGrid extends JFrame implements ActionListener {
 	private String displayDateLabel;
 
 	private final Object[][] data = new Object[6][7];
-	//private final Vector[][] apptMarker = new Vector[6][7];
 	private final String[] names = { "Sunday", "Monday", "Tuesday",
 			"Wednesday", "Thursday", "Friday", "Saturday" };
 	private final String[] months = { "January", "Feburary", "March", "April",
@@ -102,16 +101,15 @@ public class CalGrid extends JFrame implements ActionListener {
 	
 	private final String[] holidays = {
 			"New Years Day\nSpring Festival\n",
-			"Hugo Tse's Birthday (6/2)\nHugo Tse's Birthday (6/2)\nHugo Tse's Birthday (6/2)\nHugo is so important that we have to say it thrice.\n",
+			"President's Day (US)\n",
 			"",
 			"Ching Ming Festival\nGood Friday\nThe day following Good Friday\nEaster Monday\n",
-			"Labour Day\nThe Buddha Birthday\n",
-			"8964\nTuen Ng Festival\n",
+			"Labour Day\nThe Buddha Birthday\nTuen Ng Festival\n",
 			"",
 			"Hong Kong Special Administrative Region Establishment Day\n",
-			"Civic Holiday(CAN)\nUmbrella Revolution(28/9)\nChinese Mid-Autumn Festival\n",
-			"Chinese National Day(10/10)\n",
-			"National Day\nChung Yeung Festival\nThanksgiving Day\n",
+			"Civic Holiday(CAN)\n",
+			"",
+			"National Day\nChinese Mid-Autumn Festival\nChung Yeung Festival\nThanksgiving Day\n",
 			"Veterans Day(US)\nThanksgiving Day(US)\n", "Christmas\n" };
 	
 	private AppScheduler setAppDial;
@@ -148,7 +146,6 @@ public class CalGrid extends JFrame implements ActionListener {
 		currentM = 12;
 
 		getDateArray(data);
-		//initalTodayReminder();
 
 		JPanel leftP = new JPanel();
 		leftP.setLayout(new BorderLayout());
@@ -273,14 +270,13 @@ public class CalGrid extends JFrame implements ActionListener {
 
 		invitationOfJointAppt();
 		initializeSystem(); // for you to add.
-		//mCurrUser = getCurrUser(); // totally meaningless code
+
 		apptMenu.setEnabled(true);
 		locationMenu.setEnabled(true);
 		adminMenu.setEnabled(true);
 		dateStatus.setEnabled(true);
 		updateDisplay();
 		
-		//clock = new Clock(this);
 		
 		UpdateCal();
 		pack();				// sized the window to a preferred size
@@ -288,7 +284,7 @@ public class CalGrid extends JFrame implements ActionListener {
 		
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
-				//controller.closeSaving();
+
 				System.exit(0);
 			}
 		});
@@ -323,7 +319,7 @@ public class CalGrid extends JFrame implements ActionListener {
 			}
 
 			public void setValueAt(Object aValue, int row, int column) {
-//				System.out.println("Setting value to: " + aValue);
+
 				data[row][column] = aValue;
 			}
 		};
@@ -396,22 +392,17 @@ public class CalGrid extends JFrame implements ActionListener {
 			}
 		};
 		JMenuBar menuBar = new JMenuBar();
-		menuBar.getAccessibleContext().setAccessibleName("Calendar Choices");
 		JMenuItem mi;
-		
 		menuBar.add(dateStatus);
 		dateStatus.getAccessibleContext().setAccessibleDescription("Date");
-		dateStatus.setMnemonic('T');
 		mi = new JMenuItem("Change Time");
 		mi.addActionListener(listener);
 		dateStatus.add(mi);
 		
-		JMenu Access = (JMenu) menuBar.add(new JMenu("Access"));
-		Access.setMnemonic('A');
+		JMenu Access = (JMenu) menuBar.add(new JMenu("Account"));
 		Access.getAccessibleContext().setAccessibleDescription("Account Access Management");
 		
 		mi = (JMenuItem) Access.add(new JMenuItem("Account Setting"));
-		mi.setMnemonic('S');
 		mi.getAccessibleContext().setAccessibleDescription("Change account information");
 		mi.addActionListener(new ActionListener() {
 			@Override
@@ -422,16 +413,12 @@ public class CalGrid extends JFrame implements ActionListener {
 		});
 
 		mi = (JMenuItem) Access.add(new JMenuItem("Logout"));	//adding a Logout menu button for user to logout
-		mi.setMnemonic('L');
 		mi.getAccessibleContext().setAccessibleDescription("For user logout");
 		mi.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int n = JOptionPane.showConfirmDialog(null, "Logout?",
 						"Comfirm", JOptionPane.YES_NO_OPTION);
 				if (n == JOptionPane.YES_OPTION){
-					//controller.closeSaving();
-					//controller.dumpStorageToFile();
-					//System.out.println("closed");
 					dispose();
 					CalendarMain.logOut = true;
 					return;	//return to CalendarMain()
@@ -440,14 +427,12 @@ public class CalGrid extends JFrame implements ActionListener {
 		});
 		
 		mi = (JMenuItem) Access.add(new JMenuItem("Exit"));
-		mi.setMnemonic('E');
 		mi.getAccessibleContext().setAccessibleDescription("Exit Program");
 		mi.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int n = JOptionPane.showConfirmDialog(null, "Exit Program ?",
 						"Comfirm", JOptionPane.YES_NO_OPTION);
 				if (n == JOptionPane.YES_OPTION){
-					//controller.closeSaving();
 					System.exit(0);
 				}
 			}
@@ -455,7 +440,6 @@ public class CalGrid extends JFrame implements ActionListener {
 
 		menuBar.add(apptMenu);
 		apptMenu.setEnabled(false);
-		apptMenu.setMnemonic('p');
 		apptMenu.getAccessibleContext().setAccessibleDescription(
 				"Appointment Management");
 		mi = new JMenuItem("New Appointment");
@@ -474,7 +458,6 @@ public class CalGrid extends JFrame implements ActionListener {
 		if(mCurrUser.getRole().equals("Admin")) {
 			menuBar.add(adminMenu);
 			adminMenu.setEnabled(false);
-			adminMenu.setMnemonic('L');
 			adminMenu.getAccessibleContext().setAccessibleDescription("Location");
 			mi = new JMenuItem("Manage Locations");
 			mi.addActionListener(listener);
@@ -497,7 +480,6 @@ public class CalGrid extends JFrame implements ActionListener {
 	private void initializeSystem() {
 
 		mCurrUser = this.controller.getDefaultUser();	//get User from controller
-		checkUpdateJoinAppt();
 		checkApptLocationInToBeDeleteLocation();
 	}
 
@@ -571,28 +553,13 @@ public class CalGrid extends JFrame implements ActionListener {
 			this.setTitle(mCurrTitle + "(" + currentY + "-" + currentM + "-"
 					+ currentD + ")");
 			Appt[] monthAppts = null;
-			GetMonthAppts();
-
-//			for (int i = 0; i < 6; i++)
-//				for (int j = 0; j < 7; j++)
-//					apptMarker[i][j] = new Vector(10, 1);
-			
+			GetMonthAppts();	
 			TableModel t = prepareTableModel();
 			this.tableView.setModel(t);
 			this.tableView.repaint();
 			updateAppList();
 		}
 	}
-
-//	public void clear() {
-//		for (int i = 0; i < 6; i++)
-//			for (int j = 0; j < 7; j++)
-//				apptMarker[i][j] = new Vector(10, 1);
-//		TableModel t = prepareTableModel();
-//		tableView.setModel(t);
-//		tableView.repaint();
-//		applist.clear();
-//	}
 
 	private Appt[] GetMonthAppts() {
 		Timestamp start = new Timestamp(0);
@@ -714,10 +681,7 @@ public class CalGrid extends JFrame implements ActionListener {
 		end.setSeconds(59);
 		
 		TimeSpan period = new TimeSpan(start, end);
-		Appt[] apptlist= controller.RetrieveAppts(mCurrUser, period);
-		//reminder = new Reminder(this,apptlist);
-		
-		
+		Appt[] apptlist= controller.RetrieveAppts(mCurrUser, period);	
 	}
 
 	public AppList getAppList() {
@@ -726,11 +690,6 @@ public class CalGrid extends JFrame implements ActionListener {
 
 	public User getCurrUser() {
 		return mCurrUser;
-	}
-	
-	// check for any invite or update from join appointment
-	public void checkUpdateJoinAppt(){
-		// Fix Me!
 	}
 
 	public void updateDisplay() {
@@ -778,7 +737,7 @@ public class CalGrid extends JFrame implements ActionListener {
 	}
 	
 	private void checkApptLocationInToBeDeleteLocation() {
-		Appt[] apptThatLocationInToBeDelete = controller.getApptThatLocationInToBeDelete();
+		Appt[] apptThatLocationInToBeDelete = controller.getApptInDeleteLocation();
 		for(Appt appt : apptThatLocationInToBeDelete) {
 			new ConfirmLocationDeleteDialog(controller, appt.getLocation().getLocationName());
 		}

@@ -42,24 +42,21 @@ public class JointApptUserManager extends JDialog implements ActionListener {
 	private JLabel remaininguserL;
 	private JLabel inviteduserL;
 	
-	private JButton addBut;
-	private JButton removeBut;
-	private JButton addallBut;
-	private JButton removeallBut;
+	private JButton addButton;
+	private JButton removeButton;
+	private JButton addallButton;
 	
 	private JButton saveButton;
 	private JButton cancelButton;
 
-	private ArrayList<User> inviteduserName = new ArrayList<User>();
-	private ArrayList<User> remaininguserName = new ArrayList<User>();
+	private ArrayList<User> invitedUser = new ArrayList<User>();
+	private ArrayList<User> remainingUser = new ArrayList<User>();
 	
-	private Appt new_appt;
-	private User current;
+	private Appt newAppt;
 	
-	// ?? should have list(s) containing participants ??
 	public JointApptUserManager(CalGrid appt, AppScheduler appScheduler, Appt newappt) {
 		parent = appt;
-		new_appt = newappt;
+		newAppt = newappt;
 		lock = appScheduler;
 		userController = UserStorageController.getInstance();
 		setAlwaysOnTop(true);
@@ -98,18 +95,15 @@ public class JointApptUserManager extends JDialog implements ActionListener {
 	    
 		JPanel center = new JPanel();
 		
-		addBut = new JButton(">>");
-		addBut.addActionListener(this);
-		addallBut = new JButton(">> All");
-		addallBut.addActionListener(this);
-		removeBut = new JButton("<<");
-		removeBut.addActionListener(this);
-		removeallBut = new JButton("<< All");
-		removeallBut.addActionListener(this);
-		center.add(addBut);
-		center.add(addallBut);
-		center.add(removeBut);
-		center.add(removeallBut);
+		addButton = new JButton(">>");
+		addButton.addActionListener(this);
+		addallButton = new JButton(">> All");
+		addallButton.addActionListener(this);
+		removeButton = new JButton("<<");
+		removeButton.addActionListener(this);
+		center.add(addButton);
+		center.add(addallButton);
+		center.add(removeButton);
 
 	    JPanel bottom = new JPanel();
 		
@@ -125,7 +119,7 @@ public class JointApptUserManager extends JDialog implements ActionListener {
 		contentPane.add("Center", center);
 		contentPane.add("South", bottom);
 
-		updateUserList(inviteduserName, remaininguserName);
+		updateUserList(invitedUser, remainingUser);
 		pack();
 		setVisible(true);		
 	}
@@ -134,53 +128,46 @@ public class JointApptUserManager extends JDialog implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		
-		if (e.getSource() == addBut) {
+		if (e.getSource() == addButton) {
 			if(remainingList.getSelectedValuesList() == null) {
-				JOptionPane.showMessageDialog(null, "No user is selected!", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null, "No user is selected", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 			else {
 				ArrayList<User> selecteduser = new ArrayList<User> (remainingList.getSelectedValuesList());
-				addItem(remaininguserName, inviteduserName, selecteduser, true);
+				addItem(remainingUser, invitedUser, selecteduser, true);
 			}
-		} else if (e.getSource() == addallBut) {
+		} else if (e.getSource() == addallButton) {
 			if(remainingList.getComponentCount() == 0) {
-				JOptionPane.showMessageDialog(null, "All users are invited!", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null, "All users are invited", "Error", JOptionPane.ERROR_MESSAGE);
 			} else {
 				addallItem(true);
 			}
-		} else if (e.getSource() == removeBut) {
+		} else if (e.getSource() == removeButton) {
 			if(invitedList.getSelectedValuesList() == null) {
-				JOptionPane.showMessageDialog(null, "No user is selected!", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null, "No user is selected", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 			else {
 				ArrayList<User> selecteduser = new ArrayList<User> (invitedList.getSelectedValuesList());
-				addItem(inviteduserName, remaininguserName, selecteduser, false);
-			}
-		} else if (e.getSource() == removeallBut) {
-			if(invitedList.getComponentCount() == 0) {
-				JOptionPane.showMessageDialog(null, "No user is invited!", "Error", JOptionPane.ERROR_MESSAGE);
-			}
-			else {
-				addallItem(false);
+				addItem(invitedUser, remainingUser, selecteduser, false);
 			}
 		}
 		
 		if (e.getSource() == saveButton) {
 			User[] empty = null;
-			if (inviteduserName.size() > 0) {
-				User[] wait = new User[inviteduserName.size()];
-				for (int i = 0; i < inviteduserName.size(); i++) {
-					wait[i] = inviteduserName.get(i);
+			if (invitedUser.size() > 0) {
+				User[] wait = new User[invitedUser.size()];
+				for (int i = 0; i < invitedUser.size(); i++) {
+					wait[i] = invitedUser.get(i);
 				}
-				new_appt.setWaitingList(wait);
+				newAppt.setWaitingList(wait);
 			} else {
-				new_appt.setWaitingList(empty);
+				newAppt.setWaitingList(empty);
 			}
-			new_appt.setAttendList(empty);
-			new_appt.setRejectList(empty);
+			newAppt.setAttendList(empty);
+			newAppt.setRejectList(empty);
 			setVisible(false);
-			if (new_appt.getAllPeople().size() > 0) {
-				SuggestedTime suggestion = new SuggestedTime(parent, lock, new_appt);
+			if (newAppt.getAllPeople().size() > 0) {
+				SuggestedTime suggestion = new SuggestedTime(parent, lock, newAppt);
 			}
 		} else if (e.getSource() == cancelButton) {
 			setVisible(false);
@@ -188,31 +175,31 @@ public class JointApptUserManager extends JDialog implements ActionListener {
 		}
 	}
 	
-	private void updateUserList(ArrayList<User> inviteduserName, ArrayList<User> remaininguserName) {
-		if (inviteduserName.isEmpty() && remaininguserName.isEmpty()) {
+	private void updateUserList(ArrayList<User> invitedUser, ArrayList<User> remainingUser) {
+		if (invitedUser.isEmpty() && remainingUser.isEmpty()) {
 			initializeList();
 		} else {
-			remainingList.setListData(remaininguserName.toArray(new User[remaininguserName.size()]));
-			invitedList.setListData(inviteduserName.toArray(new User[inviteduserName.size()]));
+			remainingList.setListData(remainingUser.toArray(new User[remainingUser.size()]));
+			invitedList.setListData(invitedUser.toArray(new User[invitedUser.size()]));
 		}
 	}
 	
 	private void initializeList() {
-		allList = new_appt.getAllPeople();
+		allList = newAppt.getAllPeople();
 		User[] users = userController.retrieveUsers();
-		inviteduserName = new ArrayList<User>();
-		remaininguserName = new ArrayList<User>();
+		invitedUser = new ArrayList<User>();
+		remainingUser = new ArrayList<User>();
 		for(int i = 0; i < users.length; i++) {
 			if(users[i] != parent.mCurrUser){
 				if(checkuserattended(allList, users[i].ID())) {
-					inviteduserName.add(users[i]);
+					invitedUser.add(users[i]);
 				} else {
-					remaininguserName.add(users[i]);
+					remainingUser.add(users[i]);
 				}
 			}
 		}
-		remainingList.setListData(remaininguserName.toArray(new User[remaininguserName.size()]));
-		invitedList.setListData(inviteduserName.toArray(new User[inviteduserName.size()]));
+		remainingList.setListData(remainingUser.toArray(new User[remainingUser.size()]));
+		invitedList.setListData(invitedUser.toArray(new User[invitedUser.size()]));
 	}
 	
 	private void addItem(ArrayList<User> addfromM, ArrayList<User> addtoM, ArrayList<User> nametoadd, boolean option) {
@@ -231,11 +218,11 @@ public class JointApptUserManager extends JDialog implements ActionListener {
 		if (option) {
 			remainingList.setSelectionInterval(0, remainingList.getLastVisibleIndex());
 			ArrayList<User> selecteduser = new ArrayList<User> (remainingList.getSelectedValuesList());
-			addItem(remaininguserName, inviteduserName, selecteduser, true);
+			addItem(remainingUser, invitedUser, selecteduser, true);
 		} else {
 			invitedList.setSelectionInterval(0, invitedList.getLastVisibleIndex());
 			ArrayList<User> selecteduser = new ArrayList<User> (invitedList.getSelectedValuesList());
-			addItem(inviteduserName, remaininguserName, selecteduser, false);
+			addItem(invitedUser, remainingUser, selecteduser, false);
 		}
 			
 	}

@@ -42,7 +42,6 @@ public class UserApptManager extends JFrame implements ActionListener, ListSelec
 	private DefaultListModel<Appt> apptListModel;
 	private JScrollPane apptScrollPane;
 	
-	//private User selectedUser = null;
 	public static UserApptManager getInstance() {
 		return instance;
 	}
@@ -58,7 +57,7 @@ public class UserApptManager extends JFrame implements ActionListener, ListSelec
 		this.apptController = apptController;
 		this.calGrid = calGrid;
 		
-		/* Act like a destructor */
+
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
 				UserApptManager.instance = null;

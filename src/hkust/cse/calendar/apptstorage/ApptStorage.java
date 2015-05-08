@@ -61,10 +61,9 @@ public abstract class ApptStorage {
 
 	public abstract void removeApptXml(Appt appt);	//abstract method to remove appointment from xml to hash map
 
-
-	public abstract boolean checkOverLap(Appt appt, Appt entry);		
+	public abstract boolean checkOverLap(Appt appt, Appt entry);		// simple check overlap 
 	
-	public abstract boolean checkOverLaps(ArrayList<Appt> apptlist);
+	public abstract boolean checkOverLaps(ArrayList<Appt> apptlist);	// check overlap 
 	
 	public abstract boolean checkApptLocation(String locationName);
 
@@ -72,19 +71,15 @@ public abstract class ApptStorage {
 	
 	public abstract Appt[] retrieveAllAppt(User user);
 	
-	public abstract boolean checkOtherTimespan(TimeSpan suggestedTimeSpan, User[] users);
+	public abstract boolean checkOtherTimespan(TimeSpan suggesteTimeSpan, User[] users);
 
-	public abstract TimeSpan[] getSuggestedTimeSpan(User[] users, Timestamp stamp);
+	public abstract TimeSpan[] getSuggestTimeSpan(User[] users, Timestamp stamp);
 	
-	public abstract boolean checkLocationCapacityEnough(Appt appt);
+	public abstract boolean checkLocationCapacity(Appt appt);
 	
-	public abstract void deleteApptWithLocationName(String locationName);
+	public abstract void deleteApptByLocation(String locationName);
 	
 	public abstract Appt[] getApptForLocation(Location location);
 	
-	public abstract Appt[] getApptThatLocationInToBeDelete();
-	/*
-	 * Add other methods if necessary
-	 */
-
+	public abstract Appt[] getApptInDeleteLocation();
 }

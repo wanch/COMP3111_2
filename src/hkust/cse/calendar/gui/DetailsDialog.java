@@ -24,8 +24,8 @@ import javax.swing.border.TitledBorder;
 
 
 public class DetailsDialog extends JFrame implements ActionListener {
-	private JButton exitBut;
-	private JTextArea area;
+	private JButton exitButton;
+	private JTextArea detailsArea;
 
 	public DetailsDialog(String msg, String title) {
 		paintContent(title);
@@ -51,18 +51,17 @@ public class DetailsDialog extends JFrame implements ActionListener {
 		Border border = new TitledBorder(null, "Information");
 		panel.setBorder(border);
 
-		area = new JTextArea(25, 40);
-//		area.setPreferredSize(new Dimension(400, 300));
+		detailsArea = new JTextArea(25, 40);
 
-		panel.getViewport().add(area);
+		panel.getViewport().add(detailsArea);
 
-		exitBut = new JButton("Exit");
-		exitBut.addActionListener(this);
+		exitButton = new JButton("Exit");
+		exitButton.addActionListener(this);
 
 		JPanel p2 = new JPanel();
 		p2.setLayout(new FlowLayout(FlowLayout.CENTER));
 
-		p2.add(exitBut);
+		p2.add(exitButton);
 
 		content.add("Center", panel);
 		content.add("South", p2);
@@ -70,12 +69,12 @@ public class DetailsDialog extends JFrame implements ActionListener {
 	}
 
 	public void Display(String msg) {
-		area.setFont(new Font("bold", Font.BOLD, 14));
+		detailsArea.setFont(new Font("bold", Font.BOLD, 14));
 
 		if (msg.length() == 0)
 			msg = new String("No Information Inputed");
-		area.setText(msg);
-		area.setEditable(false);
+		detailsArea.setText(msg);
+		detailsArea.setEditable(false);
 	}
 
 	public void Display(Appt appt) {
@@ -109,73 +108,73 @@ public class DetailsDialog extends JFrame implements ActionListener {
 			}
 		}
 
-		area.setText("Appointment Information \n");
-		area.append("Title: " + appt.getTitle() + "\n");
-		area.append("Time: " + date + " " + time + "\n");
-		area.append("Location: " + appt.getLocation().getLocationName() + "\n");
-		area.append("Reminder: " + reminderTime +"\n");
-		area.append("\nParticipants:\n");
-		area.append("  Attend:");
+		detailsArea.setText("Appointment Information \n");
+		detailsArea.append("Title: " + appt.getTitle() + "\n");
+		detailsArea.append("Time: " + date + " " + time + "\n");
+		detailsArea.append("Location: " + appt.getLocation().getLocationName() + "\n");
+		detailsArea.append("Reminder: " + reminderTime +"\n");
+		detailsArea.append("\nParticipants:\n");
+		detailsArea.append("  Attend:");
 		LinkedList<String> attendList = appt.getAttendList();
 		if(attendList != null)
 		{
 			for(int i = 0; i < attendList.size(); i++)
 			{
-				area.append("  " + attendList.get(i));
+				detailsArea.append("  " + attendList.get(i));
 			}
 		}
-		area.append("\n\n  Reject:");
+		detailsArea.append("\n\n  Reject:");
 		LinkedList<String> rejectList = appt.getRejectList();
 		if(rejectList != null)
 		{
 			for(int i = 0; i < rejectList.size(); i++)
 			{
-				area.append("  " + rejectList.get(i));
+				detailsArea.append("  " + rejectList.get(i));
 			}
 		}
-		area.append("\n\n  Waiting:");
+		detailsArea.append("\n\n  Waiting:");
 		LinkedList<String> waitingList = appt.getWaitingList();
 		if(waitingList != null)
 		{
 			for(int i = 0; i < waitingList.size(); i++)
 			{
-				area.append("  " + waitingList.get(i));
+				detailsArea.append("  " + waitingList.get(i));
 			}
 		}
 
-		area.append("\n\nDescription: \n" + appt.getInfo());
-		area.setEditable(false);
+		detailsArea.append("\n\nDescription: \n" + appt.getInfo());
+		detailsArea.setEditable(false);
 	}
 
 	public void Display(Vector[] vs, User[] entities) {
 		if (vs == null || entities == null)
 			return;
 		String temp = ((TimeSpan) vs[0].elementAt(0)).StartTime().toString();
-		area.setText("Available Time For Selected participants and room ("
+		detailsArea.setText("Available Time For Selected participants and room ("
 				+ temp.substring(0, temp.lastIndexOf(" ")) + ")\n\n\n");
 		String temp1 = null;
 		String temp2 = null;
 
 		for (int i = 0; i < entities.length; i++) {
-			area.append((i + 1) + ". " + entities[i].ID() + " :\n\n");
+			detailsArea.append((i + 1) + ". " + entities[i].ID() + " :\n\n");
 			for (int j = 0; j < vs[i].size(); j++) {
 				temp1 = ((TimeSpan) vs[i].elementAt(j)).StartTime().toString();
 				temp2 = ((TimeSpan) vs[i].elementAt(j)).EndTime().toString();
-				area.append("   > From: "
+				detailsArea.append("   > From: "
 						+ temp1.substring(0, temp1.lastIndexOf(':')) + "  To: "
 						+ temp2.substring(0, temp2.lastIndexOf(':')) + "\n");
 
 			}
-			area.append("\n");
+			detailsArea.append("\n");
 
 		}
-		area.setEditable(false);
+		detailsArea.setEditable(false);
 
 	}
 
 	public void actionPerformed(ActionEvent e) {
 
-		if (e.getSource() == exitBut) {
+		if (e.getSource() == exitButton) {
 			dispose();
 		}
 	}

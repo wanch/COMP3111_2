@@ -46,14 +46,10 @@ public class ApptStorageNullImpl extends ApptStorage {
 		int id[] = getMaxIDs();
 		setJointID(id[1]+1);
 
-		//ApptStorage.mUserToAppts.put(defaultUser, mAppts);
-
- 		// add the related joint appt from other users to mAppt
 		// add the related joint appt from other users to mAppt
 		for(Appt appt : apptlist){
 			mAppts.put(appt.TimeSpan(),appt);
 		}
-
 	}
 
 	@Override
@@ -65,8 +61,6 @@ public class ApptStorageNullImpl extends ApptStorage {
 	public boolean checkOverLap(Appt appt,Appt entry){
 
 		// if the user is in waiting list, don't check that appt
-		//if(isCurrUserInTheList(defaultUser.ID(),entry.getWaitingList())) return false; 
-
 		if(appt.TimeSpan().Overlap(entry.TimeSpan())){
 			return true;
 		}else{
@@ -76,44 +70,35 @@ public class ApptStorageNullImpl extends ApptStorage {
 
 	@Override
 	public boolean checkOverLaps(ArrayList<Appt> appts){
-		// for non-joint appt - only check overlap with all appts of that user
+		//  only check that user appointment overlap
 		for (Appt appt: appts) {
+			for (Entry<TimeSpan, Appt> entry : mAppts.entrySet()) {
+				// if it is an old appt, then don't check overlap
+				if(appt.getID() == entry.getValue().getID()) continue;
+				// if overlap, then return true. otherwise, check next appt
+				if(checkOverLap(appt,entry.getValue())){
+					return true;
+				}
+			}	
+			if(appt.isJoint()){
+				// check all appointment overlap with joint appointment
 
-				for (Entry<TimeSpan, Appt> entry : mAppts.entrySet()) {
+				for(String people : appt.getAllPeople()){
+					HashMap<TimeSpan,Appt> apptslist = mUserToAppts.get(UserStorageController.getInstance().getUserById(people));
+					for(Appt mAppt : apptslist.values()){
 
-					// if it is an old appt, then don't check overlap
-					if(appt.getID() == entry.getValue().getID()) continue;
-					// if overlap, then return true. otherwise, check next appt
-					if(checkOverLap(appt,entry.getValue())){
-						return true;
-					}
+						// if the joint appointment owner modified his appt, don't check itself 
+						if(appt.isJoint() && (mAppt.getJoinID()==appt.getJoinID() )) continue;
 
-				}	
-				if(appt.isJoint()){
-				// for joint appt - check overlap will all appts in the list
-				
-					for(String people : appt.getAllPeople()){
-						HashMap<TimeSpan,Appt> apptslist = mUserToAppts.get(UserStorageController.getInstance().getUserById(people));
-						for(Appt mAppt : apptslist.values()){
-	
-							// if the joint appointment owner modified his appt, don't check itself 
-							if(appt.isJoint() && (mAppt.getJoinID()==appt.getJoinID() )) continue;
-	
-							// Otherwise, check if the time overlapped
-							if( mAppt.TimeSpan().Overlap(appt.TimeSpan())) {
-								return true;
-							}
+						// Otherwise, check if the time overlapped
+						if( mAppt.TimeSpan().Overlap(appt.TimeSpan())) {
+							return true;
 						}
 					}
-					
 				}
-
+			}
 		}
-
-
 		return false;
-
-
 	}
 
 
@@ -128,14 +113,12 @@ public class ApptStorageNullImpl extends ApptStorage {
 			if (d.Overlap(entry.getKey()))
 				temp.add(entry.getValue());			
 		}
-
 		return temp.toArray(new Appt[temp.size()]);
 	}
 
 	@Override
 	public Appt[] RetrieveAppts(User entity, TimeSpan time) {
 		// TODO Auto-generated method stub
-		//defaultUser = entity;
 		ArrayList<Appt> appts = new ArrayList<Appt>();
 
 		for(Entry<TimeSpan, Appt> entry : mAppts.entrySet()) {
@@ -155,15 +138,12 @@ public class ApptStorageNullImpl extends ApptStorage {
 				}
 			}
 		}
-
 		return appts.toArray(new Appt[appts.size()]);
 	}
 
 	public Appt[] RetrieveAppts2(User entity, TimeSpan time) {
 		// TODO Auto-generated method stub
-		//defaultUser = entity;
 		ArrayList<Appt> appts = new ArrayList<Appt>();
-
 		HashMap<TimeSpan, Appt> userAppts = mUserToAppts.get(entity);
 		for(Appt appt : userAppts.values()) {
 			if(time.Overlap(appt.TimeSpan())) {
@@ -171,7 +151,6 @@ public class ApptStorageNullImpl extends ApptStorage {
 			}
 
 		}
-
 		return appts.toArray(new Appt[appts.size()]);
 	}
 
@@ -185,10 +164,8 @@ public class ApptStorageNullImpl extends ApptStorage {
 			if(appt.isJoint() && isCurrUserInTheList(defaultUser.ID(), appt.getWaitingList())){
 				temp.add(appt);
 			}	
-
 		}
 		return temp.toArray(new Appt[temp.size()]);
-
 	}	
 
 
@@ -202,15 +179,12 @@ public class ApptStorageNullImpl extends ApptStorage {
 			if(joinApptID == appt.getJoinID()){
 				temp.add(appt);
 			}	
-
 		}
-
 		return temp.toArray(new Appt[temp.size()]);
 	}
 
 	@Override
 	public void UpdateAppt(Appt appt) {
-		// must use the iterator because once you remove an appt, the date of appt.getValue() contain the deleted appt so that it will crash the system
 		for(Iterator<Entry<TimeSpan, Appt>>it=mAppts.entrySet().iterator();it.hasNext();){
 			Entry<TimeSpan, Appt> entry = it.next();
 			Appt oldAppt = entry.getValue();
@@ -218,15 +192,11 @@ public class ApptStorageNullImpl extends ApptStorage {
 				it.remove();
 				mAppts.put(appt.TimeSpan(),appt);
 			}	
-
 		}
-
 	}
 
 	@Override
 	public void RemoveAppt(Appt appt) {
-		// must use the iterator because once you remove an appt, the date of appt.getValue() contain the deleted appt so that it will crash the system
-		//removeApptFromXml(appt); 
 		mAppts.remove(appt.TimeSpan());
 		for(Iterator<Entry<TimeSpan, Appt>>it = mAppts.entrySet().iterator(); it.hasNext();){
 			Entry<TimeSpan, Appt> entry = it.next();
@@ -242,7 +212,7 @@ public class ApptStorageNullImpl extends ApptStorage {
 		return defaultUser;
 	}
 
-	/* begining of xml management functions*/
+	//xml functions
 	@Override
 	public void loadApptXml(User user, HashMap<TimeSpan,Appt> appts) {
 		int id = apptXml.loadApptFromXml(ApptStorage.apptFile, appts, user.ID());
@@ -259,9 +229,8 @@ public class ApptStorageNullImpl extends ApptStorage {
 	public void removeApptXml(Appt appt) {
 		apptXml.removeApptFromXml(ApptStorage.apptFile, appt, defaultUser.ID());
 	}
-	/* end of xml management functions*/
 
-	@Override // added a method to get the assigned appt id
+	@Override 
 	public int getApptID(){
 		return mAssignedApptID;
 	}
@@ -296,7 +265,7 @@ public class ApptStorageNullImpl extends ApptStorage {
 			HashMap<TimeSpan,Appt> apptslist = apptslistEntry.getValue(); 
 			for(Appt mAppt : apptslist.values()) {
 
-				
+
 				// if the joint appointment owner modified his appt, don't check it 
 				if(appt.isJoint() && !isCurrUserInTheList(defaultUser.ID(), mAppt.getAllPeople()) ) continue;
 				else if (mAppt.getID()==appt.getID()) continue;
@@ -306,19 +275,9 @@ public class ApptStorageNullImpl extends ApptStorage {
 				// modified: non-joint to non-joint don't check itself 
 				if(!appt.isJoint() && mAppt.getOwner() == defaultUser && mAppt.getID()==appt.getID()) continue;
 
-//				System.out.println(appt.TimeSpan());
-//				System.out.println(locationName);
-//				System.out.println(mAppt.TimeSpan());
-//				System.out.println(mAppt.getLocation().toString());
-//				System.out.println("-----");
-				
 				// Otherwise, check if the locations are same or time overlapped
 				boolean isSameLocation = mAppt.getLocation().toString().equals(locationName);
 				boolean isOverLap = mAppt.TimeSpan().Overlap(appt.TimeSpan());
-				//System.out.println(mAppt.getTitle()+" "+mAppt.TimeSpan().StartTime()+" "+appt.TimeSpan().StartTime()+" "+isOverLap);
-//				System.out.println(isSameLocation);
-//				System.out.println(isOverLap);
-//				System.out.println("----------");
 				if(isSameLocation && isOverLap) {
 					return true;
 				}
@@ -328,9 +287,6 @@ public class ApptStorageNullImpl extends ApptStorage {
 		return false;
 	}
 
-	/* Tempory method to get all the appts for the admin appts
-	 * Later will change it to get the specifi
-	 * */
 
 	@Override
 	public Appt[] retrieveAllAppt(User user) {
@@ -359,15 +315,6 @@ public class ApptStorageNullImpl extends ApptStorage {
 				appts.add(appt);
 			}
 		}
-		/*
-		appts.sort(new Comparator<Appt>() {
-			@Override
-			public int compare(Appt o1, Appt o2) {
-				// TODO Auto-generated method stub
-				return (int) (o1.getStartDate().StartTime().getTime() - o2.getStartDate().StartTime().getTime());
-			}
-		});
-		 */
 		return appts.toArray(new Appt[appts.size()]);
 	}
 
@@ -381,8 +328,7 @@ public class ApptStorageNullImpl extends ApptStorage {
 		}
 		return true;
 	}
-	// 
-	//
+
 	public void loadJointAppts(HashMap<TimeSpan, Appt> appts, ArrayList<Appt> apptlist){
 		for(Iterator<Entry<TimeSpan, Appt>>it=appts.entrySet().iterator();it.hasNext();){
 			Entry<TimeSpan, Appt> entry = it.next();
@@ -405,17 +351,14 @@ public class ApptStorageNullImpl extends ApptStorage {
 	}
 
 	@Override
-	public TimeSpan[] getSuggestedTimeSpan(User[] users, Timestamp stampstart) {
-		//		System.out.println(users[0].ID());
-		//		TimeMachine timeMachine = TimeMachine.getInstance();
+	public TimeSpan[] getSuggestTimeSpan(User[] users, Timestamp stampstart) {
+
 		ArrayList<TimeSpan> suggestedTimeSpanList = new ArrayList<TimeSpan>();
 
-		//		Timestamp suggestedStartTimestamp = timeMachine.getNowTimestamp();
 		Timestamp suggestedStartTimestamp = stampstart;
 		suggestedStartTimestamp.setMinutes((suggestedStartTimestamp.getMinutes() / 15) * 15);
 		suggestedStartTimestamp.setSeconds(0);
 
-		//		Timestamp suggestedEndTimestamp = timeMachine.getNowTimestamp();
 		Timestamp suggestedEndTimestamp = new Timestamp(0);
 		suggestedEndTimestamp.setYear(suggestedStartTimestamp.getYear()+1900);
 		suggestedEndTimestamp.setMonth(suggestedStartTimestamp.getMonth());
@@ -438,22 +381,21 @@ public class ApptStorageNullImpl extends ApptStorage {
 			suggestedTimeSpan.EndTime().setMinutes(0);
 			suggestedTimeSpan.EndTime().setSeconds(0);
 		}
-		//		System.out.println(suggestedTimeSpan.toString());
+
 		Appt[] appts = RetrieveAppts2(defaultUser, suggestedTimeSpan);
 		while(appts.length != 0) {
 			suggestedTimeSpan = TimeSpan.addTime(suggestedTimeSpan, TimeSpan.MINUTE, 15);
 			appts = RetrieveAppts2(defaultUser, suggestedTimeSpan);
 		}
-		//		System.out.println(suggestedTimeSpan.toString());
+
 		int i = 0;
 		while(true) {
 			//TODO: Generate suggested timespan
 			if(checkOtherTimespan(suggestedTimeSpan, users)) {
 				suggestedTimeSpanList.add(suggestedTimeSpan);
-				//				System.out.println("added" + suggestedTimeSpan.toString());
 				i++;
 			}
-			//			System.out.println(suggestedTimeSpan.toString());
+
 			if(suggestedTimeSpan.StartTime().getHours() > 17 || (suggestedTimeSpan.StartTime().getHours() == 5 && suggestedTimeSpan.StartTime().getMinutes() > 0)) {
 				suggestedTimeSpan = TimeSpan.addTime(suggestedTimeSpan, TimeSpan.DAY, 1);
 
@@ -465,19 +407,16 @@ public class ApptStorageNullImpl extends ApptStorage {
 				suggestedTimeSpan.EndTime().setMinutes(0);
 				suggestedTimeSpan.EndTime().setSeconds(0);
 			}
-			//			System.out.println(suggestedTimeSpan.toString() + "beforeadd");
 			suggestedTimeSpan = TimeSpan.addTime(suggestedTimeSpan, TimeSpan.MINUTE, 15);
 			appts = RetrieveAppts2(defaultUser, suggestedTimeSpan);
 			while(appts.length != 0) {
 				suggestedTimeSpan = TimeSpan.addTime(suggestedTimeSpan, TimeSpan.MINUTE, 15);
 				appts = RetrieveAppts2(defaultUser, suggestedTimeSpan);
 			}
-			//			System.out.println(suggestedTimeSpan.toString() + "afteradd");
 			if(i == 5) {
 				break;
 			}
 		}
-
 		return suggestedTimeSpanList.toArray(new TimeSpan[suggestedTimeSpanList.size()]);
 	} 
 
@@ -498,11 +437,9 @@ public class ApptStorageNullImpl extends ApptStorage {
 	}
 
 	@Override
-	public boolean checkLocationCapacityEnough(Appt appt) {
+	public boolean checkLocationCapacity(Appt appt) {
 		int locationCapacity = appt.getLocation().getCapacity();
 		int peoplesize = appt.getAllPeople().size() + 1;
-//		System.out.println(peoplesize);
-//		System.out.println(locationCapacity);
 		if (peoplesize <= locationCapacity) {
 			return true;
 		}
@@ -512,7 +449,7 @@ public class ApptStorageNullImpl extends ApptStorage {
 	}
 
 	@Override
-	public void deleteApptWithLocationName(String locationName) {
+	public void deleteApptByLocation(String locationName) {
 		// TODO Auto-generated method stub
 		Iterator<Entry<TimeSpan, Appt>> it = mAppts.entrySet().iterator();
 		while(it.hasNext()) {
@@ -531,27 +468,23 @@ public class ApptStorageNullImpl extends ApptStorage {
 		ArrayList<Integer> addedId = new ArrayList<Integer>();
 
 		for(Appt appt : mAppts.values()) {
-				boolean added = false;
-
-				for(Integer id : addedId) {
-					if(id.intValue() == appt.getID()) {
-						added = true;
-						break;
-					}
+			boolean added = false;
+			for(Integer id : addedId) {
+				if(id.intValue() == appt.getID()) {
+					added = true;
+					break;
 				}
-
-				if(appt.getLocation().getLocationName().equals(location.getLocationName()) && !added) {
-					appts.add(appt);
-					addedId.add(new Integer(appt.getID()));
-				}
+			}
+			if(appt.getLocation().getLocationName().equals(location.getLocationName()) && !added) {
+				appts.add(appt);
+				addedId.add(new Integer(appt.getID()));
+			}
 		}
-
 		return appts.toArray(new Appt[appts.size()]);
 	}
-	
-	
+
 	@Override
-	public Appt[] getApptThatLocationInToBeDelete() {
+	public Appt[] getApptInDeleteLocation() {
 		// TODO Auto-generated method stub
 		LocationStorageController locationController = LocationStorageController.getInstance();
 		Location[] locationsToBeDelete = locationController.getLocationInToBeDelete();
@@ -565,8 +498,6 @@ public class ApptStorageNullImpl extends ApptStorage {
 					appts.add(ApptsInLocation[i]);				
 			}
 		}
-
 		return appts.toArray(new Appt[appts.size()]);
 	}
-
 }

@@ -131,8 +131,6 @@ public class SignupDialog extends JDialog implements ActionListener {
 		signUpButton = new JButton("Sign up now");
 		signUpButton.addActionListener(this);
 		buttonPanel.add(signUpButton);
-		// set default button so that the login button will be pressed when u press enter
-		this.getRootPane().setDefaultButton(signUpButton);
 
 		cancelButton = new JButton("Canel");
 		cancelButton.addActionListener(this);
@@ -309,7 +307,7 @@ public class SignupDialog extends JDialog implements ActionListener {
 	}
 	
 	private String checkValidFirstName(String firstname) {
-		// hugo: changed this validate check 
+
 		if(firstname.matches("[a-zA-z]+([ '-][a-zA-Z]+)*")) {
 			return firstname;
 		}
@@ -318,7 +316,7 @@ public class SignupDialog extends JDialog implements ActionListener {
 			return null;
 		}
 	}
-	// hugo: changed this validate check because the original one don't allow space between two words like "kwok kit"
+
 	private String checkValidLastName(String lastname) {
 		if(lastname.matches("[a-zA-z]+([ '-][a-zA-Z]+)*")) {
 			return lastname;
