@@ -11,15 +11,15 @@ public abstract class User implements Serializable {
 	protected String mLastName;					// Last Name
 	protected String mEmail;					// User email
 	//protected TimeSpan mBirthday;				// User Birthday
-	protected String mRole;	
+	protected String mType;	
 
 	
-	public String getRole() {
-		return mRole;
+	public String getType() {
+		return mType;
 	}
 	
-	public void setRole(String role) {
-		mRole = role;
+	public void setType(String type) {
+		mType = type;
 	}
 
 	// Getter of the user id

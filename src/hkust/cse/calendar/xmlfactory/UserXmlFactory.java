@@ -163,7 +163,7 @@ public class UserXmlFactory {
 		// TODO Auto-generated method stub
 		String id = user.ID();
 		String pw = user.Password();
-		String role = user.getRole();
+		String type = user.getType();
 		String firstname = user.getFirstName();
 		String lastname = user.getLastName();
 		String email = user.getEmail();
@@ -187,8 +187,8 @@ public class UserXmlFactory {
 				password.appendChild(document.createTextNode(pw));
 				newUser.appendChild(password);
 
-				Element userRole = document.createElement("Role");
-				userRole.appendChild(document.createTextNode(role));
+				Element userRole = document.createElement("Type");
+				userRole.appendChild(document.createTextNode(type));
 				newUser.appendChild(userRole);
 
 				Element name = document.createElement("Name");
@@ -262,7 +262,7 @@ public class UserXmlFactory {
 				password.appendChild(document.createTextNode(pw));
 
 				Element userRole = document.createElement("Role");
-				userRole.appendChild(document.createTextNode(role));
+				userRole.appendChild(document.createTextNode(type));
 				
 
 				Element name = document.createElement("Name");

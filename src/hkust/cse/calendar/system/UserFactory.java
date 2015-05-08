@@ -15,18 +15,18 @@ public class UserFactory {
 		
 	}
 	
-	public User createAccount(String id, String pw, String role, String firstName, String lastName, String email) {
+	public User createAccount(String id, String pw, String type, String firstName, String lastName, String email) {
 		User user = null;
 		
-		if(role.equals("Admin")) {
+		if(type.equals("Admin")) {
 			user = new Admin(id, pw);
-			user.setRole(role);
+			user.setType(type);
 			user.setName(firstName, lastName);
 			user.setEmail(email);
 		}
-		else if(role.equals("Regular")) {
+		else if(type.equals("Regular")) {
 			user = new RegularUser(id, pw);
-			user.setRole(role);
+			user.setType(type);
 			user.setName(firstName, lastName);
 			user.setEmail(email);
 		}

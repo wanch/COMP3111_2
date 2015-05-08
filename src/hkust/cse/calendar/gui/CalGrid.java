@@ -401,13 +401,7 @@ public class CalGrid extends JFrame implements ActionListener {
 		
 		JMenu Access = (JMenu) menuBar.add(new JMenu("Account"));
 		Access.getAccessibleContext().setAccessibleDescription("Account Access Management");
-		
-
 		mi = (JMenuItem) Access.add(new JMenuItem("Account Setting"));
-		mi.setMnemonic('S');
-
-		mi = (JMenuItem) Access.add(new JMenuItem("Account Setting"));
-
 		mi.getAccessibleContext().setAccessibleDescription("Change account information");
 		mi.addActionListener(new ActionListener() {
 			@Override
@@ -460,7 +454,7 @@ public class CalGrid extends JFrame implements ActionListener {
 		});
 		apptMenu.add(intivationMenuItem);
 		
-		if(mCurrUser.getRole().equals("Admin")) {
+		if(mCurrUser.getType().equals("Admin")) {
 			menuBar.add(adminMenu);
 			adminMenu.setEnabled(false);
 			adminMenu.getAccessibleContext().setAccessibleDescription("Location");
@@ -740,7 +734,6 @@ public class CalGrid extends JFrame implements ActionListener {
 			waitlistwindows.allDisableEdit();
 		}
 	}
-	
 	private void checkApptLocationInToBeDeleteLocation() {
 		Appt[] apptThatLocationInToBeDelete = controller.getApptInDeleteLocation();
 		for(Appt appt : apptThatLocationInToBeDelete) {

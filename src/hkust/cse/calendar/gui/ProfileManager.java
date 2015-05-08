@@ -55,7 +55,7 @@ public class ProfileManager extends JDialog implements ActionListener{
 		top.setLayout(new BoxLayout(top, BoxLayout.Y_AXIS));
 		
 		JPanel rolePanel = new JPanel();
-		rolePanel.add(new JLabel("Role: " + user.getRole() + " user"));
+		rolePanel.add(new JLabel("Role: " + user.getType() + " user"));
 		top.add(rolePanel);
 		
 		JPanel usernamePanel = new JPanel();

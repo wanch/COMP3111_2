@@ -38,9 +38,7 @@ public class SignupDialog extends JDialog implements ActionListener {
 	private JTextField firstNameField;
 	private JTextField lastNameField;
 	private JTextField emailField;
-	private JTextField bDayYearField;
-	private JTextField bDayMonthField;
-	private JTextField bDayDateField;
+
 	private JButton signUpButton;
 	private JButton cancelButton;
 	private JCheckBox adminCheckBox;
@@ -108,20 +106,6 @@ public class SignupDialog extends JDialog implements ActionListener {
 		emailPanel.add(emailField);
 		personalInfoPanel.add(emailPanel);
 
-		/*JPanel bDayPanel = new JPanel();
-		Border bDayBorder = new TitledBorder("Birthday");
-		bDayPanel.setBorder(bDayBorder);
-		bDayPanel.setLayout(new BoxLayout(bDayPanel, BoxLayout.X_AXIS));
-		bDayPanel.add(new JLabel("YEAR: "));
-		bDayYearField = new JTextField(5);
-		bDayPanel.add(bDayYearField);
-		bDayPanel.add(new JLabel("MONTH: "));
-		bDayMonthField = new JTextField(5);
-		bDayPanel.add(bDayMonthField);
-		bDayPanel.add(new JLabel("DAY: "));
-		bDayDateField = new JTextField(5);
-		bDayPanel.add(bDayDateField);
-		personalInfoPanel.add(bDayPanel);*/
 
 		contentPane.add("Center", personalInfoPanel);
 
@@ -210,39 +194,6 @@ public class SignupDialog extends JDialog implements ActionListener {
 		return true;
 	}
 
-	private int[] getValidDate() {
-		int[] date = new int[3];
-
-		date[0] = Utility.getNumber(bDayYearField.getText());
-		date[1] = Utility.getNumber(bDayMonthField.getText());
-
-		if (date[0] < 1900 || date[0] > 2014) {
-			JOptionPane.showMessageDialog(this, "Please input proper year",
-					"Input Error", JOptionPane.ERROR_MESSAGE);
-			return null;
-		}
-
-		if (date[1] <= 0 || date[1] > 12) {
-			JOptionPane.showMessageDialog(this, "Please input proper month",
-					"Input Error", JOptionPane.ERROR_MESSAGE);
-			return null;
-		}
-
-		date[2] = Utility.getNumber(bDayDateField.getText());
-		int monthDay = CalGrid.monthDays[date[1] - 1];
-		if (date[1] == 2) {
-			GregorianCalendar c = new GregorianCalendar();
-			if (c.isLeapYear(date[0]))
-				monthDay = 29;
-		}
-		if (date[2] <= 0 || date[2] > monthDay) {
-			JOptionPane.showMessageDialog(this,
-					"Please input proper month day", "Input Error",
-					JOptionPane.ERROR_MESSAGE);
-			return null;
-		}
-		return date;
-	}
 
 	private Timestamp CreateTimeStamp(int[] date, int time) {
 		Timestamp stamp = new Timestamp(0);
