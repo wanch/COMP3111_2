@@ -9,7 +9,6 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Timestamp;
-import java.util.GregorianCalendar;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -107,7 +106,7 @@ public class ProfileManager extends JDialog implements ActionListener{
 		emailPanel.add(emailField);
 		personalInfoPanel.add(emailPanel);
 
-		/*JPanel bDayPanel = new JPanel();
+		JPanel bDayPanel = new JPanel();
 		Border bDayBorder = new TitledBorder("Birthday");
 		bDayPanel.setBorder(bDayBorder);
 		bDayPanel.setLayout(new BoxLayout(bDayPanel, BoxLayout.X_AXIS));
@@ -129,7 +128,7 @@ public class ProfileManager extends JDialog implements ActionListener{
 		bdDateField.setEditable(false);
 		bdDateField.setEnabled(false);
 		bDayPanel.add(bdDateField);
-		personalInfoPanel.add(bDayPanel);*/
+		personalInfoPanel.add(bDayPanel);
 
 		contentPane.add("Center", personalInfoPanel);
 
@@ -253,5 +252,4 @@ public class ProfileManager extends JDialog implements ActionListener{
 			return null;
 		}
 	}
-
 }
