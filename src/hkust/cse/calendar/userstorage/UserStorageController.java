@@ -15,7 +15,6 @@ public class UserStorageController {
 	private UserStorageController(UserStorage userStorage) {
 		mUserStorage = userStorage;
 	}
-	
 	public static UserStorageController getInstance() {
 		return userController;
 	}
