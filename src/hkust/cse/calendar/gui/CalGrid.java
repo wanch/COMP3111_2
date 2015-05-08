@@ -735,7 +735,6 @@ public class CalGrid extends JFrame implements ActionListener {
 			waitlistwindows.allDisableEdit();
 		}
 	}
-	
 	private void checkApptLocationInToBeDeleteLocation() {
 		Appt[] apptThatLocationInToBeDelete = controller.getApptInDeleteLocation();
 		for(Appt appt : apptThatLocationInToBeDelete) {
