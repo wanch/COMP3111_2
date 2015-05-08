@@ -32,7 +32,7 @@ public class UserStorageController {
 		}
 	}
 	
-	public Integer getNumberOfUsers() {
+	public Integer getSize() {
 		return mUserStorage.getSize();
 	}
 	
