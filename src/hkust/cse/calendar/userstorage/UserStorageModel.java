@@ -24,7 +24,7 @@ public class UserStorageModel extends UserStorage {
 	}
 
 	@Override
-	public Integer getNumberOfUsers() {
+	public Integer getSize() {
 		return new Integer(mUsers.size());
 	}
 	

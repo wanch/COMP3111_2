@@ -105,7 +105,9 @@ import javax.swing.event.ListSelectionListener;
 				JOptionPane.showMessageDialog(null, "Please enter the name and capacity.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 			else{
-				Location location = new Location(locationName.getText(), Integer.parseInt(locationCapacity.getText()));
+				String locationInput = locationName.getText();
+				String locationCapacityInput = locationCapacity.getText();
+				Location location = new Location(locationInput, Integer.parseInt(locationCapacityInput));
 
 				try {
 					controller.manageLocation(location, LocationStorageController.NEW);

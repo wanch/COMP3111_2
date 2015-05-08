@@ -93,8 +93,8 @@ public class ReplyJointApptPanel extends JDialog implements ActionListener, List
 					ApptXmlFactory apptxmlfactory = new ApptXmlFactory();
 					Appt[] appts = this.parent.controller.RetrieveAppts(selectedAppt.getOwner(), selectedAppt.getJoinID());
 					for(Appt appt : appts){
-						apptxmlfactory.removeApptFromXml("appt.xml", appt, selectedAppt.getOwner().ID());
-						apptxmlfactory.saveApptToXml("appt.xml", appt, selectedAppt.getOwner().ID());					
+						apptxmlfactory.removeApptXml("appt.xml", appt, selectedAppt.getOwner().ID());
+						apptxmlfactory.saveApptXml("appt.xml", appt, selectedAppt.getOwner().ID());					
 					}
 				}
 			}
@@ -107,8 +107,8 @@ public class ReplyJointApptPanel extends JDialog implements ActionListener, List
 					ApptXmlFactory apptxmlfactory = new ApptXmlFactory();
 					Appt[] appts = this.parent.controller.RetrieveAppts(selectedAppt.getOwner(), selectedAppt.getJoinID());
 					for(Appt appt : appts){
-						apptxmlfactory.removeApptFromXml("appt.xml", appt, selectedAppt.getOwner().ID());
-						apptxmlfactory.saveApptToXml("appt.xml", appt, selectedAppt.getOwner().ID());
+						apptxmlfactory.removeApptXml("appt.xml", appt, selectedAppt.getOwner().ID());
+						apptxmlfactory.saveApptXml("appt.xml", appt, selectedAppt.getOwner().ID());
 					}
 				}
 			}

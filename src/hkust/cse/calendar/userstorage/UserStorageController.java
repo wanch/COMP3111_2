@@ -32,8 +32,8 @@ public class UserStorageController {
 		}
 	}
 	
-	public Integer getNumberOfUsers() {
-		return mUserStorage.getNumberOfUsers();
+	public Integer getSize() {
+		return mUserStorage.getSize();
 	}
 	
 	public void loadUserXml() {
